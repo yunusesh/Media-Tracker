@@ -1,0 +1,6 @@
+spring.application.name=medimenu-backend
+spotify:
+client-id: your_clientid_here
+client-secret: your_secretid_here
+
+redirect-uri: http://192.168.1.172:3000/
