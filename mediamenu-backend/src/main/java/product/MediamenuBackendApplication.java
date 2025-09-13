@@ -6,7 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MediamenuBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(MediamenuBackendApplication.class, args);
-	}
+        System.out.println("hello world");
 
+
+        SpringApplication.run(MediamenuBackendApplication.class, args);
+	}
 }

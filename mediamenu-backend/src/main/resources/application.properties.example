@@ -1,6 +1,16 @@
-spring.application.name=medimenu-backend
+spring.application.name=mediamenu-backend
+
+#mySql:
+
+spring.datasource.url=jdbc:mysql://localhost:3306/MediaMenu
+spring.data.source.username=your_username_here
+spring.datasource.password=your_password_here
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
+
 spotify:
 client-id: your_clientid_here
 client-secret: your_secretid_here
 
-redirect-uri: http://192.168.1.172:3000/
+redirect-uri: your_redirecturi_here
