@@ -33,7 +33,7 @@ export function UserRatings() {
 
     useEffect(() => {
         if (userRatings) {
-            setRatings(userRatings.reverse().map(rating => rating))
+            setRatings(userRatings.sort((a, b) => new Date(b.ratedAt) - new Date(a.ratedAt)))
         }
     }, [userRatings]);
 

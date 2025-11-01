@@ -54,13 +54,15 @@ export function User() {
 
     useEffect(() => {
         if (userRatings) {
-            setRatings(userRatings.reverse().map(rating => rating).slice(0, 12))
+            setRatings(userRatings.sort((a, b) => new Date(b.ratedAt) - new Date(a.ratedAt)).slice(0, 12))
         }
     }, [userRatings]);
 
     useEffect(() => {
         if (userListens) {
-            setListened(userListens.reverse().map(listen => listen).slice(0, 6))
+            setListened(
+                userListens.sort((a, b) => new Date(b.firstListenedAt) - new Date(a.firstListenedAt)).slice(0, 6)
+            );
         }
     }, [userListens])
 
@@ -167,7 +169,7 @@ export function User() {
                                 </div>
                                 <div className="rating-value">
                                     <h4 className={
-                                        rating.rating == 10 ? "rating-value-ten" :
+                                        rating.rating === 10 ? "rating-value-ten" :
                                             rating.rating >= 8 && rating.rating <= 9 ? "rating-value-high" :
                                                 rating.rating >= 6 && rating.rating <= 7 ? "rating-value-med" :
                                                     rating.rating >= 4 && rating.rating <= 5 ? "rating-value-medlow" :

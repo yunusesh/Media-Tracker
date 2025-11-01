@@ -34,7 +34,7 @@ public class ScrobbleController {
         return createScrobbleService.execute(scrobble);
     }
 
-    @GetMapping("/api/scrobble/user/{userId}/track/{trackId}")
+    @GetMapping("/api/scrobble/user/{userId}/track/{trackId}") // DOESNT WORK BUT IDK IF ITS NEEDED EVEN (NOT UNIQUE)
     public ResponseEntity<ScrobbleDTO> getScrobbleById(@PathVariable Integer userId, @PathVariable Integer trackId){
         return getScrobbleService.execute(userId, trackId);
     }

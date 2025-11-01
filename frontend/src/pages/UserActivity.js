@@ -3,7 +3,7 @@ import {useQuery} from "react-query";
 import {useNavigate, useParams} from "react-router-dom";
 import "./UserActivity.css"
 
-export function UserActivity(){
+export function UserActivity() {
     const {username} = useParams()
     const navigate = useNavigate()
     const [listened, setListened] = useState([])
@@ -32,11 +32,11 @@ export function UserActivity(){
 
     useEffect(() => {
         if (userListens) {
-            setListened(userListens.reverse().map(listen => listen))
+            setListened(userListens.sort((a, b) => new Date(b.firstListenedAt) - new Date(a.firstListenedAt)))
         }
     }, [userListens])
 
-    function handleDate(sqlDate){
+    function handleDate(sqlDate) {
         const timestamp = new Date(sqlDate).toLocaleString()
 
         return [timestamp.substring(0, timestamp.indexOf(",")), timestamp.substring(timestamp.indexOf(",") + 1)]
@@ -61,8 +61,8 @@ export function UserActivity(){
                                     navigate(`/music/track/${track.trackMbid}`)
                                 }}
                             >{track.trackTitle} </h5>
-                            <h5 className="format" key={track.format}>
-                                {track.format.charAt(0).toUpperCase() + track.format.slice(1)} by
+                            <h5 className="format">
+                                Track by
                             </h5>
                             <h5 className="profile-item-artist"
                                 key={track.artistName}
@@ -71,7 +71,7 @@ export function UserActivity(){
                                 }}
                             >{track.artistName}</h5>
                         </div>
-                        <div className = "listen-timestamp">
+                        <div className="listen-timestamp">
                             <h5>{handleDate(track.firstListenedAt)[1]}</h5>
                             <h5>{handleDate(track.firstListenedAt)[0]}</h5>
                         </div>

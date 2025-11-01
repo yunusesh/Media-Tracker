@@ -6,8 +6,19 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import product.track.model.Track;
 
+import java.util.Optional;
+
 @Repository
 public interface TrackRepository extends JpaRepository<Track, Integer> {
+    @Query("SELECT t FROM Track t " +
+            "LEFT JOIN FETCH t.releases " +
+            "LEFT JOIN FETCH t.artist " +
+            "WHERE t.mbid = :mbid")
+    Optional<Track> findByMbid(@Param("mbid") String mbid);
+
+    /* ensures that when a track is fetched the artist, release, and track exist
+       also creates a link between the track and release
+     */
     @Query(value = """
             WITH inserted_artist AS (
                 INSERT INTO artist (mbid, artist_name)
@@ -42,10 +53,9 @@ public interface TrackRepository extends JpaRepository<Track, Integer> {
                 LIMIT 1
             ),
             inserted_track AS (
-                INSERT INTO track (mbid, release_id, artist_id, title, release_date)
-                SELECT :trackMbid, release_final.id, artist_final.id, :trackTitle, :trackReleaseDate
+                INSERT INTO track (mbid, artist_id, title, release_date)
+                SELECT :trackMbid, artist_final.id, :trackTitle, :trackReleaseDate
                 FROM artist_final 
-                JOIN release_final ON TRUE
                 ON CONFLICT (mbid) DO UPDATE SET title = EXCLUDED.title
                 RETURNING *
             )

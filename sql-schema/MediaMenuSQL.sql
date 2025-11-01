@@ -23,19 +23,24 @@ CREATE TABLE release_group (
 CREATE TABLE track (
 	id SERIAL PRIMARY KEY,
 	mbid VARCHAR(36) UNIQUE,
-	release_id INTEGER REFERENCES release_group(id),
 	artist_id INTEGER REFERENCES artist(id),
 	title VARCHAR NOT NULL,
 	release_date VARCHAR
 );
 
+CREATE TABLE track_release (
+	track_id INTEGER REFERENCES track(id) NOT NULL,
+	release_id INTEGER REFERENCES release_group(id),
+	PRIMARY KEY (track_id, release_id)
+)
+
 CREATE TABLE scrobble(
 	id SERIAL PRIMARY KEY,
 	user_id INTEGER REFERENCES app_user(id) NOT NULL,
 	track_id INTEGER REFERENCES track(id) NOT NULL,
+	release_id INTEGER REFERENCES release_group(id),
 	first_listened_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 );
-
 
 CREATE TABLE release_rating(
 	user_id INTEGER REFERENCES app_user(id) NOT NULL,
@@ -53,26 +58,31 @@ CREATE TABLE track_rating(
 	PRIMARY KEY (user_id, track_id)
 )
 
-CREATE OR REPLACE FUNCTION update_timestamp()
+SELECT * FROM track_release;
+CREATE OR REPLACE FUNCTION update_any_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN
-    NEW.first_listened_at = CURRENT_TIMESTAMP;
+    CASE TG_TABLE_NAME
+        WHEN 'scrobble' THEN NEW.first_listened_at := CURRENT_TIMESTAMP;
+        WHEN 'release_rating' THEN NEW.rated_at := CURRENT_TIMESTAMP;
+        WHEN 'track_rating' THEN NEW.rated_at := CURRENT_TIMESTAMP;
+    END CASE;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
--- triggers for each table that needs automatic timestamp updates
+-- Use same function for all three tables
 CREATE TRIGGER update_scrobble_timestamp
 BEFORE UPDATE ON scrobble
 FOR EACH ROW
-EXECUTE FUNCTION update_timestamp('first_listened_at');
+EXECUTE FUNCTION update_any_timestamp();
 
 CREATE TRIGGER update_release_rating_timestamp
 BEFORE UPDATE ON release_rating
 FOR EACH ROW
-EXECUTE FUNCTION update_timestamp('rated_at');
+EXECUTE FUNCTION update_any_timestamp();
 
 CREATE TRIGGER update_track_rating_timestamp
 BEFORE UPDATE ON track_rating
 FOR EACH ROW
-EXECUTE FUNCTION update_timestamp('rated_at');
+EXECUTE FUNCTION update_any_timestamp();

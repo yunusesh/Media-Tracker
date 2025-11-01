@@ -1,8 +1,10 @@
+
 package product.track.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import product.release.model.Release;
 
 @Data
 @AllArgsConstructor
@@ -21,14 +23,14 @@ public class TrackRequestDTO {
     private String artistName;
 
 
-    public TrackRequestDTO(Track track) {
+    public TrackRequestDTO(Track track, Release release) {
         this.trackId = track.getId();
         this.trackMbid = track.getMbid();
         this.trackTitle = track.getTitle();
-        this.releaseId = track.getRelease().getId();
-        this.releaseMbid = track.getRelease().getMbid();
-        this.releaseTitle = track.getRelease().getTitle();
-        this.format = track.getRelease().getFormat();
+        this.releaseId = release.getId();
+        this.releaseMbid = release.getMbid();
+        this.releaseTitle = release.getTitle();
+        this.format = release.getFormat();
         this.artistId = track.getArtist().getId();
         this.artistMbid = track.getArtist().getMbid();
         this.artistName = track.getArtist().getArtistName();

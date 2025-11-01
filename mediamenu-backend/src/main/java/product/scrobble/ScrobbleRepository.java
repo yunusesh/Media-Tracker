@@ -20,10 +20,10 @@ public interface ScrobbleRepository extends JpaRepository<Scrobble, Integer> {
                         s.id,
                         s.userId,
                         s.trackId,
+                        s.releaseId,
                         t.mbid,
                         t.title,
                         s.firstListenedAt,
-                        r.id,
                         r.mbid,
                         r.title,
                         r.format,
@@ -31,11 +31,11 @@ public interface ScrobbleRepository extends JpaRepository<Scrobble, Integer> {
                         a.mbid,
                         a.artistName
                         )
-                                    
-                
+            
+      
                 FROM Scrobble s
                 JOIN s.track t
-                JOIN s.track.release r
+                LEFT JOIN s.release r
                 JOIN s.track.artist a
                 WHERE s.userId = :userId
             """)

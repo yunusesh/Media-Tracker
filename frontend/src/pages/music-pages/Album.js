@@ -134,17 +134,16 @@ export function Album() {
     }, [id, albumReissue, data])
 
     const handleLog = async () => {
-        if (user && data) {
-            console.log(tracklistDB)
-            {
-                tracklistDB.map(track => {
-                        axios.post(`http://localhost:8081/api/scrobble`, {
-                            userId: user.id,
-                            trackId: track.id
-                        })
-                    }
-                )
-            }
+        if (user && releaseDB) {
+            tracklistDB.map(track => {
+                    axios.post(`http://localhost:8081/api/scrobble`, {
+                        userId: user.id,
+                        trackId: track.id,
+                        releaseId: releaseDB.id
+                    })
+                }
+            )
+
         }
     }
 
@@ -246,7 +245,7 @@ export function Album() {
                     {!isEditing ? (
                             <h3 className={
                                 !rating ? "rating-absent" :
-                                    rating == 10 ? "rating-ten" :
+                                    rating === 10 ? "rating-ten" :
                                         rating >= 8 && rating <= 9 ? "rating-high" :
                                             rating >= 6 && rating <= 7 ? "rating-med" :
                                                 rating >= 4 && rating <= 5 ? "rating-medlow" :

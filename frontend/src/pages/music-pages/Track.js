@@ -52,12 +52,10 @@ export function Track() {
 
     const handleLog = async () => {
         if (user && data && trackDB) {
-            {
                 axios.post(`http://localhost:8081/api/scrobble`, {
                     userId: user.id,
                     trackId: trackDB.id
                 })
-            }
         }
     }
     if (status === `loading`) {
@@ -109,7 +107,7 @@ export function Track() {
                     {!isEditing ? (
                             <h3 className={
                                 !rating ? "rating-absent" :
-                                    rating == 10 ? "rating-ten" :
+                                    rating === 10 ? "rating-ten" :
                                         rating >= 8 && rating <= 9 ? "rating-high" :
                                             rating >= 6 && rating <= 7 ? "rating-med" :
                                                 rating >= 4 && rating <= 5 ? "rating-medlow" :
@@ -131,7 +129,7 @@ export function Track() {
                             />
                             <button className="manual-log"
                                     onClick={handleLog}>
-                                Log Release
+                                Log Track
                             </button>
                             <div className="rating-buttons">
                                 <button className="rate-button" onClick={handleSubmit}>

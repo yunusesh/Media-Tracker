@@ -13,10 +13,10 @@ public class ScrobbleRequestDTO {
     private Integer id;
     private Integer userId;
     private Integer trackId;
+    private Integer releaseId;
     private String trackMbid;
     private String trackTitle;
     private Timestamp firstListenedAt;
-    private Integer releaseId;
     private String releaseMbid;
     private String releaseTitle;
     private String format;
@@ -28,12 +28,12 @@ public class ScrobbleRequestDTO {
         this.id = scrobble.getId();
         this.userId = scrobble.getUserId();
         this.trackId = scrobble.getTrackId();
+        this.releaseId = scrobble.getRelease().getId();
         this.trackMbid = scrobble.getTrack().getMbid();
         this.trackTitle = scrobble.getTrack().getTitle();
         this.firstListenedAt = scrobble.getFirstListenedAt();
-        this.releaseId = scrobble.getTrack().getRelease().getId();
-        this.releaseMbid = scrobble.getTrack().getRelease().getMbid();
-        this.format = scrobble.getTrack().getRelease().getFormat();
+        this.releaseMbid = scrobble.getRelease().getMbid();
+        this.format = scrobble.getRelease().getFormat();
         this.artistId = scrobble.getTrack().getArtist().getId();
         this.artistMbid = scrobble.getTrack().getArtist().getMbid();
         this.artistName = scrobble.getTrack().getArtist().getArtistName();

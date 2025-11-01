@@ -5,6 +5,11 @@ import lombok.Data;
 import product.artist.model.Artist;
 import product.release.model.Release;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Data
 @Table(name = "track")
@@ -17,9 +22,6 @@ public class Track {
     @Column(name = "mbid")
     private String mbid;
 
-    @Column(name = "release_id")
-    private Integer releaseId;
-
     @Column(name = "artist_id")
     private Integer artistId;
 
@@ -29,9 +31,13 @@ public class Track {
     @Column(name = "release_date")
     private String releaseDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "release_id", insertable = false, updatable = false)
-    private Release release;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "track_release",
+    joinColumns = @JoinColumn(name = "track_id"),
+    inverseJoinColumns = @JoinColumn(name = "release_id")
+    )
+    private List<Release> releases = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id", insertable = false, updatable = false)
