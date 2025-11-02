@@ -23,6 +23,7 @@ public class ScrobbleRequestDTO {
     private Integer artistId;
     private String artistMbid;
     private String artistName;
+    private String altReleaseMbid;
 
     public ScrobbleRequestDTO(Scrobble scrobble){
         this.id = scrobble.getId();
@@ -37,5 +38,6 @@ public class ScrobbleRequestDTO {
         this.artistId = scrobble.getTrack().getArtist().getId();
         this.artistMbid = scrobble.getTrack().getArtist().getMbid();
         this.artistName = scrobble.getTrack().getArtist().getArtistName();
+        this.altReleaseMbid = scrobble.getTrack().getReleaseMbid();
     }
 }

@@ -48,7 +48,11 @@ export function UserActivity() {
                 {listened.map(track => (
                     <div className="ratings-page-item" key={track.trackMbid}>
                         <img className="ratings-item-img"
-                             src={`https://coverartarchive.org/release-group/${track.releaseMbid}/front`}
+                             src={
+                            track.releaseMbid ?
+                                 `https://coverartarchive.org/release-group/${track.releaseMbid}/front` :
+                                `https://coverartarchive.org/release-group/${track.altReleaseMbid}/front`
+                        }
                              alt="placeholder.png"
                              onClick={() => {
                                  navigate(`/music/track/${track.trackMbid}`)

@@ -1,10 +1,8 @@
 package product.track.model;
 
 import lombok.Data;
-import product.release.model.Release;
 import product.release.model.ReleaseDTO;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -15,6 +13,7 @@ public class TrackDTO {
     private Integer artistId;
     private String title;
     private List<ReleaseDTO> releases;
+    private String releaseMbid;
 
     public TrackDTO(Track track) {
         this.id = track.getId();
@@ -23,5 +22,6 @@ public class TrackDTO {
         this.title = track.getTitle();
         this.releaseDate = track.getReleaseDate();
         this.releases = track.getReleases().stream().map(ReleaseDTO::new).toList();
+        this.releaseMbid = track.getReleaseMbid();
     }
 }

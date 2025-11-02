@@ -3,9 +3,17 @@
   <database-model serializer="dbm" dbms="POSTGRES" family-id="POSTGRES" format-version="4.53">
     <root id="1">
       <DateStyle>mdy</DateStyle>
-      <IntrospectionStateNumber>2710</IntrospectionStateNumber>
+      <Grants>1||-9223372036854775808|c|G
+1||10|c|G
+1||10|C|G
+1||10|T|G
+4||-9223372036854775808|c|G
+4||10|c|G
+4||10|C|G
+4||10|T|G</Grants>
+      <IntrospectionStateNumber>3284</IntrospectionStateNumber>
       <ServerVersion>17.6</ServerVersion>
-      <StartupTime>1761864449</StartupTime>
+      <StartupTime>1761976961</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -801,7 +809,7 @@ false Zulu
 14704||10|C|G
 14704||-9223372036854775808|U|G
 14704||10|U|G</Grants>
-      <IntrospectionStateNumber>2710</IntrospectionStateNumber>
+      <IntrospectionStateNumber>3284</IntrospectionStateNumber>
       <ObjectId>16557</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
@@ -4229,11 +4237,11 @@ false Zulu
       <AutoIntrospectionLevel>3</AutoIntrospectionLevel>
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <LastIntrospectionL1Xid>2710</LastIntrospectionL1Xid>
-      <LastIntrospectionL2Xid>2710</LastIntrospectionL2Xid>
-      <LastIntrospectionL3Xid>2710</LastIntrospectionL3Xid>
+      <LastIntrospectionL1Xid>3284</LastIntrospectionL1Xid>
+      <LastIntrospectionL2Xid>3284</LastIntrospectionL2Xid>
+      <LastIntrospectionL3Xid>3284</LastIntrospectionL3Xid>
       <LastIntrospectionLevel>3</LastIntrospectionLevel>
-      <LastIntrospectionLocalTimestamp>2025-11-01.01:00:37</LastIntrospectionLocalTimestamp>
+      <LastIntrospectionLocalTimestamp>2025-11-02.03:10:16</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>532</StateNumber>
       <OwnerName>pg_database_owner</OwnerName>
@@ -4325,14 +4333,14 @@ false Zulu
     <table id="276" parent="265" name="scrobble">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16802</ObjectId>
-      <StateNumber>2709</StateNumber>
+      <StateNumber>3067</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>postgres</OwnerName>
     </table>
     <table id="277" parent="265" name="track">
       <DetailsLevel>2</DetailsLevel>
       <ObjectId>16783</ObjectId>
-      <StateNumber>1786</StateNumber>
+      <StateNumber>3283</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>postgres</OwnerName>
     </table>
@@ -4672,7 +4680,7 @@ release_id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16806</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>893</StateNumber>
+      <StateNumber>3067</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
@@ -4724,7 +4732,13 @@ release_id</ColNames>
       <StoredType>varchar|0s</StoredType>
       <TypeId>1043</TypeId>
     </column>
-    <foreign-key id="331" parent="277" name="track_artist_id_fkey">
+    <column id="331" parent="277" name="cover_release_mbid">
+      <Position>10</Position>
+      <StateNumber>3283</StateNumber>
+      <StoredType>varchar(36)|0s</StoredType>
+      <TypeId>1043</TypeId>
+    </column>
+    <foreign-key id="332" parent="277" name="track_artist_id_fkey">
       <ColNames>artist_id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16796</ObjectId>
@@ -4732,7 +4746,7 @@ release_id</ColNames>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16637</RefTableId>
     </foreign-key>
-    <index id="332" parent="277" name="track_pkey">
+    <index id="333" parent="277" name="track_pkey">
       <ColNames>id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16789</ObjectId>
@@ -4741,7 +4755,7 @@ release_id</ColNames>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <index id="333" parent="277" name="track_mbid_unique">
+    <index id="334" parent="277" name="track_mbid_unique">
       <ColNames>mbid</ColNames>
       <ObjectId>25061</ObjectId>
       <StateNumber>1788</StateNumber>
@@ -4751,51 +4765,51 @@ release_id</ColNames>
       <CollationIds>100</CollationIds>
       <CollationParentNames>pg_catalog</CollationParentNames>
     </index>
-    <key id="334" parent="277" name="track_pkey">
+    <key id="335" parent="277" name="track_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16790</ObjectId>
       <Primary>1</Primary>
       <StateNumber>849</StateNumber>
       <UnderlyingIndexId>16789</UnderlyingIndexId>
     </key>
-    <key id="335" parent="277" name="track_mbid_unique">
+    <key id="336" parent="277" name="track_mbid_unique">
       <ObjectId>25062</ObjectId>
       <StateNumber>1788</StateNumber>
       <UnderlyingIndexId>25061</UnderlyingIndexId>
     </key>
-    <check id="336" parent="278" name="track_rating_rating_check">
+    <check id="337" parent="278" name="track_rating_rating_check">
       <ColNames>rating</ColNames>
       <ObjectId>16879</ObjectId>
       <Predicate>(rating &gt;= 0) AND (rating &lt;= 10)</Predicate>
       <StateNumber>942</StateNumber>
     </check>
-    <column id="337" parent="278" name="user_id">
+    <column id="338" parent="278" name="user_id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>942</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="338" parent="278" name="track_id">
+    <column id="339" parent="278" name="track_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>942</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="339" parent="278" name="rating">
+    <column id="340" parent="278" name="rating">
       <Position>3</Position>
       <StateNumber>942</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="340" parent="278" name="rated_at">
+    <column id="341" parent="278" name="rated_at">
       <Position>4</Position>
       <StateNumber>942</StateNumber>
       <StoredType>timestamp|0s</StoredType>
       <TypeId>1114</TypeId>
     </column>
-    <foreign-key id="341" parent="278" name="track_rating_user_id_fkey">
+    <foreign-key id="342" parent="278" name="track_rating_user_id_fkey">
       <ColNames>user_id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16882</ObjectId>
@@ -4803,7 +4817,7 @@ release_id</ColNames>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16628</RefTableId>
     </foreign-key>
-    <foreign-key id="342" parent="278" name="track_rating_track_id_fkey">
+    <foreign-key id="343" parent="278" name="track_rating_track_id_fkey">
       <ColNames>track_id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16887</ObjectId>
@@ -4811,7 +4825,7 @@ release_id</ColNames>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16783</RefTableId>
     </foreign-key>
-    <index id="343" parent="278" name="track_rating_pkey">
+    <index id="344" parent="278" name="track_rating_pkey">
       <ColNames>user_id
 track_id</ColNames>
       <NameSurrogate>1</NameSurrogate>
@@ -4821,35 +4835,35 @@ track_id</ColNames>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="344" parent="278" name="track_rating_pkey">
+    <key id="345" parent="278" name="track_rating_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16881</ObjectId>
       <Primary>1</Primary>
       <StateNumber>942</StateNumber>
       <UnderlyingIndexId>16880</UnderlyingIndexId>
     </key>
-    <trigger id="345" parent="278" name="update_track_rating_timestamp">
+    <trigger id="346" parent="278" name="update_track_rating_timestamp">
       <Events>U</Events>
       <ObjectId>25078</ObjectId>
       <StateNumber>2375</StateNumber>
       <Turn>before-row</Turn>
       <CallRoutineId>25075</CallRoutineId>
     </trigger>
-    <column id="346" parent="279" name="track_id">
+    <column id="347" parent="279" name="track_id">
       <NotNull>1</NotNull>
       <Position>1</Position>
       <StateNumber>2707</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <column id="347" parent="279" name="release_id">
+    <column id="348" parent="279" name="release_id">
       <NotNull>1</NotNull>
       <Position>2</Position>
       <StateNumber>2707</StateNumber>
       <StoredType>integer|0s</StoredType>
       <TypeId>23</TypeId>
     </column>
-    <foreign-key id="348" parent="279" name="track_release_track_id_fkey">
+    <foreign-key id="349" parent="279" name="track_release_track_id_fkey">
       <ColNames>track_id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>25089</ObjectId>
@@ -4857,7 +4871,7 @@ track_id</ColNames>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16783</RefTableId>
     </foreign-key>
-    <foreign-key id="349" parent="279" name="track_release_release_id_fkey">
+    <foreign-key id="350" parent="279" name="track_release_release_id_fkey">
       <ColNames>release_id</ColNames>
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>25094</ObjectId>
@@ -4865,7 +4879,7 @@ track_id</ColNames>
       <RefKeyColPositions>1</RefKeyColPositions>
       <RefTableId>16765</RefTableId>
     </foreign-key>
-    <index id="350" parent="279" name="track_release_pkey">
+    <index id="351" parent="279" name="track_release_pkey">
       <ColNames>track_id
 release_id</ColNames>
       <NameSurrogate>1</NameSurrogate>
@@ -4875,7 +4889,7 @@ release_id</ColNames>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="351" parent="279" name="track_release_pkey">
+    <key id="352" parent="279" name="track_release_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>25088</ObjectId>
       <Primary>1</Primary>

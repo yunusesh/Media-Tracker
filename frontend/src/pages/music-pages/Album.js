@@ -86,7 +86,7 @@ export function Album() {
 
     const handleSubmit = async () => {
         if (user && releaseDB) {
-            axios.post('http://localhost:8081/api/release-rating', {
+            await axios.post('http://localhost:8081/api/release-rating', {
                 userId: user.id,
                 releaseId: releaseDB.id,
                 rating: rating
@@ -245,7 +245,7 @@ export function Album() {
                     {!isEditing ? (
                             <h3 className={
                                 !rating ? "rating-absent" :
-                                    rating === 10 ? "rating-ten" :
+                                    rating == 10 ? "rating-ten" :
                                         rating >= 8 && rating <= 9 ? "rating-high" :
                                             rating >= 6 && rating <= 7 ? "rating-med" :
                                                 rating >= 4 && rating <= 5 ? "rating-medlow" :

@@ -2,7 +2,7 @@ import "./Track.css"
 import {useNavigate, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
 import {FaRegEdit, FaStar} from "react-icons/fa";
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {AuthContext} from "../../AuthContext";
 import axios from "axios";
 
@@ -34,7 +34,7 @@ export function Track() {
                 releaseTitle: data.releases[0].title,
                 format: data.releases[0]["primary-type"],
                 artistMbid: data["artist-credit"]?.[0]?.id,
-                artistName: data["artist-credit"]?.[0]?.name
+                artistName: data["artist-credit"]?.[0]?.name,
             })
             return response.data
         }
@@ -46,15 +46,40 @@ export function Track() {
         enabled: !!id
     })
 
-    const handleSubmit = async () => {
-        console.log("wip")
+    async function fetchRating() {
+        if (user && trackDB) {
+            const response = await fetch(`http://localhost:8081/api/track-rating/user/${user.id}/track/${trackDB.id}`)
+            return response.json()
+        }
     }
+
+    const {data: userRating} = useQuery({
+        queryKey: ['userRating', user?.id, trackDB?.id],
+        queryFn: () => fetchRating(),
+        enabled: !!user && !!trackDB
+    })
+
+    useEffect(() => {
+        if (userRating) {
+            setRating(userRating.rating)
+        }
+    }, [userRating])
+
+    const handleSubmit = async () => {
+        if (user && trackDB) {
+            await axios.post('http://localhost:8081/api/track-rating', {
+                userId: user.id,
+                trackId: trackDB.id,
+                rating: rating
+            })
+            setIsEditing(false)
+        }    }
 
     const handleLog = async () => {
         if (user && data && trackDB) {
                 axios.post(`http://localhost:8081/api/scrobble`, {
                     userId: user.id,
-                    trackId: trackDB.id
+                    trackId: trackDB.id,
                 })
         }
     }
@@ -107,7 +132,7 @@ export function Track() {
                     {!isEditing ? (
                             <h3 className={
                                 !rating ? "rating-absent" :
-                                    rating === 10 ? "rating-ten" :
+                                    rating == 10 ? "rating-ten" :
                                         rating >= 8 && rating <= 9 ? "rating-high" :
                                             rating >= 6 && rating <= 7 ? "rating-med" :
                                                 rating >= 4 && rating <= 5 ? "rating-medlow" :

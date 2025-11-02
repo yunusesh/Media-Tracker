@@ -13,7 +13,7 @@ export function User() {
     const [listened, setListened] = useState([])
     const [topOfYear, setTopOfYear] = useState([])
 
-    function handleDate(sqlDate){
+    function handleDate(sqlDate) {
         const timestamp = new Date(sqlDate).toLocaleString()
 
         return [timestamp.substring(0, timestamp.indexOf(",")), timestamp.substring(timestamp.indexOf(",") + 1)]
@@ -30,16 +30,34 @@ export function User() {
         enabled: !!username,
     })
 
-    async function fetchUserRatings() {
+    async function fetchUserReleaseRatings() {
         const response = await fetch(`http://localhost:8081/api/release-rating/user/${userData?.id}`)
         return response.json()
     }
 
-    const {data: userRatings, status} = useQuery({
+    const {data: userReleaseRatings, status} = useQuery({
         queryKey: ["userRatings", userData?.id],
-        queryFn: () => fetchUserRatings(),
+        queryFn: () => fetchUserReleaseRatings(),
         enabled: !!userData?.id,
     })
+
+    async function fetchUserTrackRatings() {
+        const response = await fetch(`http://localhost:8081/api/track-rating/user/${userData?.id}`)
+        return response.json()
+    }
+
+    const {data: userTrackRatings} = useQuery({
+        queryKey: ["userTrackRatings", userData?.id],
+        queryFn: () => fetchUserTrackRatings(),
+        enabled: !!userData?.id,
+    })
+
+    useEffect(() => {
+        if (userTrackRatings && userReleaseRatings) {
+            const userRatings = userTrackRatings.concat(userReleaseRatings)
+            setRatings(userRatings.sort((a, b) => new Date(b.ratedAt) - new Date(a.ratedAt)).slice(0, 12))
+        }
+    }, [userTrackRatings, userReleaseRatings])
 
     async function fetchUserListens() {
         const response = await fetch(`http://localhost:8081/api/scrobble/user/${userData?.id}`)
@@ -51,12 +69,6 @@ export function User() {
         queryFn: () => fetchUserListens(),
         enabled: !!userData?.id
     })
-
-    useEffect(() => {
-        if (userRatings) {
-            setRatings(userRatings.sort((a, b) => new Date(b.ratedAt) - new Date(a.ratedAt)).slice(0, 12))
-        }
-    }, [userRatings]);
 
     useEffect(() => {
         if (userListens) {
@@ -102,7 +114,11 @@ export function User() {
                         {listened.map(track => (
                             <div className="releaseGroup-items" key={track.trackMbid}>
                                 <img className="profile-item-img"
-                                     src={`https://coverartarchive.org/release-group/${track.releaseMbid}/front`}
+                                     src={
+                                    track.releaseMbid ?
+                                         `https://coverartarchive.org/release-group/${track.releaseMbid}/front` :
+                                         `https://coverartarchive.org/release-group/${track.altReleaseMbid}/front`
+                                     }
                                      alt="placeholder.png"
                                      onClick={() => {
                                          navigate(`/music/track/${track.trackMbid}`)
@@ -124,7 +140,7 @@ export function User() {
                                         }}
                                     >{track.artistName}</h4>
                                 </div>
-                                <div className = "listen-timestamp">
+                                <div className="listen-timestamp">
                                     <h5>{handleDate(track.firstListenedAt)[1]}</h5>
                                     <h5>{handleDate(track.firstListenedAt)[0]}</h5>
                                 </div>
@@ -151,15 +167,30 @@ export function User() {
                                      }}
                                 />
                                 <div className="release-info">
-                                    <h4 className="profile-item-title"
-                                        key={rating.title}
-                                        onClick={() => {
-                                            navigate(`/music/album/${rating.releaseMbid}`)
-                                        }}
-                                    >{rating.title} </h4>
-                                    <h5 className="format" key={rating.format}>
-                                        {rating.format.charAt(0).toUpperCase() + rating.format.slice(1)} by
-                                    </h5>
+                                    {rating.title ?
+                                        <h4 className="profile-item-title"
+                                            key={rating.title}
+                                            onClick={() => {
+                                                navigate(`/music/album/${rating.releaseMbid}`)
+                                            }}
+                                        >{rating.title} </h4>
+                                        :
+                                        <h4 className="profile-item-title"
+                                            key={rating.trackTitle}
+                                            onClick={() => {
+                                                navigate(`/music/track/${rating.trackMbid}`)
+                                            }}
+                                        >{rating.trackTitle} </h4>
+                                    }
+                                    {rating.format ?
+                                        <h5 className="format" key={rating.format}>
+                                            {rating.format.charAt(0).toUpperCase() + rating.format.slice(1)} by
+                                        </h5>
+                                        :
+                                        <h5 className="format" key="track">
+                                            Track by
+                                        </h5>
+                                    }
                                     <h4 className="profile-item-artist"
                                         key={rating.artistName}
                                         onClick={() => {
@@ -169,7 +200,7 @@ export function User() {
                                 </div>
                                 <div className="rating-value">
                                     <h4 className={
-                                        rating.rating === 10 ? "rating-value-ten" :
+                                        rating.rating == 10 ? "rating-value-ten" :
                                             rating.rating >= 8 && rating.rating <= 9 ? "rating-value-high" :
                                                 rating.rating >= 6 && rating.rating <= 7 ? "rating-value-med" :
                                                     rating.rating >= 4 && rating.rating <= 5 ? "rating-value-medlow" :

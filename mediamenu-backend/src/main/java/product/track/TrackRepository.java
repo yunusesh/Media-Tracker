@@ -4,8 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import product.release.model.Release;
 import product.track.model.Track;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,7 +17,6 @@ public interface TrackRepository extends JpaRepository<Track, Integer> {
             "LEFT JOIN FETCH t.artist " +
             "WHERE t.mbid = :mbid")
     Optional<Track> findByMbid(@Param("mbid") String mbid);
-
     /* ensures that when a track is fetched the artist, release, and track exist
        also creates a link between the track and release
      */

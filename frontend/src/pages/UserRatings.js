@@ -20,23 +20,34 @@ export function UserRatings() {
         enabled: !!username,
     })
 
-    async function fetchUserRatings() {
+    async function fetchUserReleaseRatings() {
         const response = await fetch(`http://localhost:8081/api/release-rating/user/${userData?.id}`)
         return response.json()
     }
 
-    const {data: userRatings, status} = useQuery({
+    const {data: userReleaseRatings, status} = useQuery({
         queryKey: ["userRatings", userData?.id],
-        queryFn: () => fetchUserRatings(),
+        queryFn: () => fetchUserReleaseRatings(),
+        enabled: !!userData?.id,
+    })
+
+    async function fetchUserTrackRatings() {
+        const response = await fetch(`http://localhost:8081/api/track-rating/user/${userData?.id}`)
+        return response.json()
+    }
+
+    const {data: userTrackRatings} = useQuery({
+        queryKey: ["userTrackRatings", userData?.id],
+        queryFn: () => fetchUserTrackRatings(),
         enabled: !!userData?.id,
     })
 
     useEffect(() => {
-        if (userRatings) {
+        if (userTrackRatings && userReleaseRatings) {
+            const userRatings = userTrackRatings.concat(userReleaseRatings)
             setRatings(userRatings.sort((a, b) => new Date(b.ratedAt) - new Date(a.ratedAt)))
         }
-    }, [userRatings]);
-
+    }, [userTrackRatings, userReleaseRatings])
     return (
         <div className="user-ratings-page">
             <div className="user-ratings">
@@ -50,15 +61,31 @@ export function UserRatings() {
                              }}
                         />
                         <div className="ratings-release-info">
-                            <h5 className="profile-item-title"
-                                key={rating.title}
-                                onClick={() => {
-                                    navigate(`/music/album/${rating.releaseMbid}`)
-                                }}
-                            >{rating.title} </h5>
-                            <h5 className="format" key={rating.format}>
-                                {rating.format.charAt(0).toUpperCase() + rating.format.slice(1)} by
-                            </h5>
+                            {rating.title ?
+                                <h5 className="profile-item-title"
+                                    key={rating.title}
+                                    onClick={() => {
+                                        navigate(`/music/album/${rating.releaseMbid}`)
+                                    }}
+                                >{rating.title} </h5>
+                                :
+                                <h5 className="profile-item-title"
+                                    key={rating.trackTitle}
+                                    onClick={() => {
+                                        navigate(`/music/track/${rating.trackMbid}`)
+                                    }}
+                                >{rating.trackTitle} </h5>
+
+                            }
+                            {rating.format ?
+                                <h5 className="format" key={rating.format}>
+                                    {rating.format.charAt(0).toUpperCase() + rating.format.slice(1)} by
+                                </h5>
+                                :
+                                <h5 className="format" key="track">
+                                    Track by
+                                </h5>
+                            }
                             <h5 className="profile-item-artist"
                                 key={rating.artistName}
                                 onClick={() => {

@@ -29,7 +29,8 @@ public interface ScrobbleRepository extends JpaRepository<Scrobble, Integer> {
                         r.format,
                         a.id,
                         a.mbid,
-                        a.artistName
+                        a.artistName,
+                        t.releaseMbid
                         )
             
       

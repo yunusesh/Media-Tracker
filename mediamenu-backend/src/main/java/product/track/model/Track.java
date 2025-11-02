@@ -6,9 +6,7 @@ import product.artist.model.Artist;
 import product.release.model.Release;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Data
@@ -30,6 +28,9 @@ public class Track {
 
     @Column(name = "release_date")
     private String releaseDate;
+
+    @Column(name = "cover_release_mbid")
+    private String releaseMbid;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

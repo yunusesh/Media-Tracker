@@ -21,19 +21,4 @@ public class TrackRequestDTO {
     private Integer artistId;
     private String artistMbid;
     private String artistName;
-
-
-    public TrackRequestDTO(Track track, Release release) {
-        this.trackId = track.getId();
-        this.trackMbid = track.getMbid();
-        this.trackTitle = track.getTitle();
-        this.releaseId = release.getId();
-        this.releaseMbid = release.getMbid();
-        this.releaseTitle = release.getTitle();
-        this.format = release.getFormat();
-        this.artistId = track.getArtist().getId();
-        this.artistMbid = track.getArtist().getMbid();
-        this.artistName = track.getArtist().getArtistName();
-        this.releaseDate = track.getReleaseDate();
-    }
 }
