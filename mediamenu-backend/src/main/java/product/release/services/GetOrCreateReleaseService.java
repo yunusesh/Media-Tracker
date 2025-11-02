@@ -15,11 +15,12 @@ public class GetOrCreateReleaseService {
         this.releaseRepository = releaseRepository;
     }
 
-    public ResponseEntity<ReleaseDTO> execute(String releaseMbid, String title, String format,
+    public ResponseEntity<ReleaseDTO> execute(String releaseMbid, String title, String releaseDate, String format,
                                               String artistMbid, String artistName) {
         Release release = releaseRepository.upsertReleaseGroup(
                 releaseMbid,
                 title,
+                releaseDate,
                 format,
                 artistMbid,
                 artistName

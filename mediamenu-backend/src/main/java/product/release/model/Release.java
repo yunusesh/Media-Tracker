@@ -28,6 +28,9 @@ public class Release {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "release_date")
+    private String releaseDate;
+
     @Column(name = "format")
     private String format;
 

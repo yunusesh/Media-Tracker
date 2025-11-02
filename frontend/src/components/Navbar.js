@@ -105,7 +105,6 @@ export function Navbar() {
                                         onClick={() => {
                                             handleSearchTypeChange("artists")
                                         }}
-                                    //if artist button is clicked we highlight by changing color
                                 >
                                     Artists
                                 </button>

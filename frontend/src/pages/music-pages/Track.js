@@ -5,6 +5,8 @@ import {FaRegEdit, FaStar} from "react-icons/fa";
 import {useContext, useEffect, useState} from "react";
 import {AuthContext} from "../../AuthContext";
 import axios from "axios";
+import {ToastContainer, toast, Bounce} from 'react-toastify';
+
 
 export function Track() {
     const {id} = useParams()
@@ -73,14 +75,28 @@ export function Track() {
                 rating: rating
             })
             setIsEditing(false)
-        }    }
+        }
+    }
+
+    const logSuccess = () => toast.success('Track Logged', {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+    });
 
     const handleLog = async () => {
         if (user && data && trackDB) {
-                axios.post(`http://localhost:8081/api/scrobble`, {
-                    userId: user.id,
-                    trackId: trackDB.id,
-                })
+            axios.post(`http://localhost:8081/api/scrobble`, {
+                userId: user.id,
+                trackId: trackDB.id,
+            })
+            logSuccess()
         }
     }
     if (status === `loading`) {
@@ -155,6 +171,19 @@ export function Track() {
                             <button className="manual-log"
                                     onClick={handleLog}>
                                 Log Track
+                                <ToastContainer
+                                    position="bottom-center"
+                                    autoClose={5000}
+                                    hideProgressBar={false}
+                                    newestOnTop
+                                    closeOnClick={false}
+                                    rtl={false}
+                                    pauseOnFocusLoss
+                                    draggable
+                                    pauseOnHover
+                                    theme="colored"
+                                    transition={Bounce}
+                                />
                             </button>
                             <div className="rating-buttons">
                                 <button className="rate-button" onClick={handleSubmit}>

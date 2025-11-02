@@ -57,7 +57,11 @@ export function UserRatings() {
                              src={`https://coverartarchive.org/release-group/${rating.releaseMbid}/front`}
                              alt="placeholder.png"
                              onClick={() => {
-                                 navigate(`/music/album/${rating.releaseMbid}`)
+                                 navigate(
+                                     rating.title ?
+                                         `/music/album/${rating.releaseMbid}` :
+                                         `/music/track/${rating.trackMbid}`
+                                 )
                              }}
                         />
                         <div className="ratings-release-info">

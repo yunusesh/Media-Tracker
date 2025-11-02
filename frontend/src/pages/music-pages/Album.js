@@ -6,6 +6,7 @@ import {FaStar} from "react-icons/fa";
 import {FaRegEdit} from "react-icons/fa";
 import {AuthContext} from "../../AuthContext";
 import axios from "axios";
+import {Bounce, toast, ToastContainer} from "react-toastify";
 
 export function Album() {
     const {id} = useParams();
@@ -48,9 +49,11 @@ export function Album() {
 
     async function fetchReleaseFromDB() {
         if (user && data) {
+            console.log(data["first-release-date"])
             const response = await axios.post(`http://localhost:8081/api/release/getOrCreate`, {
                 releaseMbid: id,
                 title: data.title,
+                releaseDate: data["first-release-date"],
                 format: data["primary-type"],
                 artistMbid: data["artist-credit"]?.[0]?.id,
                 artistName: data["artist-credit"]?.[0]?.name,
@@ -133,6 +136,18 @@ export function Album() {
         }
     }, [id, albumReissue, data])
 
+    const logSuccess = () => toast.success('Release Logged', {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+    });
+
     const handleLog = async () => {
         if (user && releaseDB) {
             tracklistDB.map(track => {
@@ -143,7 +158,7 @@ export function Album() {
                     })
                 }
             )
-
+            logSuccess()
         }
     }
 
@@ -268,6 +283,19 @@ export function Album() {
                             <button className="manual-log"
                                     onClick={handleLog}>
                                 Log Release
+                                <ToastContainer
+                                    position="bottom-center"
+                                    autoClose={5000}
+                                    hideProgressBar={false}
+                                    newestOnTop
+                                    closeOnClick={false}
+                                    rtl={false}
+                                    pauseOnFocusLoss
+                                    draggable
+                                    pauseOnHover
+                                    theme="colored"
+                                    transition={Bounce}
+                                />
                             </button>
                             <div className="rating-buttons">
                                 <button className="rate-button" onClick={handleSubmit}>

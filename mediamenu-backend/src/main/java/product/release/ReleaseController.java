@@ -43,6 +43,7 @@ public class ReleaseController {
         ReleaseDTO releaseDTO = getOrCreateReleaseService.execute(
                 release.getReleaseMbid(),
                 release.getTitle(),
+                release.getReleaseDate(),
                 release.getFormat(),
                 release.getArtistMbid(),
                 release.getArtistName()

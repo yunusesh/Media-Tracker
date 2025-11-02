@@ -17,6 +17,7 @@ CREATE TABLE release_group (
 	mbid VARCHAR(36) UNIQUE,
 	artist_id INTEGER REFERENCES artist(id) NOT NULL,
 	title VARCHAR NOT NULL,
+	release_date VARCHAR,
 	format VARCHAR
 );
 
@@ -25,7 +26,8 @@ CREATE TABLE track (
 	mbid VARCHAR(36) UNIQUE,
 	artist_id INTEGER REFERENCES artist(id),
 	title VARCHAR NOT NULL,
-	release_date VARCHAR
+	release_date VARCHAR,
+	cover_release_mbid VARCHAR(36)
 );
 
 CREATE TABLE track_release (

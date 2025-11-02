@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ReleaseRequestDTO {
     private String releaseMbid;
     private String title;
+    private String releaseDate;
     private String format;
     private String artistMbid;
     private String artistName;

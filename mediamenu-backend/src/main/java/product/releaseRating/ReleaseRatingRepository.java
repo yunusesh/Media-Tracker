@@ -18,6 +18,7 @@ public interface ReleaseRatingRepository extends JpaRepository<ReleaseRating, Re
                 rr.ratedAt,
                 r.mbid,
                 r.title,
+                r.releaseDate,
                 r.format,
                 r.artistId,
                 a.mbid,

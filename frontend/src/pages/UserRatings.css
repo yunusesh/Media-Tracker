@@ -15,13 +15,13 @@
 .ratings-item-img{
     width: 20vh;
     height: 20vh;
-    margin: 15px 0 5px 0;
-    border: 2px solid black;
+    margin: .9rem 0 .5rem 0;
+    border: .02rem solid black;
     cursor: pointer;
 }
 
 .ratings-item-img:hover{
-    border: 2px solid #30DBBF;
+    border: .02rem solid #30DBBF;
 }
 
 .ratings-page-item{
@@ -36,7 +36,7 @@
     flex-direction: column;
     position: relative;
     align-items: center;
-    padding-bottom: 5px;
+    padding-bottom: .3rem;
     width: 20vh;
 }
 
@@ -47,5 +47,5 @@
     left: 50%;
     width: 100%;
     transform: translateX(-50%);
-    border-bottom: 1px solid #4C5563;
+    border-bottom: 0.01rem solid #4C5563;
 }

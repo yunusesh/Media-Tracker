@@ -56,6 +56,7 @@ export function User() {
         if (userTrackRatings && userReleaseRatings) {
             const userRatings = userTrackRatings.concat(userReleaseRatings)
             setRatings(userRatings.sort((a, b) => new Date(b.ratedAt) - new Date(a.ratedAt)).slice(0, 12))
+            setTopOfYear(userRatings.filter(rating => rating.releaseDate != null && rating.releaseDate.includes(currentYear)))
         }
     }, [userTrackRatings, userReleaseRatings])
 
@@ -78,7 +79,6 @@ export function User() {
         }
     }, [userListens])
 
-
     if (status === 'loading') {
         return <p>Loading...</p>
     }
@@ -99,7 +99,68 @@ export function User() {
                 <div className="profile-categories">
                     <h1 className="category">Top of {currentYear}</h1>
                     <div className="category-releases">
+                        {topOfYear.map(rating => (
+                            <div className="releaseGroup-items" key={rating.mbid}>
+                                <img className="profile-item-img"
+                                     src={`https://coverartarchive.org/release-group/${rating.releaseMbid}/front`}
+                                     alt="placeholder.png"
+                                     onClick={() => {
+                                         navigate(
+                                             rating.title ?
+                                                 `/music/album/${rating.releaseMbid}` :
+                                                 `/music/track/${rating.trackMbid}`
+                                         )
+                                     }}
+                                     key={rating.releaseMbid + "image"}
+                                />
+                                <div className="release-info" key={rating.mbid + "release-info"}>
+                                    {rating.title ?
+                                        <h4 className="profile-item-title"
+                                            key={rating.title + "release"}
+                                            onClick={() => {
+                                                navigate(`/music/album/${rating.releaseMbid}`)
+                                            }}
+                                        >{rating.title} </h4>
+                                        :
+                                        <h4 className="profile-item-title"
+                                            key={rating.trackTitle + "track"}
+                                            onClick={() => {
+                                                navigate(`/music/track/${rating.trackMbid}`)
+                                            }}
+                                        >{rating.trackTitle} </h4>
+                                    }
+                                    {rating.format ?
+                                        <h5 className="format" key={rating.format}>
+                                            {rating.format.charAt(0).toUpperCase() + rating.format.slice(1)} by
+                                        </h5>
+                                        :
+                                        <h5 className="format" key="track">
+                                            Track by
+                                        </h5>
+                                    }
+                                    <h4 className="profile-item-artist"
+                                        key={rating.artistName}
+                                        onClick={() => {
+                                            navigate(`/music/artist/${rating.artistMbid}`)
+                                        }}
+                                    >{rating.artistName}</h4>
+                                </div>
+                                <div className="rating-value" key={rating.mbid + rating.rating}>
+                                    <h4 className={
+                                        rating.rating == 10 ? "rating-value-ten" :
+                                            rating.rating >= 8 && rating.rating <= 9 ? "rating-value-high" :
+                                                rating.rating >= 6 && rating.rating <= 7 ? "rating-value-med" :
+                                                    rating.rating >= 4 && rating.rating <= 5 ? "rating-value-medlow" :
+                                                        rating.rating >= 1 && rating.rating <= 3 ? "rating-value-low" :
+                                                            "rating-value-zero"
 
+                                    } key={rating.id}>
+                                        <FaStar className="star-profile" key={rating.id + "star"}/>
+                                        {rating.rating}/10
+                                    </h4>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <div className="profile-categories">
@@ -112,25 +173,26 @@ export function User() {
                     </div>
                     <div className="category-releases">
                         {listened.map(track => (
-                            <div className="releaseGroup-items" key={track.trackMbid}>
+                            <div className="releaseGroup-items" key={track.trackId + "track-items"}>
                                 <img className="profile-item-img"
                                      src={
-                                    track.releaseMbid ?
-                                         `https://coverartarchive.org/release-group/${track.releaseMbid}/front` :
-                                         `https://coverartarchive.org/release-group/${track.altReleaseMbid}/front`
+                                         track.releaseMbid ?
+                                             `https://coverartarchive.org/release-group/${track.releaseMbid}/front` :
+                                             `https://coverartarchive.org/release-group/${track.altReleaseMbid}/front`
                                      }
                                      alt="placeholder.png"
                                      onClick={() => {
                                          navigate(`/music/track/${track.trackMbid}`)
                                      }}
+                                     key={track.releaseMbid + "track-img"}
                                 />
-                                <div className="release-info">
+                                <div className="release-info" key={track.trackId + "track-info"}>
                                     <h4 className="profile-item-title"
                                         key={track.trackId}
                                         onClick={() => {
                                             navigate(`/music/track/${track.trackMbid}`)
                                         }}> {track.trackTitle}</h4>
-                                    <h5 className="format">
+                                    <h5 className="format" key={track.trackId + "format"}>
                                         Track by
                                     </h5>
                                     <h4 className="profile-item-artist"
@@ -140,7 +202,7 @@ export function User() {
                                         }}
                                     >{track.artistName}</h4>
                                 </div>
-                                <div className="listen-timestamp">
+                                <div className="listen-timestamp" key={track.timestamp}>
                                     <h5>{handleDate(track.firstListenedAt)[1]}</h5>
                                     <h5>{handleDate(track.firstListenedAt)[0]}</h5>
                                 </div>
@@ -163,20 +225,25 @@ export function User() {
                                      src={`https://coverartarchive.org/release-group/${rating.releaseMbid}/front`}
                                      alt="placeholder.png"
                                      onClick={() => {
-                                         navigate(`/music/album/${rating.releaseMbid}`)
+                                         navigate(
+                                             rating.title ?
+                                                 `/music/album/${rating.releaseMbid}` :
+                                                 `/music/track/${rating.trackMbid}`
+                                         )
                                      }}
+                                     key={rating.releaseMbid + "image"}
                                 />
-                                <div className="release-info">
+                                <div className="release-info" key={rating.mbid + "release-info"}>
                                     {rating.title ?
                                         <h4 className="profile-item-title"
-                                            key={rating.title}
+                                            key={rating.title + "release"}
                                             onClick={() => {
                                                 navigate(`/music/album/${rating.releaseMbid}`)
                                             }}
                                         >{rating.title} </h4>
                                         :
                                         <h4 className="profile-item-title"
-                                            key={rating.trackTitle}
+                                            key={rating.trackTitle + "track"}
                                             onClick={() => {
                                                 navigate(`/music/track/${rating.trackMbid}`)
                                             }}
@@ -198,7 +265,7 @@ export function User() {
                                         }}
                                     >{rating.artistName}</h4>
                                 </div>
-                                <div className="rating-value">
+                                <div className="rating-value" key={rating.mbid + rating.rating}>
                                     <h4 className={
                                         rating.rating == 10 ? "rating-value-ten" :
                                             rating.rating >= 8 && rating.rating <= 9 ? "rating-value-high" :
@@ -208,7 +275,7 @@ export function User() {
                                                             "rating-value-zero"
 
                                     } key={rating.id}>
-                                        <FaStar className="star-profile"/>
+                                        <FaStar className="star-profile" key={rating.id + "star"}/>
                                         {rating.rating}/10
                                     </h4>
                                 </div>

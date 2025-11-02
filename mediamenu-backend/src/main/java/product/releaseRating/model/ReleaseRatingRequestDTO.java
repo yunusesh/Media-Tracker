@@ -16,6 +16,7 @@ public class ReleaseRatingRequestDTO {
     private Timestamp ratedAt;
     private String releaseMbid;
     private String title;
+    private String releaseDate;
     private String format;
     private Integer artistId;
     private String artistMbid;

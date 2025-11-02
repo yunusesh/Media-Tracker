@@ -8,6 +8,7 @@ public class ReleaseDTO {
     private String mbid;
     private Integer artistId;
     private String title;
+    private String releaseDate;
     private String format;
 
     public ReleaseDTO(Release release){
@@ -15,6 +16,7 @@ public class ReleaseDTO {
         this.mbid = release.getMbid();
         this.artistId = release.getArtistId();
         this.title = release.getTitle();
+        this.releaseDate = release.getReleaseDate();
         this.format = release.getFormat();
     }
 }
