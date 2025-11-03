@@ -39,7 +39,7 @@ public class MBArtistService implements Query<String, MBArtistDTO> {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<MBArtistResponse> response = restTemplate.exchange(
-                fetchArtist + id + "?&fmt=json",
+                fetchArtist + id + "?inc=genres&fmt=json",
                 HttpMethod.GET,
                 entity,
                 MBArtistResponse.class
@@ -127,7 +127,8 @@ public class MBArtistService implements Query<String, MBArtistDTO> {
                 response.getBody().getId(),
                 response.getBody().getName(),
                 image,
-                releases
+                releases,
+                response.getBody().getGenres()
         );
         return ResponseEntity.ok(mbArtistDTO);
     }

@@ -24,6 +24,9 @@ public class MBTrackDTO {
 
     private MBTrackDTO recording;
 
+    private List<MBGenreDTO> genres;
+
+
     public MBTrackDTO(String title, String id, List<MBArtistDTO> artistCredit){
         this.title = title;
         this.id = id;
@@ -37,11 +40,12 @@ public class MBTrackDTO {
     }
 
     public MBTrackDTO(String id, String title, String date,
-                      List<MBAlbumDTO> releases, List<MBArtistDTO> artistCredit){
+                      List<MBAlbumDTO> releases, List<MBArtistDTO> artistCredit, List<MBGenreDTO> genres){
         this.id = id;
         this.title = title;
         this.date = date;
         this.releases = releases;
         this.artistCredit = artistCredit;
+        this.genres = genres;
     }
 }

@@ -23,6 +23,7 @@ export function Album() {
     const [rating, setRating] = useState()
     const [isEditing, setIsEditing] = useState(false)
     const [tracklistDB, setTracklistDB] = useState([])
+    const [genres, setGenres] = useState([])
 
     async function fetchAlbum() {
         const response = await fetch(`http://localhost:8081/album/${id}`)
@@ -44,12 +45,12 @@ export function Album() {
             setAlbumReissue(data)
             const ids = data.releases.map(release => release.id)
             setReissueIds(ids)
+            setGenres(data.genres.map(genre => genre.name))
         }
     }, [data])
 
     async function fetchReleaseFromDB() {
         if (user && data) {
-            console.log(data["first-release-date"])
             const response = await axios.post(`http://localhost:8081/api/release/getOrCreate`, {
                 releaseMbid: id,
                 title: data.title,
@@ -180,6 +181,9 @@ export function Album() {
                         <h5>www.spotify.com/album</h5>
                         <h5>www.applemusic.com/album</h5>
                     </div>
+                    <div className="genres">
+                        {genres.join(", ") + " // genres"}
+                    </div>
                 </div>
                 <div className="list-under-title">
                     <div className="title-date-artist">
@@ -230,6 +234,7 @@ export function Album() {
 
                             }}> Reissues ({data.releases?.length})
                             </button>
+
                         </div>
                     </div>
                     <div className="tracklist">

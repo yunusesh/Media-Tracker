@@ -50,6 +50,7 @@ export function UserRatings() {
     }, [userTrackRatings, userReleaseRatings])
     return (
         <div className="user-ratings-page">
+            <h1 className="category">All Ratings</h1>
             <div className="user-ratings">
                 {ratings.map(rating => (
                     <div className="ratings-page-item" key={rating.mbid}>

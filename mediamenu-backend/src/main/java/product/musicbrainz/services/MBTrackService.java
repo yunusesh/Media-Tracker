@@ -37,7 +37,7 @@ public class MBTrackService implements Query<String, MBTrackDTO> {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<MBTrackResponse> response = restTemplate.exchange(
-                url + id + "?inc=artist-credits+releases+release-groups&fmt=json",
+                url + id + "?inc=artist-credits+releases+release-groups+genres&fmt=json",
                 HttpMethod.GET,
                 entity,
                 MBTrackResponse.class
@@ -66,7 +66,8 @@ public class MBTrackService implements Query<String, MBTrackDTO> {
                 response.getBody().getTitle(),
                 response.getBody().getDate(),
                 releases,
-                artists
+                artists,
+                response.getBody().getGenres()
         );
         return ResponseEntity.ok(mbTrackDTO);
     }

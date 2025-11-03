@@ -35,7 +35,7 @@
 
             //releaseGroup
             ResponseEntity<MBAlbumResponse> response = restTemplate.exchange(
-                    url + id + "?inc=releases+artist-credits&fmt=json",
+                    url + id + "?inc=releases+artist-credits+genres&fmt=json",
                     HttpMethod.GET,
                     entity,
                     MBAlbumResponse.class
@@ -84,7 +84,8 @@
                     response.getBody().getSecondaryTypes(),
                     artists,
                     tracklist,
-                    releases
+                    releases,
+                    response.getBody().getGenres()
             );
             return ResponseEntity.ok(mbAlbumDTO);
         }

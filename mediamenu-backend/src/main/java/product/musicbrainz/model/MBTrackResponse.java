@@ -21,4 +21,7 @@ public class MBTrackResponse {
     private MBTrackDTO recording;
 
     private List<MBTrackDTO> recordings;
+
+    private List<MBGenreDTO> genres;
+
 }

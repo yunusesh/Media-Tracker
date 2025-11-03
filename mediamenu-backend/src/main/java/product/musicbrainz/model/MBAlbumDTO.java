@@ -39,6 +39,7 @@ public class MBAlbumDTO {
     private MBAlbumDTO releaseGroup;
 
     private String disambiguation;
+    private List<MBGenreDTO> genres;
 
     public MBAlbumDTO(String id, String title, String date, String primaryType, List<String> secondaryTypes){
         this.id = id;
@@ -50,7 +51,7 @@ public class MBAlbumDTO {
 
     public MBAlbumDTO(String title, String id, String date,
                       String primaryType, List<String> secondaryTypes, List<MBArtistDTO> artistCredit,
-                      List<MBTrackDTO> tracklist, List<MBReleaseDTO> releases){
+                      List<MBTrackDTO> tracklist, List<MBReleaseDTO> releases, List<MBGenreDTO> genres){
         this.title = title;
         this.id = id;
         this.date = date;
@@ -59,6 +60,7 @@ public class MBAlbumDTO {
         this.tracklist = tracklist;
         this.secondaryTypes = secondaryTypes;
         this.releases = releases;
+        this.genres = genres;
     }
 
     public MBAlbumDTO(String title, String id, List<MBArtistDTO> artistCredit){

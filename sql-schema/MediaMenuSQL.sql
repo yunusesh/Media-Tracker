@@ -21,6 +21,7 @@ CREATE TABLE release_group (
 	format VARCHAR
 );
 
+
 CREATE TABLE track (
 	id SERIAL PRIMARY KEY,
 	mbid VARCHAR(36) UNIQUE,

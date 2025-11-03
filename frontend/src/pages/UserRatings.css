@@ -3,6 +3,7 @@
     align-items: center;
     justify-content: center;
     padding-bottom: 20px;
+    flex-direction: column;
 }
 .user-ratings{
     display: grid;
@@ -10,6 +11,17 @@
     gap: 10px;
     justify-items: center;
     width: 70%;
+    position: relative;
+}
+
+.user-ratings::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+    border-top: 1px solid #4C5563;
 }
 
 .ratings-item-img{

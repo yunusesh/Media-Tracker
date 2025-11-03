@@ -24,4 +24,7 @@ public class MBArtistResponse {
 
     @JsonProperty("release-group-offset")
     private String releaseGroupOffset;
+
+    private List<MBGenreDTO> genres;
+
 }

@@ -38,4 +38,7 @@ public class MBAlbumResponse {
 
     private String disambiguation;
 
+    private List<MBGenreDTO> genres;
+
+
 } 
