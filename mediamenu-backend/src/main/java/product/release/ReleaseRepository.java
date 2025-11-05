@@ -19,7 +19,7 @@ public interface ReleaseRepository extends JpaRepository<Release, Integer> {
     * then, create a new release using the artist final, if release already exists update the title to keep data fresh */
     @Query(value = """
 WITH inserted_artist AS (
-    INSERT INTO artist (mbid, artist_name)  
+    INSERT INTO artist (mbid, artist_name)
     VALUES (:artistMbid, :artistName)
     ON CONFLICT (mbid) DO UPDATE SET artist_name = EXCLUDED.artist_name
     RETURNING id

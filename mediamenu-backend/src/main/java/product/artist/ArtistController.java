@@ -7,18 +7,21 @@ import product.artist.model.ArtistDTO;
 import product.artist.services.CreateArtistService;
 import product.artist.services.DeleteArtistService;
 import product.artist.services.GetArtistService;
+import product.artist.services.GetOrCreateArtistService;
 
 @RestController
 public class ArtistController {
     private final CreateArtistService createArtistService;
     private final GetArtistService getArtistService;
     private final DeleteArtistService deleteArtistService;
+    private final GetOrCreateArtistService getOrCreateArtistService;
 
     public ArtistController(CreateArtistService createArtistService, GetArtistService getArtistService,
-                            DeleteArtistService deleteArtistService) {
+                            DeleteArtistService deleteArtistService, GetOrCreateArtistService getOrCreateArtistService) {
         this.createArtistService = createArtistService;
         this.getArtistService = getArtistService;
         this.deleteArtistService = deleteArtistService;
+        this.getOrCreateArtistService = getOrCreateArtistService;
     }
 
     @PostMapping("/api/artist")
@@ -29,6 +32,13 @@ public class ArtistController {
     @GetMapping("/api/artist/{id}")
     public ResponseEntity<ArtistDTO> getArtistById(@PathVariable Integer id){
         return getArtistService.execute(id);
+    }
+
+    @PostMapping("/api/artist/getOrCreate")
+    public ResponseEntity<ArtistDTO> getOrCreateArtist(@RequestBody ArtistDTO artist){
+        ArtistDTO artistDTO = getOrCreateArtistService.execute(artist.getMbid(), artist.getArtistName());
+
+        return ResponseEntity.ok(artistDTO);
     }
 
     @DeleteMapping("/api/artist/{id}")

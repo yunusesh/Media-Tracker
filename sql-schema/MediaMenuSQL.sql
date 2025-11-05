@@ -21,7 +21,6 @@ CREATE TABLE release_group (
 	format VARCHAR
 );
 
-
 CREATE TABLE track (
 	id SERIAL PRIMARY KEY,
 	mbid VARCHAR(36) UNIQUE,
@@ -30,12 +29,12 @@ CREATE TABLE track (
 	release_date VARCHAR,
 	cover_release_mbid VARCHAR(36)
 );
-
+		
 CREATE TABLE track_release (
 	track_id INTEGER REFERENCES track(id) NOT NULL,
 	release_id INTEGER REFERENCES release_group(id),
 	PRIMARY KEY (track_id, release_id)
-)
+);
 
 CREATE TABLE scrobble(
 	id SERIAL PRIMARY KEY,
@@ -59,7 +58,16 @@ CREATE TABLE track_rating(
 	rating INTEGER check (rating between 0 and 10),
 	rated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (user_id, track_id)
-)
+);
+
+CREATE TABLE top5_releases(
+	user_id INTEGER REFERENCES app_user(id) NOT NULL,
+	release1_id INTEGER references release_group(id),
+	release2_id INTEGER references release_group(id),
+	release3_id INTEGER references release_group(id),
+	release4_id INTEGER references release_group(id),
+	release5_id INTEGER references release_group(id)
+);
 
 SELECT * FROM track_release;
 CREATE OR REPLACE FUNCTION update_any_timestamp()

@@ -12,8 +12,17 @@ export function Track() {
     const {id} = useParams()
     const {user} = useContext(AuthContext)
     const navigate = useNavigate()
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear()
+    const currentMonth = currentDate.getMonth()
+    const currentDay = currentDate.getDay()
     const [rating, setRating] = useState()
     const [isEditing, setIsEditing] = useState(false)
+    const [genres, setGenres] = useState([])
+    const[totalScrobbles, setTotalScrobbles] = useState([])
+    const[yearScrobbles, setYearScrobbles] = useState([])
+    const[monthScrobbles, setMonthScrobbles] = useState([])
+    const[dayScrobbles, setDayScrobbles] = useState([])
 
     async function fetchTrack() {
         const response = await fetch(`http://localhost:8081/track/${id}`)
@@ -27,7 +36,7 @@ export function Track() {
     })
 
     async function fetchTrackFromDB() {
-        if (user && data) {
+        if (data) {
             const response = await axios.post(`http://localhost:8081/api/track/getOrCreate`, {
                 trackMbid: id,
                 trackTitle: data.title,
@@ -41,6 +50,12 @@ export function Track() {
             return response.data
         }
     }
+
+    useEffect(() => {
+        if (data) {
+            setGenres(data.genres.map(genre => genre.name))
+        }
+    }, [data]);
 
     const {data: trackDB} = useQuery({
         queryKey: ['trackDB', id],
@@ -66,6 +81,29 @@ export function Track() {
             setRating(userRating.rating)
         }
     }, [userRating])
+
+
+    async function fetchUserScrobbles() {
+        if (user && trackDB) {
+            const response = await fetch(`http://localhost:8081/api/scrobble/user/${user.id}/track/${trackDB.id}`)
+            return response.json()
+        }
+    }
+
+    const {data: userScrobbles} = useQuery({
+        queryKey: ['userScrobbles', user?.id, trackDB?.id],
+        queryFn: () => fetchUserScrobbles(),
+        enabled: !!user && !!trackDB
+    })
+
+    useEffect(() => {
+        if(userScrobbles) {
+            setTotalScrobbles(userScrobbles.length)
+            setYearScrobbles(userScrobbles.filter(date => new Date(date).getFullYear() === currentYear).length)
+            setMonthScrobbles(userScrobbles.filter(date => new Date(date).getMonth() === currentMonth).length)
+            setDayScrobbles(userScrobbles.filter(date => new Date(date).getDay() === currentDay).length)
+        }
+    }, [userScrobbles]);
 
     const handleSubmit = async () => {
         if (user && trackDB) {
@@ -110,10 +148,19 @@ export function Track() {
     return (
         <div className="track-page">
             <div className="track-info">
-                <img className="img"
-                     src={`https://coverartarchive.org/release-group/${data?.releases[0].id}/front`}
-                     alt='placeholder.jpg'
-                />
+                <div className="links-under-img">
+                    <img className="img"
+                            src={`https://coverartarchive.org/release-group/${data?.releases[0].id}/front`}
+                         alt="placeholder.jpg"/>
+                    <div className="album-links">
+                        <h5>www.youtube.com/album</h5>
+                        <h5>www.spotify.com/album</h5>
+                        <h5>www.applemusic.com/album</h5>
+                    </div>
+                    <div className="genres">
+                        {genres.join(", ") + " // genres"}
+                    </div>
+                </div>
                 <div className="title-above-release">
                     <div className="title-date-artist">
                         <h1 className="title">{data?.title}</h1>
@@ -134,16 +181,16 @@ export function Track() {
                 </div>
             </div>
             <div className={isEditing ? "stats-editing" : "stats"}>
-                Your Stats
-                <FaRegEdit className="edit" onClick={() => {
-                    user ? setIsEditing(!isEditing) : setIsEditing(false)
-                }}/>
-                <div className="activity">
-                    <h4>500 Total Listens</h4>
-                    <h4>400 Listens In 2025</h4>
-                    <h4>200 Listens This Month</h4>
-                    <h4>100 Listens Today</h4>
-                </div>
+                    Your Stats
+                    <FaRegEdit className="edit" onClick={() => {
+                        user ? setIsEditing(!isEditing) : setIsEditing(false)
+                    }}/>
+                    <div className="activity">
+                        <h4>{totalScrobbles} Total Listens</h4>
+                        <h4>{yearScrobbles} Listens In 2025</h4>
+                        <h4>{monthScrobbles} Listens This Month</h4>
+                        <h4>{dayScrobbles} Listens Today</h4>
+                    </div>
                 <div className="rating">
                     {!isEditing ? (
                             <h3 className={
@@ -171,20 +218,20 @@ export function Track() {
                             <button className="manual-log"
                                     onClick={handleLog}>
                                 Log Track
-                                <ToastContainer
-                                    position="bottom-center"
-                                    autoClose={5000}
-                                    hideProgressBar={false}
-                                    newestOnTop
-                                    closeOnClick={false}
-                                    rtl={false}
-                                    pauseOnFocusLoss
-                                    draggable
-                                    pauseOnHover
-                                    theme="colored"
-                                    transition={Bounce}
-                                />
                             </button>
+                            <ToastContainer className = "success-alert"
+                                position="bottom-center"
+                                autoClose={5000}
+                                hideProgressBar={false}
+                                newestOnTop
+                                closeOnClick={false}
+                                rtl={false}
+                                pauseOnFocusLoss
+                                draggable
+                                pauseOnHover
+                                theme="colored"
+                                transition={Bounce}
+                            />
                             <div className="rating-buttons">
                                 <button className="rate-button" onClick={handleSubmit}>
                                     UPDATE

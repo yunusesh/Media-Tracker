@@ -13,6 +13,10 @@ export function Album() {
     const {user} = useContext(AuthContext);
     // grab state of releaseGroupId from search query b/c it is has the most general album cover (not specific to release)
     const navigate = useNavigate();
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear()
+    const currentMonth = currentDate.getMonth()
+    const currentDay = currentDate.getDay()
     const [visible, setVisible] = useState(false);
     const [albumImage, setAlbumImage] = useState("")
     const [albumTitle, setAlbumTitle] = useState("")
@@ -24,6 +28,10 @@ export function Album() {
     const [isEditing, setIsEditing] = useState(false)
     const [tracklistDB, setTracklistDB] = useState([])
     const [genres, setGenres] = useState([])
+    const [totalScrobbles, setTotalScrobbles] = useState([])
+    const [yearScrobbles, setYearScrobbles] = useState([])
+    const [monthScrobbles, setMonthScrobbles] = useState([])
+    const [dayScrobbles, setDayScrobbles] = useState([])
 
     async function fetchAlbum() {
         const response = await fetch(`http://localhost:8081/album/${id}`)
@@ -50,7 +58,7 @@ export function Album() {
     }, [data])
 
     async function fetchReleaseFromDB() {
-        if (user && data) {
+        if (data) {
             const response = await axios.post(`http://localhost:8081/api/release/getOrCreate`, {
                 releaseMbid: id,
                 title: data.title,
@@ -87,6 +95,28 @@ export function Album() {
             setRating(userRating.rating)
         }
     }, [userRating])
+
+    async function fetchUserScrobbles() {
+        if (user && releaseDB) {
+            const response = await fetch(`http://localhost:8081/api/scrobble/user/${user.id}/release/${releaseDB.id}`)
+            return response.json()
+        }
+    }
+
+    const {data: userScrobbles} = useQuery({
+        queryKey: ['userScrobbles', user?.id, releaseDB?.id],
+        queryFn: () => fetchUserScrobbles(),
+        enabled: !!user && !!releaseDB
+    })
+
+    useEffect(() => {
+        if (userScrobbles) {
+            setTotalScrobbles(userScrobbles.length)
+            setYearScrobbles(userScrobbles.filter(date => new Date(date).getFullYear() === currentYear).length)
+            setMonthScrobbles(userScrobbles.filter(date => new Date(date).getMonth() === currentMonth).length)
+            setDayScrobbles(userScrobbles.filter(date => new Date(date).getDay() === currentDay).length)
+        }
+    }, [userScrobbles]);
 
     const handleSubmit = async () => {
         if (user && releaseDB) {
@@ -250,72 +280,72 @@ export function Album() {
                     </div>
                 </div>
             </div>
-            <div className={isEditing ? "stats-editing" : "stats"}>
-                Your Stats
-                <FaRegEdit className="edit" onClick={() => {
-                    user ? setIsEditing(!isEditing) : setIsEditing(false)
-                }}/>
-                <div className="activity">
-                    <h4>500 Total Listens</h4>
-                    <h4>400 Listens In 2025</h4>
-                    <h4>200 Listens This Month</h4>
-                    <h4>100 Listens Today</h4>
-                </div>
-                <div className="rating">
-                    {!isEditing ? (
-                            <h3 className={
-                                !rating ? "rating-absent" :
-                                    rating == 10 ? "rating-ten" :
-                                        rating >= 8 && rating <= 9 ? "rating-high" :
-                                            rating >= 6 && rating <= 7 ? "rating-med" :
-                                                rating >= 4 && rating <= 5 ? "rating-medlow" :
-                                                    rating >= 1 && rating <= 3 ? "rating-low" :
-                                                        "rating-zero"
+            <div className="user-album">
+                <div className={isEditing ? "stats-editing" : "stats"}>
+                    Your Stats
+                    <FaRegEdit className="edit" onClick={() => {
+                        user ? setIsEditing(!isEditing) : setIsEditing(false)
+                    }}/>
+                    <div className="activity">
+                        <h4>{totalScrobbles} Total Listens</h4>
+                        <h4>{yearScrobbles} Listens In 2025</h4>
+                        <h4>{monthScrobbles} Listens This Month</h4>
+                        <h4>{dayScrobbles} Listens Today</h4>
+                    </div>
+                    <div className="rating">
+                        {!isEditing ? (
+                                <h3 className={
+                                    !rating ? "rating-absent" :
+                                        rating == 10 ? "rating-ten" :
+                                            rating >= 8 && rating <= 9 ? "rating-high" :
+                                                rating >= 6 && rating <= 7 ? "rating-med" :
+                                                    rating >= 4 && rating <= 5 ? "rating-medlow" :
+                                                        rating >= 1 && rating <= 3 ? "rating-low" :
+                                                            "rating-zero"
 
-                            }>
+                                }>
 
+                                    <FaStar className="star"/>
+                                    {rating ? `${rating}/10` : "1-10"}</h3>
+                            ) :
+                            <div className="edit-rating">
                                 <FaStar className="star"/>
-                                {rating ? `${rating}/10` : "1-10"}</h3>
-                        ) :
-                        <div className="edit-rating">
-                            <FaStar className="star"/>
-                            <input
-                                placeholder="0-10"
-                                type="number"
-                                value={rating}
-                                onChange={(e) => setRating(e.target.value)}
-                            />
-                            <button className="manual-log"
-                                    onClick={handleLog}>
-                                Log Release
-                                <ToastContainer
-                                    position="bottom-center"
-                                    autoClose={5000}
-                                    hideProgressBar={false}
-                                    newestOnTop
-                                    closeOnClick={false}
-                                    rtl={false}
-                                    pauseOnFocusLoss
-                                    draggable
-                                    pauseOnHover
-                                    theme="colored"
-                                    transition={Bounce}
+                                <input
+                                    placeholder="0-10"
+                                    type="number"
+                                    value={rating}
+                                    onChange={(e) => setRating(e.target.value)}
                                 />
-                            </button>
-                            <div className="rating-buttons">
-                                <button className="rate-button" onClick={handleSubmit}>
-                                    UPDATE
+                                <button className="manual-log"
+                                        onClick={handleLog}>
+                                    Log Release
                                 </button>
-                                <button className="cancel-rate-button" onClick={() => {
-                                    setIsEditing(false)
-                                }}>
-                                    CANCEL
-                                </button>
+                                <ToastContainer className="success-alert"
+                                                position="bottom-center"
+                                                autoClose={5000}
+                                                hideProgressBar={false}
+                                                newestOnTop
+                                                closeOnClick={false}
+                                                rtl={false}
+                                                pauseOnFocusLoss
+                                                draggable
+                                                pauseOnHover
+                                                theme="colored"
+                                                transition={Bounce}
+                                />
+                                <div className="rating-buttons">
+                                    <button className="rate-button" onClick={handleSubmit}>
+                                        UPDATE
+                                    </button>
+                                    <button className="cancel-rate-button" onClick={() => {
+                                        setIsEditing(false)
+                                    }}>
+                                        CANCEL
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-
-
-                    }
+                        }
+                    </div>
                 </div>
             </div>
         </div>

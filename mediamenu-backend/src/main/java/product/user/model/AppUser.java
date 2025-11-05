@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import product.release.model.Release;
 import product.releaseRating.model.ReleaseRating;
 import product.scrobble.model.Scrobble;
 import product.trackRating.model.TrackRating;

@@ -6,7 +6,7 @@
     display: flex;
     align-items: flex-start;
     position: relative;
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
     margin-left: 4.3rem;
 }
 
@@ -15,7 +15,7 @@
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: 90%;
+    width: 95%;
     transform: translateX(-50%);
     border-bottom: 1px solid #4C5563;
 }
@@ -179,22 +179,23 @@
     font-family: "Malgun Gothic Semilight";
 }
 
+.user-album{
+    margin-left: 3.5rem;
+}
+
 .stats{
     font-family: "Malgun Gothic Semilight";
-    font-size: 23px;
-    margin-left: 10vh;
+    font-size: 1.5rem;
     padding: 10px;
     align-items: center;
     justify-content: center;
-    border: 2.5px solid #4C5563;
-    min-width: 20vh;
-    max-width: 55vh;
+    border: .25rem solid #4C5563;
+    width: 20rem;
 }
 
 .stats-editing{
     font-family: "Malgun Gothic Semilight";
-    font-size: 25px;
-    margin-left: 10vh;
+    font-size: 1.5rem;
     padding: 10px;
     align-items: center;
     justify-content: center;
@@ -333,4 +334,8 @@ input[type=number]::-webkit-inner-spin-button {
 
 .edit:hover{
     cursor:pointer;
+}
+
+.success-alert{
+    font-family: "Malgun Gothic Semilight";
 }

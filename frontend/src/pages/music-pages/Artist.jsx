@@ -1,17 +1,32 @@
 import './Artist.css'
 import {useNavigate, useParams} from "react-router-dom";
-import { useQuery } from "react-query";
-import {useEffect, useState} from "react";
+import {useQuery} from "react-query";
+import {useContext, useEffect, useState} from "react";
+import {FaRegEdit} from "react-icons/fa";
+import axios from "axios";
+import {AuthContext} from "../../AuthContext";
 
-export function Artist(){
-    const {id} = useParams();
-    const navigate = useNavigate();
-    async function fetchArtist(){
+export function Artist() {
+    const {id} = useParams()
+    const {user} = useContext(AuthContext);
+    const navigate = useNavigate()
+    const [genres, setGenres] = useState([])
+    const currentDate = new Date()
+    const currentYear = currentDate.getFullYear()
+    const currentMonth = currentDate.getMonth()
+    const currentDay = currentDate.getDay()
+    const [totalScrobbles, setTotalScrobbles] = useState([])
+    const [yearScrobbles, setYearScrobbles] = useState([])
+    const [monthScrobbles, setMonthScrobbles] = useState([])
+    const [dayScrobbles, setDayScrobbles] = useState([])
+
+
+    async function fetchArtist() {
         const response = await fetch(`http://localhost:8081/artist/${id}`);
         return response.json()
     }
 
-    const{ data, status } = useQuery( {
+    const {data, status} = useQuery({
         queryKey: ['artist', id],
         queryFn: () => fetchArtist(id),
         enabled: !!id,
@@ -19,20 +34,58 @@ export function Artist(){
 
     const [artistImage, setArtistImage] = useState(null);
 
-    useEffect( () => {
-        if(data){
-            if(`${data.url}` == null){
+    useEffect(() => {
+        if (data) {
+            setGenres(data.genres.map(genre => genre.name))
+            if (`${data.url}` == null) {
                 setArtistImage(`https://coverartarchive.org/release-group/${data["release-groups"]?.[0]?.id}/front`)
-            }
-            else setArtistImage(`${data.url}`);
+            } else setArtistImage(`${data.url}`);
         }
-        }, [data])
+    }, [data])
 
-    if(status === 'loading'){
+    async function fetchArtistFromDB() {
+        if (data) {
+            const response = await axios.post(`http://localhost:8081/api/artist/getOrCreate`, {
+                mbid: data.id,
+                artistName: data.name,
+            })
+            return response.data
+        }
+    }
+
+    const {data: artistDB} = useQuery({
+        queryKey: ['artistDB', id],
+        queryFn: () => fetchArtistFromDB(),
+        enabled: !!id
+    })
+
+    async function fetchUserScrobbles() {
+        if (user && artistDB) {
+            const response = await fetch(`http://localhost:8081/api/scrobble/user/${user.id}/artist/${artistDB.id}`)
+            return response.json()
+        }
+    }
+
+    const {data: userScrobbles} = useQuery({
+        queryKey: ['userScrobbles', user?.id, artistDB?.id],
+        queryFn: () => fetchUserScrobbles(),
+        enabled: !!user && !!artistDB
+    })
+
+    useEffect(() => {
+        if (userScrobbles) {
+            setTotalScrobbles(userScrobbles.length)
+            setYearScrobbles(userScrobbles.filter(date => new Date(date).getFullYear() === currentYear).length)
+            setMonthScrobbles(userScrobbles.filter(date => new Date(date).getMonth() === currentMonth).length)
+            setDayScrobbles(userScrobbles.filter(date => new Date(date).getDay() === currentDay).length)
+        }
+    }, [userScrobbles]);
+
+    if (status === 'loading') {
         return <p>Loading...</p>
     }
 
-    if(status === 'error'){
+    if (status === 'error') {
         return <p>Error!</p>
     }
 
@@ -56,51 +109,66 @@ export function Artist(){
                             "Interview", "Audiobook", "Audio drama",
                             "Remix", "DJ-mix", "Demo", "Field recording"]
                             .some(type => releaseGroup["secondary-types"]?.includes(type))
-                            && releaseGroup["primary-type"]?.includes("Album") ? "others" :
+                        && releaseGroup["primary-type"]?.includes("Album") ? "others" :
 
                             releaseGroup["primary-type"]?.includes("Album") ? "albums" :
-                            releaseGroup["primary-type"]?.includes("EP") ? "eps" :
-                                releaseGroup["primary-type"]?.includes("Single") ? "singles" :
+                                releaseGroup["primary-type"]?.includes("EP") ? "eps" :
+                                    releaseGroup["primary-type"]?.includes("Single") ? "singles" :
                                         "others";
 
 
         releaseGroupsByFormat[format].push(releaseGroup);
     });
 
-    return(
-        <div className = "artist-page">
-            <div className = "name-over-img">
-                <h1 className = "artist-name">{data.name}</h1>
-                <img className = "artist-img"
-                     src = {artistImage}
-                     onError={() =>
-                         setArtistImage(
-                             `https://coverartarchive.org/release-group/${data["release-groups"]?.[0]?.id}/front`
-                         )}
-                     alt = "placeholder.png"/>
+    return (
+        <div className="artist-page">
+            <div className="artist-page-left">
+                <div className="name-over-img">
+                    <h1 className="artist-name">{data.name}</h1>
+                    <img className="artist-img"
+                         src={artistImage}
+                         onError={() =>
+                             setArtistImage(
+                                 `https://coverartarchive.org/release-group/${data["release-groups"]?.[0]?.id}/front`
+                             )}
+                         alt="placeholder.png"/>
+                    <div className="genres">
+                        {genres.join(", ") + " // genres"}
+                    </div>
+
+                </div>
+                <div className="stats">
+                    Your Stats
+                    <div className="activity">
+                        <h4>{totalScrobbles} Total Listens</h4>
+                        <h4>{yearScrobbles} Listens In 2025</h4>
+                        <h4>{monthScrobbles} Listens This Month</h4>
+                        <h4>{dayScrobbles} Listens Today</h4>
+                    </div>
+                </div>
             </div>
 
-                <div className= "releases">
+            <div className="releases">
                 {Object.entries(releaseGroupsByFormat).map(([format, groups]) => (
-                    <div className="categories" key = {format}>
+                    <div className="categories" key={format}>
                         {/* i.e. type albums becomes header Albums */}
-                        <h3 className = "category">{format.charAt(0).toUpperCase() + format.slice(1)}</h3>
-                        <div className = "category-releases">
-                        {groups.map(releaseGroup => (
-                            <div className="releaseGroup-items" key={releaseGroup.id}
-                                 onClick={() => navigate(`/music/album/${releaseGroup.id}`)}>
-                                <img className="releaseGroup-img"
-                                     src={`https://coverartarchive.org/release-group/${releaseGroup.id}/front`}
-                                     alt="placeholder.jpg"/>
-                                <h4 className="releaseGroup-title">{releaseGroup.title}</h4>
-                                {/* substring(0,4) 2012-10-15 -> 2012 */}
-                                <h5 className = "releaseGroup-date"> {releaseGroup["first-release-date"]?.substring(0,4)}</h5>
-                            </div>
-                        ))}
+                        <h3 className="category">{format.charAt(0).toUpperCase() + format.slice(1)}</h3>
+                        <div className="category-releases">
+                            {groups.map(releaseGroup => (
+                                <div className="releaseGroup-items" key={releaseGroup.id}
+                                     onClick={() => navigate(`/music/album/${releaseGroup.id}`)}>
+                                    <img className="releaseGroup-img"
+                                         src={`https://coverartarchive.org/release-group/${releaseGroup.id}/front`}
+                                         alt="placeholder.jpg"/>
+                                    <h4 className="releaseGroup-title">{releaseGroup.title}</h4>
+                                    {/* substring(0,4) 2012-10-15 -> 2012 */}
+                                    <h5 className="releaseGroup-date"> {releaseGroup["first-release-date"]?.substring(0, 4)}</h5>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 ))}
-                </div>
+            </div>
         </div>
     )
 }

@@ -31,7 +31,7 @@ public class MBArtistService implements Query<String, MBArtistDTO> {
     public ResponseEntity<MBArtistDTO> execute(String id) {
 
         final String fetchArtist = "https://musicbrainz.org/ws/2/artist/";
-        final String fetchImage = "http://webservice.fanart.tv/v3/music/";
+        final String fetchImage = "https://webservice.fanart.tv/v3/music/";
         final String fetchReleaseGroups = "https://musicbrainz.org/ws/2/release-group?artist=";
 
         HttpHeaders headers = new HttpHeaders();

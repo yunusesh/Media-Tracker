@@ -1,12 +1,13 @@
 .track-page{
     padding: 30px;
+    position: relative;
 }
 .track-info {
     display: flex;
     align-items: flex-start;
     position: relative;
-    padding-bottom: 20px;
     margin-bottom: 10px;
+    margin-left: 4.3rem;
 }
 
 .track-info::after {
@@ -14,7 +15,7 @@
     position: absolute;
     bottom: 0;
     left: 50%;
-    width: 90%;
+    width: 95%;
     transform: translateX(-50%);
     border-bottom: 1px solid #4C5563;
 }
@@ -22,11 +23,7 @@
 .img{
     height: 50vh;
     width: 50vh;
-    margin-right: 30px;
-    margin-top: 10px;
-    margin-left: 50px;
     border: black solid 4px;
-
 }
 
 .title, .artist, .date{
@@ -42,8 +39,13 @@
 }
 
 .title-above-release{
+    position: relative;
+    margin-bottom: 20px;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 50vh;
 }
 
 .releases{
@@ -51,6 +53,7 @@
     margin-bottom: 10px;
     color: #525457;
     letter-spacing: 1px;
+
 }
 
 .release-format{
@@ -70,3 +73,4 @@
     display: inline;
     color: #525457;
 }
+
