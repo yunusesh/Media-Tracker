@@ -5,12 +5,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import product.release.model.Release;
-import product.release.model.ReleaseDTO;
+import product.release.model.UserTopReleaseDTO;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ReleaseRepository extends JpaRepository<Release, Integer> {
+
     Optional<Release> findByMbid(String mbid);
 
     /* try to create a new artist, if the artist exists then update the name from mbid in case of change

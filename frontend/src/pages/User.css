@@ -3,6 +3,7 @@
     justify-content: left;
     align-items: center;
     padding: 20px;
+    position: relative;
 }
 
 .profile-categories {
@@ -33,6 +34,61 @@
 
 .see-more:hover{
     text-decoration: underline;
+}
+
+.top5-header{
+    display: flex;
+    flex-direction: row;
+}
+
+.edit-top5 {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 40%;
+    height: 60%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+    border-radius: 1rem;
+    box-shadow: 2px 2px 1px black;
+    background-color: #545961;
+}
+
+.top5-category{
+    display: flex;
+    height: 19%;
+    width: 95%;
+    position: relative;
+    border-bottom: 1px solid #7F95B8;
+    z-index: 1000;
+}
+
+.top5-pre{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    width: 13%;
+    aspect-ratio: 1 / 1;
+    background-color: #1d6fa3;
+    margin: 0.5rem 0 0.5rem 0;
+    box-shadow: 2px 2px 1px black;
+}
+
+.top5-rank{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    width: 2.5rem;
+    height: 2.3rem;
+    margin-top: 0.5rem;
+    background-color: #1d6fa3;
+    box-shadow: 2px 2px 1px black;
 }
 
 .category-releases {

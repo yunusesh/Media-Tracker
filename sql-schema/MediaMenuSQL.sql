@@ -61,15 +61,23 @@ CREATE TABLE track_rating(
 );
 
 CREATE TABLE top5_releases(
+	id SERIAL PRIMARY KEY,
 	user_id INTEGER REFERENCES app_user(id) NOT NULL,
-	release1_id INTEGER references release_group(id),
-	release2_id INTEGER references release_group(id),
-	release3_id INTEGER references release_group(id),
-	release4_id INTEGER references release_group(id),
-	release5_id INTEGER references release_group(id)
+	tier INTEGER CHECK (tier BETWEEN 1 AND 5),
+	release_id INTEGER REFERENCES release_group(id) NOT NULL
 );
 
-SELECT * FROM track_release;
+CREATE TABLE top5_tracks(
+	id SERIAL PRIMARY KEY,
+	user_id INTEGER REFERENCES app_user(id) NOT NULL,
+	tier INTEGER CHECK (tier BETWEEN 1 AND 5),
+	track_id INTEGER REFERENCES track(id) NOT NULL
+);
+
+ALTER TABLE top5_tracks ADD CONSTRAINT unique_user_track_tier UNIQUE (user_id, tier);
+ALTER TABLE top5_releases ADD CONSTRAINT unique_user_release_tier UNIQUE (user_id, tier);
+
+
 CREATE OR REPLACE FUNCTION update_any_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN

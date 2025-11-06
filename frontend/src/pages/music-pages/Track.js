@@ -19,10 +19,10 @@ export function Track() {
     const [rating, setRating] = useState()
     const [isEditing, setIsEditing] = useState(false)
     const [genres, setGenres] = useState([])
-    const[totalScrobbles, setTotalScrobbles] = useState([])
-    const[yearScrobbles, setYearScrobbles] = useState([])
-    const[monthScrobbles, setMonthScrobbles] = useState([])
-    const[dayScrobbles, setDayScrobbles] = useState([])
+    const [totalScrobbles, setTotalScrobbles] = useState([])
+    const [yearScrobbles, setYearScrobbles] = useState([])
+    const [monthScrobbles, setMonthScrobbles] = useState([])
+    const [dayScrobbles, setDayScrobbles] = useState([])
 
     async function fetchTrack() {
         const response = await fetch(`http://localhost:8081/track/${id}`)
@@ -97,7 +97,7 @@ export function Track() {
     })
 
     useEffect(() => {
-        if(userScrobbles) {
+        if (userScrobbles) {
             setTotalScrobbles(userScrobbles.length)
             setYearScrobbles(userScrobbles.filter(date => new Date(date).getFullYear() === currentYear).length)
             setMonthScrobbles(userScrobbles.filter(date => new Date(date).getMonth() === currentMonth).length)
@@ -150,7 +150,7 @@ export function Track() {
             <div className="track-info">
                 <div className="links-under-img">
                     <img className="img"
-                            src={`https://coverartarchive.org/release-group/${data?.releases[0].id}/front`}
+                         src={`https://coverartarchive.org/release-group/${data?.releases[0].id}/front`}
                          alt="placeholder.jpg"/>
                     <div className="album-links">
                         <h5>www.youtube.com/album</h5>
@@ -180,7 +180,8 @@ export function Track() {
                     )}
                 </div>
             </div>
-            <div className={isEditing ? "stats-editing" : "stats"}>
+            <div className="user-track">
+                <div className={isEditing ? "stats-editing" : "stats"}>
                     Your Stats
                     <FaRegEdit className="edit" onClick={() => {
                         user ? setIsEditing(!isEditing) : setIsEditing(false)
@@ -191,61 +192,62 @@ export function Track() {
                         <h4>{monthScrobbles} Listens This Month</h4>
                         <h4>{dayScrobbles} Listens Today</h4>
                     </div>
-                <div className="rating">
-                    {!isEditing ? (
-                            <h3 className={
-                                !rating ? "rating-absent" :
-                                    rating == 10 ? "rating-ten" :
-                                        rating >= 8 && rating <= 9 ? "rating-high" :
-                                            rating >= 6 && rating <= 7 ? "rating-med" :
-                                                rating >= 4 && rating <= 5 ? "rating-medlow" :
-                                                    rating >= 1 && rating <= 3 ? "rating-low" :
-                                                        "rating-zero"
+                    <div className="rating">
+                        {!isEditing ? (
+                                <h3 className={
+                                    !rating ? "rating-absent" :
+                                        rating == 10 ? "rating-ten" :
+                                            rating >= 8 && rating <= 9 ? "rating-high" :
+                                                rating >= 6 && rating <= 7 ? "rating-med" :
+                                                    rating >= 4 && rating <= 5 ? "rating-medlow" :
+                                                        rating >= 1 && rating <= 3 ? "rating-low" :
+                                                            "rating-zero"
 
-                            }>
+                                }>
 
+                                    <FaStar className="star"/>
+                                    {rating ? `${rating}/10` : "1-10"}</h3>
+                            ) :
+                            <div className="edit-rating">
                                 <FaStar className="star"/>
-                                {rating ? `${rating}/10` : "1-10"}</h3>
-                        ) :
-                        <div className="edit-rating">
-                            <FaStar className="star"/>
-                            <input
-                                placeholder="0-10"
-                                type="number"
-                                value={rating}
-                                onChange={(e) => setRating(e.target.value)}
-                            />
-                            <button className="manual-log"
-                                    onClick={handleLog}>
-                                Log Track
-                            </button>
-                            <ToastContainer className = "success-alert"
-                                position="bottom-center"
-                                autoClose={5000}
-                                hideProgressBar={false}
-                                newestOnTop
-                                closeOnClick={false}
-                                rtl={false}
-                                pauseOnFocusLoss
-                                draggable
-                                pauseOnHover
-                                theme="colored"
-                                transition={Bounce}
-                            />
-                            <div className="rating-buttons">
-                                <button className="rate-button" onClick={handleSubmit}>
-                                    UPDATE
+                                <input
+                                    placeholder="0-10"
+                                    type="number"
+                                    value={rating}
+                                    onChange={(e) => setRating(e.target.value)}
+                                />
+                                <button className="manual-log"
+                                        onClick={handleLog}>
+                                    Log Track
                                 </button>
-                                <button className="cancel-rate-button" onClick={() => {
-                                    setIsEditing(false)
-                                }}>
-                                    CANCEL
-                                </button>
+                                <ToastContainer className="success-alert"
+                                                position="bottom-center"
+                                                autoClose={5000}
+                                                hideProgressBar={false}
+                                                newestOnTop
+                                                closeOnClick={false}
+                                                rtl={false}
+                                                pauseOnFocusLoss
+                                                draggable
+                                                pauseOnHover
+                                                theme="colored"
+                                                transition={Bounce}
+                                />
+                                <div className="rating-buttons">
+                                    <button className="rate-button" onClick={handleSubmit}>
+                                        UPDATE
+                                    </button>
+                                    <button className="cancel-rate-button" onClick={() => {
+                                        setIsEditing(false)
+                                    }}>
+                                        CANCEL
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
 
-                    }
+                        }
+                    </div>
                 </div>
             </div>
         </div>

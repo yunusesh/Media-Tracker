@@ -1,17 +1,21 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {useQuery} from "react-query";
 import "./User.css"
-import {FaStar} from "react-icons/fa";
+import {FaRegEdit, FaStar} from "react-icons/fa";
+import {AuthContext} from "../AuthContext";
 
 export function User() {
     const navigate = useNavigate()
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const {username} = useParams()
+    const {user} = useContext(AuthContext)
     const [ratings, setRatings] = useState([])
     const [listened, setListened] = useState([])
     const [topOfYear, setTopOfYear] = useState([])
+    const [isEditing, setIsEditing] = useState(false)
+    const [top5, setTop5] = useState([])
 
     function handleDate(sqlDate) {
         const timestamp = new Date(sqlDate).toLocaleString()
@@ -79,6 +83,23 @@ export function User() {
         }
     }, [userListens])
 
+    async function fetchUserTop5(){
+        const response = await fetch(`http://localhost:8081/api/user/${userData?.id}/top/releases`)
+        return response.json()
+    }
+
+    const {data: userTopReleases} = useQuery({
+        queryKey: ["userTopReleases", userData?.id],
+        queryFn: () => fetchUserTop5(),
+        enabled: !!userData?.id
+    })
+
+    useEffect(() => {
+        if(userTopReleases){
+            setTop5(userTopReleases)
+        }
+    }, [userTopReleases])
+
     if (status === 'loading') {
         return <p>Loading...</p>
     }
@@ -89,11 +110,101 @@ export function User() {
 
     return (
         <div className="user-page">
+            {isEditing ? (
+                <div className ="edit-top5">
+                    <div className = "top5-category">
+                        <div className = "top5-pre">
+                            1
+                        </div>
+                    </div>
+                    <div className = "top5-category">
+                        <div className = "top5-pre">
+                            2
+                        </div>
+
+                    </div>
+                    <div className = "top5-category">
+                        <div className = "top5-pre">
+                            3
+                        </div>
+
+                    </div>
+                    <div className = "top5-category">
+                        <div className = "top5-pre">
+                            4
+                        </div>
+
+                    </div>
+                    <div className = "top5-category">
+                        <div className = "top5-pre">
+                            5
+                        </div>
+
+                    </div>
+
+                </div>
+            ) : null}
             <div className="profile">
                 <div className="profile-categories">
-                    <h1 className="category">Top 5</h1>
+                    <div className="top5-header">
+                        <h1 className="category">Top 5</h1>
+                        {user && user.username === username ?
+                            <FaRegEdit className = "edit" onClick={() => {setIsEditing(!isEditing)}}/> :
+                            null
+                        }
+                    </div>
                     <div className="category-releases">
-
+                        {top5.map(release => (
+                            <div className="releaseGroup-items" key={release.mbid}>
+                                <img className="profile-item-img"
+                                     src={`https://coverartarchive.org/release-group/${release.releaseMbid}/front`}
+                                     alt="placeholder.png"
+                                     onClick={() => {
+                                         navigate(
+                                             release.releaseTitle ?
+                                                 `/music/album/${release.releaseMbid}` :
+                                                 `/music/track/${release.trackMbid}`
+                                         )
+                                     }}
+                                     key={release.releaseMbid + "image"}
+                                />
+                                <div className="release-info" key={release.releaseMbid + "release-info"}>
+                                    {release.releaseTitle ?
+                                        <h4 className="profile-item-title"
+                                            key={release.releaseTitle + "release"}
+                                            onClick={() => {
+                                                navigate(`/music/album/${release.releaseMbid}`)
+                                            }}
+                                        >{release.releaseTitle} </h4>
+                                        :
+                                        <h4 className="profile-item-title"
+                                            key={release.trackTitle + "track"}
+                                            onClick={() => {
+                                                navigate(`/music/track/${release.trackMbid}`)
+                                            }}
+                                        >{release.trackTitle} </h4>
+                                    }
+                                    {release.format ?
+                                        <h5 className="format" key={release.format}>
+                                            {release.format.charAt(0).toUpperCase() + release.format.slice(1)} by
+                                        </h5>
+                                        :
+                                        <h5 className="format" key="track">
+                                            Track by
+                                        </h5>
+                                    }
+                                    <h4 className="profile-item-artist"
+                                        key={release.artistName}
+                                        onClick={() => {
+                                            navigate(`/music/artist/${release.artistMbid}`)
+                                        }}
+                                    >{release.artistName}</h4>
+                                </div>
+                                <div className = "top5-rank">
+                                    {release.tier}
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </div>
                 <div className="profile-categories">
