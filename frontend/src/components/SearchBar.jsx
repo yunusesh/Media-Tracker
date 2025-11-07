@@ -1,0 +1,123 @@
+import React, {useState, useRef} from "react";
+import {FaSearch} from "react-icons/fa";
+import "./SearchBar.css"
+import {useNavigate} from "react-router-dom";
+
+export default function SearchBar({searchTypeProp, buttonsEnabled, onClickFunction}) {
+    const [input, setInput] = useState("");
+    const debounceTimeout = useRef(null);
+    const [results, setResults] = useState([]);
+    const [searchType, setSearchType] = useState(searchTypeProp || "artists");
+    const [buttonsVisible, setButtonsVisible] = useState(false);
+    const navigate = useNavigate();
+
+    const fetchData = (value) => {
+        if (!value || value.trim() === "") {
+            setResults([]);
+            return;
+        }
+
+        fetch(`http://localhost:8081/${searchType}/${value}`)
+            .then((response) => response.json())
+            .then((json) => {
+                if (json.artists) setResults(json.artists);
+                else if (json.releaseGroups) setResults(json.releaseGroups);
+                else if (json.tracks) setResults(json.tracks);
+                else setResults([]);
+            })
+            .catch(() => setResults([]));
+    };
+
+    const handleChange = (value) => {
+        setInput(value);
+        if (debounceTimeout.current) clearTimeout(debounceTimeout.current);
+        debounceTimeout.current = setTimeout(() => fetchData(value), 400);
+    };
+
+    const handleSearchTypeChange = (type) => {
+        setInput("");
+        setSearchType(type);
+        setResults([]);
+    };
+
+    return (
+        <div className="search-wrapper">
+            <FaSearch
+                id="search-icon"
+                onClick={() => {
+                    buttonsEnabled ?
+                        setButtonsVisible(true) : setButtonsVisible(false)
+                }
+                }
+            />
+            <div className="input-wrapper">
+                <input
+                    placeholder="Type to search..."
+                    value={input}
+                    onChange={(e) => handleChange(e.target.value)}
+                    onClick={() => {
+                        buttonsEnabled ?
+                            setButtonsVisible(true) : setButtonsVisible(false)
+                    }
+                    }
+                />
+            </div>
+
+            {buttonsVisible && (
+                <div className="search-buttons">
+                    <button className={`artist-button ${searchType === "artists" ? "active" : ""}`}
+                            onClick={() => {
+                                handleSearchTypeChange("artists")
+                            }}
+                    >
+                        Artists
+                    </button>
+                    <button className={`release-button ${searchType === "releases" ? "active" : ""}`}
+                            onClick={() => {
+                                handleSearchTypeChange("releases")
+                            }}
+                    >
+                        Releases
+                    </button>
+                    <button className={`track-button ${searchType === "tracks" ? "active" : ""}`}
+                            onClick={() => {
+                                handleSearchTypeChange("tracks")
+                            }}
+                    >
+                        Tracks
+                    </button>
+                </div>
+            )}
+            <div className="results-list">
+                {
+                    results.map((result) => (
+                        <div className="search-result"
+                             onClick={() => {
+                                 if (searchType === "artists") {
+                                     navigate(`/music/artist/${result.id}`)
+                                 } else if (searchType === "releases") {
+                                     {
+                                         buttonsEnabled ? navigate(`/music/album/${result.id}`) :
+                                             onClickFunction(result)
+                                     }
+                                 } else if (searchType === "tracks") {
+                                     navigate(`/music/track/${result.id}`)
+                                 } else alert('Invalid search type')
+                             }
+                             }
+                        >
+                            {
+                                searchType === "artists"
+                                    ? result.name
+                                    : searchType === "releases"
+                                        ? `${result.title}  - ${result["artist-credit"][0]?.name}`
+                                        : searchType === "tracks"
+                                            ? `${result.title} - ${result["artist-credit"][0]?.name}`
+                                            : "Invalid search type"
+                            }
+                        </div>
+                    ))}
+            </div>
+        </div>
+    );
+}

@@ -10,7 +10,7 @@ import {SortableContext, useSortable, verticalListSortingStrategy} from "@dnd-ki
 import {CSS} from '@dnd-kit/utilities';
 import axios from "axios";
 import {Bounce, toast, ToastContainer} from "react-toastify";
-
+import SearchBar from "../components/SearchBar";
 
 export function User() {
     const navigate = useNavigate()
@@ -23,6 +23,9 @@ export function User() {
     const [topOfYear, setTopOfYear] = useState([])
     const [isEditing, setIsEditing] = useState(false)
     const [top5, setTop5] = useState([])
+    const [searchBarVisible, setSearchBarVisible] = useState(false)
+    const [addToTier, setAddToTier] = useState(null);
+
 
     function handleDate(sqlDate) {
         const timestamp = new Date(sqlDate).toLocaleString()
@@ -108,9 +111,9 @@ export function User() {
     }, [userTopReleases])
 
     // basically copy pasted from dnd kit docs
-    function SortableItem({ release }) {
-        const { attributes, listeners, setNodeRef, transform, transition } =
-            useSortable({ id: release.releaseMbid });
+    function SortableItem({release}) {
+        const {attributes, listeners, setNodeRef, transform, transition} =
+            useSortable({id: release.releaseMbid});
 
         const style = {
             transform: CSS.Transform.toString(transform),
@@ -132,7 +135,7 @@ export function User() {
     }
 
     function handleDragEnd(event) {
-        const { active, over } = event;
+        const {active, over} = event;
         if (active.id !== over.id) {
             setTop5(prev => {
                 const oldIndex = prev.findIndex(item => item.releaseMbid === active.id);
@@ -146,6 +149,24 @@ export function User() {
         }
     }
 
+    async function handleTop5Save() {
+        await Promise.all(top5.map((item, newTier) => axios.put(`http://localhost:8081/api/user/${user.id}/top/releases`, {
+            userId: user.id,
+            tier: newTier + 1, //tiers are 1-5, index is 1-4
+            releaseId: item.releaseId
+        })))
+        saveSuccess()
+        setIsEditing(false)
+    }
+
+    async function removeTop5Item(index) {
+        await axios.delete(`http://localhost:8081/api/user/${user.id}/top/releases/${index}`)
+    }
+
+    function addTop5Item(release) {
+        console.log(release)
+    }
+
     const saveSuccess = () => toast.success('Saved Changes', {
         position: "bottom-center",
         autoClose: 5000,
@@ -157,16 +178,6 @@ export function User() {
         theme: "colored",
         transition: Bounce,
     });
-
-    async function handleTop5Save(){
-        await Promise.all(top5.map((item, newTier) => axios.put(`http://localhost:8081/api/user/${user.id}/top/releases`,{
-            userId: user.id,
-            tier: newTier + 1, //tiers are 1-5, index is 1-4
-            releaseId: item.releaseId
-        })))
-        saveSuccess()
-        setIsEditing(false)
-    }
 
     if (status === 'loading') {
         return <p>Loading...</p>
@@ -193,11 +204,20 @@ export function User() {
             />
             {isEditing ? (
                 <div className="top5-popup">
+                    {searchBarVisible ? (
+                        <SearchBar className="profile-search"
+                                   searchTypeProp="releases"
+                                   buttonsEnabled={false}
+                                   onClickFunction={(release) => {
+                                       addTop5Item(release)
+                                       setSearchBarVisible(false)
+                                   }}/>
+                        ) : null}
                     <div className="edit-top5">
                         <IoCloseSharp className="top5-exit" onClick={() => {
                             setIsEditing(false)
                         }}/>
-                        <button className = "save-changes" onClick={handleTop5Save}>
+                        <button className="save-changes" onClick={handleTop5Save}>
                             Save
                         </button>
                         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -205,12 +225,30 @@ export function User() {
                                 items={top5.map(r => r.releaseMbid)}
                                 strategy={verticalListSortingStrategy}
                             >
-                                {top5.map((release, index) =>
+                                {Array.from({length: 5}, (_, index) => (
                                     <div className="top5-category">
                                         <div className="top5-pre">{index + 1}</div>
-                                        <SortableItem key={release.releaseMbid} release={release} />
+                                        {top5[index] ?
+                                            <>
+                                                <SortableItem key={top5[index].releaseMbid} release={top5[index]}/>
+                                                <button className="top5-remove"
+                                                        onClick={() =>
+                                                            removeTop5Item(index + 1)}> Remove
+                                                </button>
+                                            </> :
+                                            <>
+                                                <div className="top5-row"></div>
+                                                <button className="top5-add" key = {index + 1}
+                                                        onClick={() => {
+                                                            setSearchBarVisible(true)
+                                                            setAddToTier(index + 1)
+                                                        }}> Add
+                                                </button>
+                                            </>
+
+                                        }
                                     </div>
-                                )}
+                                ))}
                             </SortableContext>
                         </DndContext>
 

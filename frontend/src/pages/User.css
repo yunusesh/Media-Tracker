@@ -59,6 +59,7 @@
 .edit-top5 {
     width: 50%;
     height: 60%;
+    margin-top: .5rem;
     position: relative;
     display: flex;
     justify-content: center;
@@ -86,6 +87,8 @@
     position: absolute;
     bottom: 1rem;
     right: 1rem;
+}
+.save-changes, .top5-remove, .top5-add{
     height: 1.7rem;
     width: 4.3rem;
     font-size: 1rem;
@@ -99,7 +102,15 @@
     transition: all 0.2s ease-in-out;
 }
 
-.save-changes:hover{
+.top5-remove, .top5-add{
+    height: 1.5rem;
+    width: 4rem;
+    font-size: .8rem;
+    box-shadow: 1px 1px 1px black;
+    margin-left: .5rem;
+}
+
+.save-changes:hover, .top5-remove:hover, .top5-add:hover{
     background-color: #687487;
 }
 
@@ -169,6 +180,9 @@
     flex-direction: column;
     justify-content: left;
     margin-left: .5rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow:hidden;
 }
 
 .category-releases {

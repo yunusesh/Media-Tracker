@@ -16,6 +16,7 @@ public class ReleaseController {
     private final GetUserTopReleasesService getUserTopReleasesService;
     private final CreateUserTopReleaseService createUserTopReleaseService;
     private final UpdateUserTopReleasesService updateUserTopReleasesService;
+    private final DeleteUserTopReleaseService deleteUserTopReleaseService;
 
 
     public ReleaseController(CreateReleaseService createReleaseService,
@@ -24,7 +25,8 @@ public class ReleaseController {
                              GetOrCreateReleaseService getOrCreateReleaseService,
                              GetUserTopReleasesService getUserTopReleasesService,
                              CreateUserTopReleaseService createUserTopReleaseService,
-                             UpdateUserTopReleasesService updateUserTopReleasesService) {
+                             UpdateUserTopReleasesService updateUserTopReleasesService,
+                             DeleteUserTopReleaseService deleteUserTopReleaseService) {
         this.createReleaseService = createReleaseService;
         this.deleteReleaseService = deleteReleaseService;
         this.getReleaseService = getReleaseService;
@@ -32,6 +34,7 @@ public class ReleaseController {
         this.getUserTopReleasesService = getUserTopReleasesService;
         this.createUserTopReleaseService = createUserTopReleaseService;
         this.updateUserTopReleasesService = updateUserTopReleasesService;
+        this.deleteUserTopReleaseService = deleteUserTopReleaseService;
     }
 
     @PostMapping("/api/release")
@@ -72,9 +75,15 @@ public class ReleaseController {
     public ResponseEntity<Void> updateUserTopReleases(@RequestBody UserTopReleaseDTO release){
         return updateUserTopReleasesService.execute(release.getUserId(), release.getTier(), release.getReleaseId());
     }
+
     @DeleteMapping("/api/release/{id}")
     public ResponseEntity<Void> deleteRelease(@PathVariable Integer id){
         return deleteReleaseService.execute(id);
+    }
+
+    @DeleteMapping("/api/user/{userId}/top/releases/{tier}")
+    public ResponseEntity<Void> deleteUserTopRelease(@PathVariable Integer userId, @PathVariable Integer tier){
+        return deleteUserTopReleaseService.execute(userId, tier);
     }
 
 

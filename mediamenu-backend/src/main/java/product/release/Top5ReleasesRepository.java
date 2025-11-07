@@ -10,6 +10,7 @@ import product.release.model.Top5Releases;
 import product.release.model.UserTopReleaseRequestDTO;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface Top5ReleasesRepository extends JpaRepository<Top5Releases, Integer> {
@@ -20,6 +21,8 @@ public interface Top5ReleasesRepository extends JpaRepository<Top5Releases, Inte
         ORDER BY r.tier ASC
     """)
         List<UserTopReleaseRequestDTO> findUserTopReleases(@Param("userId") Integer userId);
+
+    Optional<Top5Releases> findByUserIdAndTier(@Param("userId") Integer userId, @Param("tier") Integer tier);
 
     @Modifying
     @Transactional
