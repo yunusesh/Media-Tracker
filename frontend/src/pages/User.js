@@ -4,6 +4,13 @@ import {useQuery} from "react-query";
 import "./User.css"
 import {FaRegEdit, FaStar} from "react-icons/fa";
 import {AuthContext} from "../AuthContext";
+import {IoCloseSharp} from "react-icons/io5";
+import {closestCenter, DndContext} from "@dnd-kit/core";
+import {SortableContext, useSortable, verticalListSortingStrategy} from "@dnd-kit/sortable";
+import {CSS} from '@dnd-kit/utilities';
+import axios from "axios";
+import {Bounce, toast, ToastContainer} from "react-toastify";
+
 
 export function User() {
     const navigate = useNavigate()
@@ -83,7 +90,7 @@ export function User() {
         }
     }, [userListens])
 
-    async function fetchUserTop5(){
+    async function fetchUserTop5() {
         const response = await fetch(`http://localhost:8081/api/user/${userData?.id}/top/releases`)
         return response.json()
     }
@@ -95,10 +102,71 @@ export function User() {
     })
 
     useEffect(() => {
-        if(userTopReleases){
+        if (userTopReleases) {
             setTop5(userTopReleases)
         }
     }, [userTopReleases])
+
+    // basically copy pasted from dnd kit docs
+    function SortableItem({ release }) {
+        const { attributes, listeners, setNodeRef, transform, transition } =
+            useSortable({ id: release.releaseMbid });
+
+        const style = {
+            transform: CSS.Transform.toString(transform),
+            transition,
+        }
+
+        return (
+            <div ref={setNodeRef} style={style} className="top5-row" {...attributes} {...listeners}>
+                <img className="top5-img"
+                     src={`https://coverartarchive.org/release-group/${release.releaseMbid}/front`}
+                     alt={release.releaseTitle}
+                />
+                <div className="top5-info">
+                    <h5>{release.releaseTitle}</h5>
+                    <h5>{release.artistName}</h5>
+                </div>
+            </div>
+        );
+    }
+
+    function handleDragEnd(event) {
+        const { active, over } = event;
+        if (active.id !== over.id) {
+            setTop5(prev => {
+                const oldIndex = prev.findIndex(item => item.releaseMbid === active.id);
+                const newIndex = prev.findIndex(item => item.releaseMbid === over.id);
+
+                const updated = [...prev];
+                const [movedItem] = updated.splice(oldIndex, 1);
+                updated.splice(newIndex, 0, movedItem);
+                return updated;
+            });
+        }
+    }
+
+    const saveSuccess = () => toast.success('Saved Changes', {
+        position: "bottom-center",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+    });
+
+    async function handleTop5Save(){
+        await Promise.all(top5.map((item, newTier) => axios.put(`http://localhost:8081/api/user/${user.id}/top/releases`,{
+            userId: user.id,
+            tier: newTier + 1, //tiers are 1-5, index is 1-4
+            releaseId: item.releaseId
+        })))
+        saveSuccess()
+        setIsEditing(false)
+    }
 
     if (status === 'loading') {
         return <p>Loading...</p>
@@ -110,51 +178,59 @@ export function User() {
 
     return (
         <div className="user-page">
+            <ToastContainer className="success-alert"
+                            position="bottom-center"
+                            autoClose={5000}
+                            hideProgressBar={false}
+                            newestOnTop
+                            closeOnClick={false}
+                            rtl={false}
+                            pauseOnFocusLoss
+                            draggable
+                            pauseOnHover
+                            theme="colored"
+                            transition={Bounce}
+            />
             {isEditing ? (
-                <div className ="edit-top5">
-                    <div className = "top5-category">
-                        <div className = "top5-pre">
-                            1
-                        </div>
-                    </div>
-                    <div className = "top5-category">
-                        <div className = "top5-pre">
-                            2
-                        </div>
+                <div className="top5-popup">
+                    <div className="edit-top5">
+                        <IoCloseSharp className="top5-exit" onClick={() => {
+                            setIsEditing(false)
+                        }}/>
+                        <button className = "save-changes" onClick={handleTop5Save}>
+                            Save
+                        </button>
+                        <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                            <SortableContext
+                                items={top5.map(r => r.releaseMbid)}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                {top5.map((release, index) =>
+                                    <div className="top5-category">
+                                        <div className="top5-pre">{index + 1}</div>
+                                        <SortableItem key={release.releaseMbid} release={release} />
+                                    </div>
+                                )}
+                            </SortableContext>
+                        </DndContext>
 
                     </div>
-                    <div className = "top5-category">
-                        <div className = "top5-pre">
-                            3
-                        </div>
-
-                    </div>
-                    <div className = "top5-category">
-                        <div className = "top5-pre">
-                            4
-                        </div>
-
-                    </div>
-                    <div className = "top5-category">
-                        <div className = "top5-pre">
-                            5
-                        </div>
-
-                    </div>
-
                 </div>
             ) : null}
+
             <div className="profile">
                 <div className="profile-categories">
                     <div className="top5-header">
                         <h1 className="category">Top 5</h1>
                         {user && user.username === username ?
-                            <FaRegEdit className = "edit" onClick={() => {setIsEditing(!isEditing)}}/> :
+                            <FaRegEdit className="edit" onClick={() => {
+                                setIsEditing(!isEditing)
+                            }}/> :
                             null
                         }
                     </div>
                     <div className="category-releases">
-                        {top5.map(release => (
+                        {top5.map((release, index) => (
                             <div className="releaseGroup-items" key={release.mbid}>
                                 <img className="profile-item-img"
                                      src={`https://coverartarchive.org/release-group/${release.releaseMbid}/front`}
@@ -200,8 +276,8 @@ export function User() {
                                         }}
                                     >{release.artistName}</h4>
                                 </div>
-                                <div className = "top5-rank">
-                                    {release.tier}
+                                <div className="top5-rank">
+                                    {index + 1}
                                 </div>
                             </div>
                         ))}

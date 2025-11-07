@@ -15,6 +15,7 @@ public class ReleaseController {
     private final GetOrCreateReleaseService getOrCreateReleaseService;
     private final GetUserTopReleasesService getUserTopReleasesService;
     private final CreateUserTopReleaseService createUserTopReleaseService;
+    private final UpdateUserTopReleasesService updateUserTopReleasesService;
 
 
     public ReleaseController(CreateReleaseService createReleaseService,
@@ -22,13 +23,15 @@ public class ReleaseController {
                              GetReleaseService getReleaseService,
                              GetOrCreateReleaseService getOrCreateReleaseService,
                              GetUserTopReleasesService getUserTopReleasesService,
-                             CreateUserTopReleaseService createUserTopReleaseService) {
+                             CreateUserTopReleaseService createUserTopReleaseService,
+                             UpdateUserTopReleasesService updateUserTopReleasesService) {
         this.createReleaseService = createReleaseService;
         this.deleteReleaseService = deleteReleaseService;
         this.getReleaseService = getReleaseService;
         this.getOrCreateReleaseService = getOrCreateReleaseService;
         this.getUserTopReleasesService = getUserTopReleasesService;
         this.createUserTopReleaseService = createUserTopReleaseService;
+        this.updateUserTopReleasesService = updateUserTopReleasesService;
     }
 
     @PostMapping("/api/release")
@@ -37,7 +40,7 @@ public class ReleaseController {
     }
 
     @PostMapping("/api/user/top/release")
-    public ResponseEntity<UserTopReleaseDTO> createUserTopRelease(@RequestBody Top5Releases top){
+    public ResponseEntity<UserTopReleaseRequestDTO> createUserTopRelease(@RequestBody Top5Releases top){
         return createUserTopReleaseService.execute(top);
     }
 
@@ -61,10 +64,14 @@ public class ReleaseController {
     }
 
     @GetMapping("/api/user/{userId}/top/releases")
-    public ResponseEntity<List<UserTopReleaseDTO>> getUserTopReleases(@PathVariable Integer userId){
+    public ResponseEntity<List<UserTopReleaseRequestDTO>> getUserTopReleases(@PathVariable Integer userId){
         return getUserTopReleasesService.execute(userId);
     }
 
+    @PutMapping("/api/user/{userId}/top/releases")
+    public ResponseEntity<Void> updateUserTopReleases(@RequestBody UserTopReleaseDTO release){
+        return updateUserTopReleasesService.execute(release.getUserId(), release.getTier(), release.getReleaseId());
+    }
     @DeleteMapping("/api/release/{id}")
     public ResponseEntity<Void> deleteRelease(@PathVariable Integer id){
         return deleteReleaseService.execute(id);

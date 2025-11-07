@@ -19,7 +19,7 @@ public class Top5Releases {
     @Column(name = "tier")
     private Integer tier;
 
-    @Column(name = "release_id")
+    @Column(name = "release_id", nullable = false)
     private Integer releaseId;
 
     @ManyToOne(fetch = FetchType.LAZY)

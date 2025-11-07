@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import product.release.Top5ReleasesRepository;
 import product.release.model.Top5Releases;
-import product.release.model.UserTopReleaseDTO;
+import product.release.model.UserTopReleaseRequestDTO;
 
 @Service
 public class CreateUserTopReleaseService {
@@ -15,9 +15,9 @@ public class CreateUserTopReleaseService {
         this.top5ReleasesRepository = top5ReleasesRepository;
     }
 
-    public ResponseEntity<UserTopReleaseDTO> execute(Top5Releases release){
+    public ResponseEntity<UserTopReleaseRequestDTO> execute(Top5Releases release){
         Top5Releases top5Release = top5ReleasesRepository.save(release);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserTopReleaseDTO(top5Release));
+        return ResponseEntity.status(HttpStatus.CREATED).body(new UserTopReleaseRequestDTO(top5Release));
     }
 }

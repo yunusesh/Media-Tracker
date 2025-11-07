@@ -1,10 +1,13 @@
 package product.release;
 
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import product.release.model.Top5Releases;
-import product.release.model.UserTopReleaseDTO;
+import product.release.model.UserTopReleaseRequestDTO;
 
 import java.util.List;
 
@@ -16,6 +19,17 @@ public interface Top5ReleasesRepository extends JpaRepository<Top5Releases, Inte
         WHERE r.user.id = :userId
         ORDER BY r.tier ASC
     """)
-        List<UserTopReleaseDTO> findUserTopReleases(Integer userId);
+        List<UserTopReleaseRequestDTO> findUserTopReleases(@Param("userId") Integer userId);
 
+    @Modifying
+    @Transactional
+    @Query(value = """
+    INSERT INTO top5_releases (user_id, tier, release_id)
+    VALUES (:userId, :tier, :releaseId)
+    ON CONFLICT (user_id, tier)
+    DO UPDATE SET release_id = EXCLUDED.release_id;
+    """, nativeQuery = true)
+    void upsertUserTopRelease(@Param("userId") Integer userId,
+                                      @Param("tier") Integer tier,
+                                      @Param("releaseId") Integer releaseId);
 }

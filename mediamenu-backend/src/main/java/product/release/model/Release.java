@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Data
-@Table(name = "releaseGroup")
+@Table(name = "release_group")
 @NoArgsConstructor
 public class Release {
     @Id
@@ -40,6 +40,7 @@ public class Release {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id", insertable = false, updatable = false)
     Artist artist;
+
 
     public Release(Integer id, String mbid, Integer artistId, String title, String format) {
         this.id = id;

@@ -44,7 +44,7 @@ export function UserActivity() {
 
     return (
         <div className="user-ratings-page">
-            <h1 className="category">All Listens</h1>
+            <h1 className="category">All Activity</h1>
             <div className="user-ratings">
                 {listened.map(track => (
                     <div className="ratings-page-item" key={track.trackMbid}>
