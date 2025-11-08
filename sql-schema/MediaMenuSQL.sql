@@ -73,7 +73,7 @@ CREATE TABLE top5_tracks(
 	tier INTEGER CHECK (tier BETWEEN 1 AND 5),
 	track_id INTEGER REFERENCES track(id) NOT NULL
 );
-
+	
 ALTER TABLE top5_tracks ADD CONSTRAINT unique_user_track_tier UNIQUE (user_id, tier);
 ALTER TABLE top5_releases ADD CONSTRAINT unique_user_release_tier UNIQUE (user_id, tier);
 

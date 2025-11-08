@@ -18,7 +18,9 @@ public class CreateUserTopReleaseService {
     }
 
     public ResponseEntity<UserTopReleaseRequestDTO> execute(Top5Releases release){
-        Top5Releases top5Release = top5ReleasesRepository.save(release);
+        if(top5ReleasesRepository.findByUserIdAndReleaseId(release.getUserId(), release.getReleaseId()).isEmpty()){
+            top5ReleasesRepository.save(release);
+        }
 
         Optional<Top5Releases> releaseOptional = top5ReleasesRepository.findWithRelease(release.getReleaseId());
         if(releaseOptional.isPresent()){
