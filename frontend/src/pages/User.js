@@ -24,8 +24,6 @@ export function User() {
     const [isEditing, setIsEditing] = useState(false)
     const [top5, setTop5] = useState([])
     const [searchBarVisible, setSearchBarVisible] = useState(false)
-    const [addToTier, setAddToTier] = useState(null);
-
 
     function handleDate(sqlDate) {
         const timestamp = new Date(sqlDate).toLocaleString()
@@ -156,15 +154,28 @@ export function User() {
             releaseId: item.releaseId
         })))
         saveSuccess()
-        setIsEditing(false)
     }
 
     async function removeTop5Item(index) {
         await axios.delete(`http://localhost:8081/api/user/${user.id}/top/releases/${index}`)
     }
 
-    function addTop5Item(release) {
-        console.log(release)
+    async function addTop5Item(release) {
+        const response = await axios.post('http://localhost:8081/api/release/getOrCreate',{
+            releaseMbid: release.releaseGroupId,
+            title: release.title,
+            releaseDate: release["first-release-date"],
+            format: release["primary-type"],
+            artistMbid: release["artist-credit"][0].artist.id,
+            artistName: release["artist-credit"][0].artist.name
+        })
+
+        await axios.post('http://localhost:8081/api/user/top/release',{
+            userId: user.id,
+            tier: top5.length + 1,
+            releaseId: response.data.id
+        })
+        handleTop5Save()
     }
 
     const saveSuccess = () => toast.success('Saved Changes', {
@@ -217,7 +228,10 @@ export function User() {
                         <IoCloseSharp className="top5-exit" onClick={() => {
                             setIsEditing(false)
                         }}/>
-                        <button className="save-changes" onClick={handleTop5Save}>
+                        <button className="save-changes" onClick={() => {
+                            setIsEditing(false)
+                            handleTop5Save()
+                        }}>
                             Save
                         </button>
                         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -241,7 +255,6 @@ export function User() {
                                                 <button className="top5-add" key = {index + 1}
                                                         onClick={() => {
                                                             setSearchBarVisible(true)
-                                                            setAddToTier(index + 1)
                                                         }}> Add
                                                 </button>
                                             </>

@@ -7,6 +7,8 @@ import product.release.Top5ReleasesRepository;
 import product.release.model.Top5Releases;
 import product.release.model.UserTopReleaseRequestDTO;
 
+import java.util.Optional;
+
 @Service
 public class CreateUserTopReleaseService {
     private Top5ReleasesRepository top5ReleasesRepository;
@@ -18,6 +20,13 @@ public class CreateUserTopReleaseService {
     public ResponseEntity<UserTopReleaseRequestDTO> execute(Top5Releases release){
         Top5Releases top5Release = top5ReleasesRepository.save(release);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(new UserTopReleaseRequestDTO(top5Release));
+        Optional<Top5Releases> releaseOptional = top5ReleasesRepository.findWithRelease(release.getReleaseId());
+        if(releaseOptional.isPresent()){
+            Top5Releases releaseFound = releaseOptional.get();
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(new UserTopReleaseRequestDTO(releaseFound));
+        }
+
+        return null;
     }
 }

@@ -20,9 +20,17 @@ public interface Top5ReleasesRepository extends JpaRepository<Top5Releases, Inte
         WHERE r.user.id = :userId
         ORDER BY r.tier ASC
     """)
-        List<UserTopReleaseRequestDTO> findUserTopReleases(@Param("userId") Integer userId);
+    List<UserTopReleaseRequestDTO> findUserTopReleases(@Param("userId") Integer userId);
 
     Optional<Top5Releases> findByUserIdAndTier(@Param("userId") Integer userId, @Param("tier") Integer tier);
+
+    @Query("""
+    select t from Top5Releases t
+    join fetch t.release r
+    join fetch r.artist
+    where t.id = :id
+""")
+    Optional<Top5Releases> findWithRelease(Integer id);
 
     @Modifying
     @Transactional

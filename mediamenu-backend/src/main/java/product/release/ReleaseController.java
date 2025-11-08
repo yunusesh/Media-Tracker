@@ -42,14 +42,14 @@ public class ReleaseController {
         return createReleaseService.execute(release);
     }
 
-    @PostMapping("/api/user/top/release")
-    public ResponseEntity<UserTopReleaseRequestDTO> createUserTopRelease(@RequestBody Top5Releases top){
-        return createUserTopReleaseService.execute(top);
-    }
-
     @GetMapping("/api/release/{id}")
     public ResponseEntity<ReleaseDTO> getReleaseById(@PathVariable Integer id){
         return getReleaseService.execute(id);
+    }
+
+    @PostMapping("/api/user/top/release")
+    public ResponseEntity<UserTopReleaseRequestDTO> createUserTopRelease(@RequestBody Top5Releases top){
+        return createUserTopReleaseService.execute(top);
     }
 
     @PostMapping("/api/release/getOrCreate")
@@ -76,15 +76,16 @@ public class ReleaseController {
         return updateUserTopReleasesService.execute(release.getUserId(), release.getTier(), release.getReleaseId());
     }
 
+    @DeleteMapping("/api/user/{userId}/top/releases/{tier}")
+    public ResponseEntity<Void> deleteUserTopRelease(@PathVariable Integer userId, @PathVariable Integer tier){
+        return deleteUserTopReleaseService.execute(userId, tier);
+    }
+
     @DeleteMapping("/api/release/{id}")
     public ResponseEntity<Void> deleteRelease(@PathVariable Integer id){
         return deleteReleaseService.execute(id);
     }
 
-    @DeleteMapping("/api/user/{userId}/top/releases/{tier}")
-    public ResponseEntity<Void> deleteUserTopRelease(@PathVariable Integer userId, @PathVariable Integer tier){
-        return deleteUserTopReleaseService.execute(userId, tier);
-    }
 
 
 }
