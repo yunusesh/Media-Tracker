@@ -46,6 +46,10 @@ export function Track() {
                 format: data.releases[0]["primary-type"],
                 artistMbid: data["artist-credit"]?.[0]?.id,
                 artistName: data["artist-credit"]?.[0]?.name,
+                genres: data.genres?.map(genre => ({
+                    mbid: genre.id,
+                    genreName: genre.name
+                })) || []
             })
             return response.data
         }

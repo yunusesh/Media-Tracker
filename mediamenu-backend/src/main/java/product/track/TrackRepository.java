@@ -21,12 +21,26 @@ public interface TrackRepository extends JpaRepository<Track, Integer> {
        also creates a link between the track and release
      */
     @Query(value = """
-            WITH inserted_artist AS (
-                INSERT INTO artist (mbid, artist_name)
-                VALUES (:artistMbid, :artistName)
-                ON CONFLICT (mbid) DO UPDATE SET artist_name = EXCLUDED.artist_name
-                RETURNING id
+            WITH genre_data AS(
+            SELECT UNNEST(:genreMbids) as mbid,
+                   UNNEST(:genreNames) as genre_name
             ),
+    
+            inserted_genres AS (
+            INSERT INTO genre (mbid, genre_name)
+            SELECT gd.mbid, gd.genre_name
+            FROM genre_data gd
+            ON CONFLICT (mbid) DO UPDATE SET genre_name = EXCLUDED.genre_name
+            RETURNING id, mbid
+            ),
+    
+            inserted_artist AS (
+            INSERT INTO artist (mbid, artist_name)
+            VALUES (:artistMbid, :artistName)
+            ON CONFLICT (mbid) DO UPDATE SET artist_name = EXCLUDED.artist_name
+            RETURNING id
+            ),
+    
             existing_artist AS (
                 SELECT id FROM artist WHERE mbid = :artistMbid
             ),
@@ -59,7 +73,14 @@ public interface TrackRepository extends JpaRepository<Track, Integer> {
                 FROM artist_final 
                 ON CONFLICT (mbid) DO UPDATE SET title = EXCLUDED.title
                 RETURNING *
-            )
+            ),
+            insert_track_genres AS (
+            INSERT INTO track_genre (track_id, genre_id)
+            SELECT it.id, ig.id
+            FROM inserted_track it
+            CROSS JOIN inserted_genres ig
+            ON CONFLICT DO NOTHING
+    )
             SELECT *
             FROM inserted_track
             UNION ALL
@@ -76,5 +97,8 @@ public interface TrackRepository extends JpaRepository<Track, Integer> {
             @Param("releaseTitle") String releaseTitle,
             @Param("format") String format,
             @Param("artistMbid") String artistMbid,
-            @Param("artistName") String artistName);
+            @Param("artistName") String artistName,
+            @Param("genreMbids") String[] genreMbids,
+            @Param("genreNames") String[] genreNames
+    );
 }

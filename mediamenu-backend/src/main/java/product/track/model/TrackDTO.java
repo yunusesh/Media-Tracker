@@ -1,6 +1,7 @@
 package product.track.model;
 
 import lombok.Data;
+import product.genre.GenreDTO;
 import product.release.model.ReleaseDTO;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public class TrackDTO {
     private String title;
     private List<ReleaseDTO> releases;
     private String releaseMbid;
+    private List<GenreDTO> genres;
 
     public TrackDTO(Track track) {
         this.id = track.getId();
@@ -23,5 +25,6 @@ public class TrackDTO {
         this.releaseDate = track.getReleaseDate();
         this.releases = track.getReleases().stream().map(ReleaseDTO::new).toList();
         this.releaseMbid = track.getReleaseMbid();
+        this.genres =  track.getGenres().stream().map(GenreDTO::new).toList();
     }
 }

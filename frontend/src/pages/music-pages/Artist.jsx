@@ -48,6 +48,10 @@ export function Artist() {
             const response = await axios.post(`http://localhost:8081/api/artist/getOrCreate`, {
                 mbid: data.id,
                 artistName: data.name,
+                genres: data.genres?.map(genre => ({
+                    mbid: genre.id,
+                    genreName: genre.name
+                })) || []
             })
             return response.data
         }

@@ -2,6 +2,7 @@ package product.release;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import product.genre.GenreDTO;
 import product.release.model.*;
 import product.release.services.*;
 
@@ -60,7 +61,9 @@ public class ReleaseController {
                 release.getReleaseDate(),
                 release.getFormat(),
                 release.getArtistMbid(),
-                release.getArtistName()
+                release.getArtistName(),
+                release.getGenres().stream().map(GenreDTO::getMbid).toArray(String[]:: new),
+                release.getGenres().stream().map(GenreDTO::getGenreName).toArray(String[]:: new)
         ).getBody();
 
         return ResponseEntity.ok(releaseDTO);

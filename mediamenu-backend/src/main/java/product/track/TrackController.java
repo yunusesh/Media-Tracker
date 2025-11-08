@@ -2,6 +2,7 @@ package product.track;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import product.genre.GenreDTO;
 import product.track.model.Track;
 import product.track.model.TrackDTO;
 import product.track.model.TrackRequestDTO;
@@ -47,7 +48,9 @@ public class TrackController {
                 track.getReleaseTitle(),
                 track.getFormat(),
                 track.getArtistMbid(),
-                track.getArtistName()
+                track.getArtistName(),
+                track.getGenres().stream().map(GenreDTO::getMbid).toArray(String[]:: new),
+                track.getGenres().stream().map(GenreDTO::getGenreName).toArray(String[]:: new)
         ).getBody();
 
         return ResponseEntity.ok(trackDTO);

@@ -20,7 +20,15 @@ public class GetOrCreateTrackService {
 
     public ResponseEntity<TrackDTO> execute(String trackMbid, String trackTitle, String releaseDate,
                                             String releaseMbid, String releaseTitle, String format,
-                                            String artistMbid, String artistName) {
+                                            String artistMbid, String artistName, String[] genreMbids,
+                                            String[] genreNames) {
+        if (genreMbids == null) {
+            genreMbids = new String[0];
+        }
+
+        if (genreNames == null) {
+            genreNames = new String[0];
+        }
         Track track = trackRepository.upsertTrack(
                 trackMbid,
                 trackTitle,
@@ -29,7 +37,9 @@ public class GetOrCreateTrackService {
                 releaseTitle,
                 format,
                 artistMbid,
-                artistName
+                artistName,
+                genreMbids,
+                genreNames
         );
 
         Release release = releaseRepository.findByMbid(releaseMbid).orElseThrow();

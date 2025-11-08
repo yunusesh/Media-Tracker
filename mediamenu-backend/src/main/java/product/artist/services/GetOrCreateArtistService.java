@@ -14,8 +14,16 @@ public class GetOrCreateArtistService {
         this.artistRepository = artistRepository;
     }
 
-    public ArtistDTO execute(String mbid, String name){
-        Artist artist = artistRepository.upsertArtist(mbid, name);
+    public ArtistDTO execute(String mbid, String name, String[] genreMbids, String[] genreNames) {
+        if (genreMbids == null) {
+            genreMbids = new String[0];
+        }
+
+        if (genreNames == null) {
+            genreNames = new String[0];
+        }
+
+        Artist artist = artistRepository.upsertArtist(mbid, name, genreMbids, genreNames);
 
         return new ArtistDTO(artist);
     }

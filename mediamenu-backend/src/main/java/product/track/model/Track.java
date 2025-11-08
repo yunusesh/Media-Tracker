@@ -3,6 +3,7 @@ package product.track.model;
 import jakarta.persistence.*;
 import lombok.Data;
 import product.artist.model.Artist;
+import product.genre.Genre;
 import product.release.model.Release;
 
 import java.util.ArrayList;
@@ -43,4 +44,12 @@ public class Track {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "artist_id", insertable = false, updatable = false)
     private Artist artist;
+
+    @ManyToMany
+    @JoinTable(
+            name = "track_genre",
+            joinColumns = @JoinColumn(name = "track_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private List<Genre> genres;
 }

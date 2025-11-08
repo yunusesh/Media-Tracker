@@ -7,6 +7,8 @@ import product.release.ReleaseRepository;
 import product.release.model.Release;
 import product.release.model.ReleaseDTO;
 
+import java.util.List;
+
 @Service
 public class GetOrCreateReleaseService {
     private final ReleaseRepository releaseRepository;
@@ -16,14 +18,25 @@ public class GetOrCreateReleaseService {
     }
 
     public ResponseEntity<ReleaseDTO> execute(String releaseMbid, String title, String releaseDate, String format,
-                                              String artistMbid, String artistName) {
+                                              String artistMbid, String artistName, String[] genreMbids,
+                                              String[] genreNames) {
+        if (genreMbids == null) {
+            genreMbids = new String[0];
+        }
+
+        if (genreNames == null) {
+            genreNames = new String[0];
+        }
+
         Release release = releaseRepository.upsertReleaseGroup(
                 releaseMbid,
                 title,
                 releaseDate,
                 format,
                 artistMbid,
-                artistName
+                artistName,
+                genreMbids,
+                genreNames
         );
 
         return ResponseEntity.ok(new ReleaseDTO(release));

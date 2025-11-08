@@ -1,10 +1,15 @@
 
 package product.track.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import product.genre.GenreDTO;
 import product.release.model.Release;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -21,4 +26,6 @@ public class TrackRequestDTO {
     private Integer artistId;
     private String artistMbid;
     private String artistName;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<GenreDTO> genres = new ArrayList<>();
 }

@@ -66,6 +66,11 @@ export function Album() {
                 format: data["primary-type"],
                 artistMbid: data["artist-credit"]?.[0]?.id,
                 artistName: data["artist-credit"]?.[0]?.name,
+                genres: data.genres?.map(genre => ({
+                    mbid: genre.id,
+                    genreName: genre.name
+                })) || [] //genre object naming on mbid is different from the db so we have to map to correct name
+
             })
             return response.data
         }

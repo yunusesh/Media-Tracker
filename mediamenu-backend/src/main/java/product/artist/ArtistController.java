@@ -8,6 +8,7 @@ import product.artist.services.CreateArtistService;
 import product.artist.services.DeleteArtistService;
 import product.artist.services.GetArtistService;
 import product.artist.services.GetOrCreateArtistService;
+import product.genre.GenreDTO;
 
 @RestController
 public class ArtistController {
@@ -36,7 +37,12 @@ public class ArtistController {
 
     @PostMapping("/api/artist/getOrCreate")
     public ResponseEntity<ArtistDTO> getOrCreateArtist(@RequestBody ArtistDTO artist){
-        ArtistDTO artistDTO = getOrCreateArtistService.execute(artist.getMbid(), artist.getArtistName());
+        ArtistDTO artistDTO = getOrCreateArtistService.execute(
+                artist.getMbid(),
+                artist.getArtistName(),
+                artist.getGenres().stream().map(GenreDTO::getMbid).toArray(String[]:: new),
+                artist.getGenres().stream().map(GenreDTO::getGenreName).toArray(String[]:: new)
+        );
 
         return ResponseEntity.ok(artistDTO);
     }

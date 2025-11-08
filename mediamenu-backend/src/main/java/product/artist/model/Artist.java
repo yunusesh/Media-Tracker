@@ -2,6 +2,9 @@ package product.artist.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import product.genre.Genre;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -17,5 +20,13 @@ public class Artist {
 
     @Column(name = "artist_name")
     private String artistName;
+
+    @ManyToMany
+    @JoinTable(
+            name = "artist_genre",
+            joinColumns = @JoinColumn(name = "artist_id"),
+            inverseJoinColumns = @JoinColumn(name = "genre_id")
+    )
+    private List<Genre> genres;
 
 }

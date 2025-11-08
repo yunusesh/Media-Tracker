@@ -29,12 +29,37 @@ CREATE TABLE track (
 	release_date VARCHAR,
 	cover_release_mbid VARCHAR(36)
 );
-		
+
+CREATE TABLE genre (
+	id SERIAL PRIMARY KEY,
+	mbid VARCHAR(36) UNIQUE,
+	genre_name VARCHAR NOT NULL
+);
+	
+
 CREATE TABLE track_release (
 	track_id INTEGER REFERENCES track(id) NOT NULL,
 	release_id INTEGER REFERENCES release_group(id),
 	PRIMARY KEY (track_id, release_id)
 );
+
+CREATE TABLE track_genre (
+	track_id INTEGER REFERENCES track(id) NOT NULL,
+	genre_id INTEGER REFERENCES genre(id) NOT NULL,
+	PRIMARY KEY (track_id, genre_id)
+)
+
+CREATE TABLE artist_genre (
+	artist_id INTEGER REFERENCES artist(id) NOT NULL,
+	genre_id INTEGER REFERENCES genre(id) NOT NULL,
+	PRIMARY KEY (track_id, genre_id)
+)
+
+CREATE TABLE release_genre (
+	release_id INTEGER REFERENCES release_group(id) NOT NULL,
+	genre_id INTEGER REFERENCES genre(id) NOT NULL,
+	PRIMARY KEY (track_id, genre_id)
+)
 
 CREATE TABLE scrobble(
 	id SERIAL PRIMARY KEY,
