@@ -24,7 +24,10 @@ WITH genre_data AS(
     SELECT UNNEST(:genreMbids) as mbid,
            UNNEST(:genreNames) as genre_name
 ),
-    
+artist_data AS (
+        SELECT UNNEST(:artistMbids) AS mbid,
+               UNNEST(:artistNames) AS artist_name
+),
 inserted_genres AS (
     INSERT INTO genre (mbid, genre_name)
     SELECT gd.mbid, gd.genre_name
@@ -32,29 +35,49 @@ inserted_genres AS (
     ON CONFLICT (mbid) DO UPDATE SET genre_name = EXCLUDED.genre_name
     RETURNING id, mbid
 ),
-    
-inserted_artist AS (
+  
+inserted_artists AS (
     INSERT INTO artist (mbid, artist_name)
-    VALUES (:artistMbid, :artistName)
+    SELECT ad.mbid, ad.artist_name
+    FROM artist_data ad
     ON CONFLICT (mbid) DO UPDATE SET artist_name = EXCLUDED.artist_name
-    RETURNING id
+    RETURNING id, mbid
 ),
-existing_artist AS (
-    SELECT id FROM artist WHERE mbid = :artistMbid
-),
+    
 artist_final AS (
-    SELECT id FROM inserted_artist
-    UNION ALL
-    SELECT id FROM existing_artist
-    LIMIT 1
+    SELECT id
+    FROM inserted_artists
+    UNION
+    SELECT id
+    FROM artist
+    WHERE mbid IN (SELECT mbid FROM artist_data)
 ),
+    
 inserted_release AS (
-    INSERT INTO release_group (mbid, artist_id, title, release_date, format)
-    SELECT :releaseMbid, artist_final.id, :title, :releaseDate, :format
-    FROM artist_final
+    INSERT INTO release_group (mbid,  title, release_date, format)
+    SELECT :releaseMbid, :title, :releaseDate, :format
     ON CONFLICT (mbid) DO UPDATE SET release_date = EXCLUDED.release_date
     RETURNING *
 ),
+    
+existing_release AS (
+    SELECT id FROM release_group WHERE mbid = :releaseMbid
+),
+release_final AS (
+    SELECT id FROM inserted_release
+    UNION ALL
+    SELECT id FROM existing_release
+    LIMIT 1
+),
+
+insert_release_artists AS (
+    INSERT INTO release_artist (release_id, artist_id)
+    SELECT rf.id, af.id
+    FROM release_final rf
+    CROSS JOIN artist_final af
+    ON CONFLICT DO NOTHING
+),
+    
 insert_release_genres AS (
     INSERT INTO release_genre (release_id, genre_id)
     SELECT ir.id, ig.id
@@ -75,8 +98,8 @@ LIMIT 1;
             @Param("title") String title,
             @Param("releaseDate") String releaseDate,
             @Param("format") String format,
-            @Param("artistMbid") String artistMbid,
-            @Param("artistName") String artistName,
+            @Param("artistMbids") String[] artistMbids,
+            @Param("artistNames") String[] artistNames,
             @Param("genreMbids") String[] genreMbids,
             @Param("genreNames") String[] genreNames
             );

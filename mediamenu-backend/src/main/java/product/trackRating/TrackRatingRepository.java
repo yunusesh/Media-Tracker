@@ -17,23 +17,20 @@ import java.util.List;
 public interface TrackRatingRepository extends JpaRepository<TrackRating, TrackRatingId> {
 
     @Query("""
-            SELECT new product.trackRating.model.TrackRatingRequestDTO(
-                tr.id.userId,
-                tr.id.trackId,
-                tr.rating,
-                tr.ratedAt,
-                t.mbid,
-                t.title,
-                t.releaseDate,
-                t.artistId,
-                a.mbid,
-                a.artistName,
-                t.releaseMbid
-            )
-                FROM TrackRating tr
-                JOIN tr.track t
-                JOIN t.artist a
-                WHERE tr.id.userId = :userId
-            """)
+        SELECT new product.trackRating.model.TrackRatingRequestDTO(
+            tr.id.userId,
+            tr.id.trackId,
+            tr.rating,
+            tr.ratedAt,
+            t.mbid,
+            t.title,
+            t.releaseDate,
+            t.releaseMbid
+        )
+        FROM TrackRating tr
+        JOIN tr.track t
+        WHERE tr.id.userId = :userId
+        """)
     List<TrackRatingRequestDTO> findAllByUserId(@Param("userId") Integer userId);
+
 }

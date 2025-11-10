@@ -24,9 +24,6 @@ public class Release {
     @Column(name = "mbid")
     private String mbid;
 
-    @Column(name = "artist_id")
-    private Integer artistId;
-
     @Column(name = "title")
     private String title;
 
@@ -39,9 +36,12 @@ public class Release {
     @ManyToMany(mappedBy = "releases")
     private Set<Track> tracks = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artist_id", insertable = false, updatable = false)
-    Artist artist;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "release_artist",
+            joinColumns = @JoinColumn(name = "release_id"),
+            inverseJoinColumns = @JoinColumn(name = "artist_id")
+    )
+    private List<Artist> artists;
 
     @ManyToMany
     @JoinTable(
@@ -52,10 +52,9 @@ public class Release {
     private List<Genre> genres;
 
 
-    public Release(Integer id, String mbid, Integer artistId, String title, String format) {
+    public Release(Integer id, String mbid, String title, String format) {
         this.id = id;
         this.mbid = mbid;
-        this.artistId = artistId;
         this.title = title;
         this.format = format;
     }

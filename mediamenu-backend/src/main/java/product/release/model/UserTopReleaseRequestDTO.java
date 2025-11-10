@@ -2,6 +2,9 @@ package product.release.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import product.artist.model.ArtistDTO;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -12,9 +15,7 @@ public class UserTopReleaseRequestDTO {
     private String releaseMbid;
     private String releaseTitle;
     private String format;
-    private Integer artistId;
-    private String artistMbid;
-    private String artistName;
+    private List<ArtistDTO> artists;
 
     public UserTopReleaseRequestDTO(Top5Releases top){
         this.tier = top.getTier();
@@ -23,8 +24,6 @@ public class UserTopReleaseRequestDTO {
         this.releaseMbid = top.getRelease().getMbid();
         this.releaseTitle = top.getRelease().getTitle();
         this.format =  top.getRelease().getFormat();
-        this.artistId = top.getRelease().getArtistId();
-        this.artistMbid = top.getRelease().getArtist().getMbid();
-        this.artistName = top.getRelease().getArtist().getArtistName();
+        this.artists = top.getRelease().getArtists().stream().map(ArtistDTO::new).toList();
     }
 }

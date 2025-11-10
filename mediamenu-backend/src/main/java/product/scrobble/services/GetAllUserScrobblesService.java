@@ -3,21 +3,36 @@ package product.scrobble.services;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import product.Query;
+import product.artist.model.ArtistDTO;
 import product.scrobble.ScrobbleRepository;
 import product.scrobble.model.ScrobbleRequestDTO;
+import product.track.TrackRepository;
+import product.track.model.Track;
 
 import java.util.List;
 
 @Service
-public class GetAllUserScrobblesService implements Query<Integer, List<ScrobbleRequestDTO>> {
+public class
+GetAllUserScrobblesService implements Query<Integer, List<ScrobbleRequestDTO>> {
     private ScrobbleRepository scrobbleRepository;
+    private TrackRepository trackRepository;
 
-    public GetAllUserScrobblesService(ScrobbleRepository scrobbleRepository) {
+    public GetAllUserScrobblesService(ScrobbleRepository scrobbleRepository,
+                                      TrackRepository trackRepository) {
         this.scrobbleRepository = scrobbleRepository;
+        this.trackRepository = trackRepository;
     }
 
     @Override
     public ResponseEntity<List<ScrobbleRequestDTO>> execute(Integer userId) {
-        return ResponseEntity.ok(scrobbleRepository.findAllByUserId(userId));
+        List<ScrobbleRequestDTO> scrobbles = scrobbleRepository.findAllByUserId(userId);
+
+        for (ScrobbleRequestDTO scrobble : scrobbles) {
+            Track track = trackRepository.findById(scrobble.getTrackId()).orElseThrow();
+
+            scrobble.setArtists(track.getArtists().stream().map(ArtistDTO::new).toList());
+        }
+
+        return ResponseEntity.ok(scrobbles);
     }
 }

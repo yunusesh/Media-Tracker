@@ -3,8 +3,10 @@ package product.scrobble.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import product.artist.model.ArtistDTO;
 
 import java.sql.Timestamp;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -20,24 +22,23 @@ public class ScrobbleRequestDTO {
     private String releaseMbid;
     private String releaseTitle;
     private String format;
-    private Integer artistId;
-    private String artistMbid;
-    private String artistName;
     private String altReleaseMbid;
+    private List<ArtistDTO> artists;
 
-    public ScrobbleRequestDTO(Scrobble scrobble){
-        this.id = scrobble.getId();
-        this.userId = scrobble.getUserId();
-        this.trackId = scrobble.getTrackId();
-        this.releaseId = scrobble.getRelease().getId();
-        this.trackMbid = scrobble.getTrack().getMbid();
-        this.trackTitle = scrobble.getTrack().getTitle();
-        this.firstListenedAt = scrobble.getFirstListenedAt();
-        this.releaseMbid = scrobble.getRelease().getMbid();
-        this.format = scrobble.getRelease().getFormat();
-        this.artistId = scrobble.getTrack().getArtist().getId();
-        this.artistMbid = scrobble.getTrack().getArtist().getMbid();
-        this.artistName = scrobble.getTrack().getArtist().getArtistName();
-        this.altReleaseMbid = scrobble.getTrack().getReleaseMbid();
+    public ScrobbleRequestDTO(Integer id, Integer userId, Integer trackId,
+                              Integer releaseId, String trackMbid, String trackTitle,
+                              Timestamp firstListenedAt, String releaseMbid, String releaseTitle,
+                              String format, String altReleaseMbid) {
+        this.id = id;
+        this.userId = userId;
+        this.trackId = trackId;
+        this.releaseId = releaseId;
+        this.trackMbid = trackMbid;
+        this.trackTitle = trackTitle;
+        this.firstListenedAt = firstListenedAt;
+        this.releaseMbid = releaseMbid;
+        this.releaseTitle = releaseTitle;
+        this.format = format;
+        this.altReleaseMbid = altReleaseMbid;
     }
 }

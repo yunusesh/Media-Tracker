@@ -27,7 +27,7 @@ public interface Top5ReleasesRepository extends JpaRepository<Top5Releases, Inte
     @Query("""
     SELECT t FROM Top5Releases t
     JOIN FETCH t.release r
-    JOIN FETCH r.artist
+    JOIN FETCH r.artists
     WHERE t.id = :id
 """)
     Optional<Top5Releases> findWithRelease(Integer id);

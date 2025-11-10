@@ -18,7 +18,7 @@ public class GetOrCreateReleaseService {
     }
 
     public ResponseEntity<ReleaseDTO> execute(String releaseMbid, String title, String releaseDate, String format,
-                                              String artistMbid, String artistName, String[] genreMbids,
+                                              String[] artistMbids, String[] artistNames, String[] genreMbids,
                                               String[] genreNames) {
         if (genreMbids == null) {
             genreMbids = new String[0];
@@ -28,13 +28,21 @@ public class GetOrCreateReleaseService {
             genreNames = new String[0];
         }
 
+        if (artistMbids == null) {
+            artistMbids = new String[0];
+        }
+
+        if(artistNames == null) {
+            artistNames = new String[0];
+        }
+
         Release release = releaseRepository.upsertReleaseGroup(
                 releaseMbid,
                 title,
                 releaseDate,
                 format,
-                artistMbid,
-                artistName,
+                artistMbids,
+                artistNames,
                 genreMbids,
                 genreNames
         );

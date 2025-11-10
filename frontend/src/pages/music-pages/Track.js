@@ -44,8 +44,10 @@ export function Track() {
                 releaseMbid: data.releases[0].id,
                 releaseTitle: data.releases[0].title,
                 format: data.releases[0]["primary-type"],
-                artistMbid: data["artist-credit"]?.[0]?.id,
-                artistName: data["artist-credit"]?.[0]?.name,
+                artists: data["artist-credit"]?.map(artist => ({
+                    mbid: artist.id,
+                    artistName: artist.name
+                })) || [],
                 genres: data.genres?.map(genre => ({
                     mbid: genre.id,
                     genreName: genre.name
@@ -169,9 +171,18 @@ export function Track() {
                     <div className="title-date-artist">
                         <h1 className="title">{data?.title}</h1>
                         <h3 className="date">{data?.["first-release-date"]?.substring(0, 4)} • Track by </h3>
-                        <h2 className="artist"
-                            onClick={() => navigate(`/music/artist/${data?.releases[0]["artist-credit"]?.[0]?.artist.id}`)}
-                        >{data?.releases[0]["artist-credit"]?.[0]?.name}</h2>
+                            {data?.["artist-credit"]?.map((artist, index, array) => (
+                                <span key={artist.id}>
+                                    <h2 className="artist"
+                                        onClick={() => navigate(`/music/artist/${artist.id}`)}
+                                    >
+                                    {artist.name}
+                                    </h2>
+                                    {index < array.length - 1 && (
+                                        <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                    )}
+                                </span>
+                            ))}
                     </div>
                     <h3 className="releases">Appears on</h3>
                     {data?.releases?.map(releaseGroup =>

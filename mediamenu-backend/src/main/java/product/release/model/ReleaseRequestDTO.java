@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import product.artist.model.ArtistDTO;
 import product.genre.GenreDTO;
 
 import java.util.ArrayList;
@@ -17,8 +18,9 @@ public class ReleaseRequestDTO {
     private String title;
     private String releaseDate;
     private String format;
-    private String artistMbid;
-    private String artistName;
+
+    private List<ArtistDTO> artists = new ArrayList<>();
+
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<GenreDTO> genres = new ArrayList<>();
 }

@@ -21,9 +21,6 @@ public class Track {
     @Column(name = "mbid")
     private String mbid;
 
-    @Column(name = "artist_id")
-    private Integer artistId;
-
     @Column(name = "title")
     private String title;
 
@@ -41,9 +38,12 @@ public class Track {
     )
     private List<Release> releases = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "artist_id", insertable = false, updatable = false)
-    private Artist artist;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "track_artist",
+            joinColumns = @JoinColumn(name = "track_id"),
+            inverseJoinColumns = @JoinColumn(name = "artist_id")
+    )
+    private List<Artist> artists;
 
     @ManyToMany
     @JoinTable(

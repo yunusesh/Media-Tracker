@@ -64,13 +64,14 @@ export function Album() {
                 title: data.title,
                 releaseDate: data["first-release-date"],
                 format: data["primary-type"],
-                artistMbid: data["artist-credit"]?.[0]?.id,
-                artistName: data["artist-credit"]?.[0]?.name,
+                artists: data["artist-credit"]?.map(artist => ({
+                    mbid: artist.id,
+                    artistName: artist.name
+                })) || [],
                 genres: data.genres?.map(genre => ({
                     mbid: genre.id,
                     genreName: genre.name
                 })) || [] //genre object naming on mbid is different from the db so we have to map to correct name
-
             })
             return response.data
         }
@@ -158,8 +159,10 @@ export function Album() {
                     releaseMbid: id,
                     releaseTitle: albumReissue.title,
                     format: data["primary-type"],
-                    artistMbid: data["artist-credit"]?.[0]?.id,
-                    artistName: data["artist-credit"]?.[0]?.name
+                    artists: track.recording["artist-credit"]?.map(artist => ({
+                        mbid: artist.id,
+                        artistName: artist.name
+                    })) || [],
                 })))
                 const tracklistData = await Promise.all(responses.map(response => response.data))
                 setTracklistDB(tracklistData)
@@ -228,11 +231,18 @@ export function Album() {
                         <div className="date-artist">
                             <h3 className="date-format"> {albumDate} • {data["primary-type"]} by </h3>
                             {/*(0,4) grabs start of date to end of date i.e. 2014-10-12 becomes 2012) */}
-                            <h2 className="artist" onClick={() => {
-                                navigate(`/music/artist/${data["artist-credit"]?.[0]?.id}`)
-                            }}
-                                //0 grabs first release/artist
-                            >{data["artist-credit"]?.[0]?.name}</h2>
+                            {data["artist-credit"]?.map((artist, index, array) => (
+                                <span key={artist.id}>
+                                    <h2 className="artist"
+                                        onClick={() => navigate(`/music/artist/${artist.id}`)}
+                                    >
+                                    {artist.name}
+                                    </h2>
+                                    {index < array.length - 1 && (
+                                        <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                    )}
+                                </span>
+                            ))}
                         </div>
                         <div className="reissues-container">
                             {visible && (

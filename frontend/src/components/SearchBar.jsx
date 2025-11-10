@@ -107,13 +107,24 @@ export default function SearchBar({searchTypeProp, buttonsEnabled, onClickFuncti
                              }
                         >
                             {
-                                searchType === "artists"
-                                    ? result.name
-                                    : searchType === "releases"
-                                        ? `${result.title}  - ${result["artist-credit"][0]?.name}`
-                                        : searchType === "tracks"
-                                            ? `${result.title} - ${result["artist-credit"][0]?.name}`
-                                            : "Invalid search type"
+                                searchType === "artists" ? (
+                                    <h4>{result.name}</h4>
+                                ) : searchType === "releases" || searchType === "tracks" ? (
+                                    <h4>
+                                        {result.title} -{" "}
+                                        {result["artist-credit"]?.map((artist, index, array) => (
+                                            <span
+                                                key={artist.id}
+                                                onClick={() => navigate(`/music/artist/${artist.id}`)}
+                                            >{artist.name}
+                                                {index < array.length - 1 &&
+                                                    (index === array.length - 2 ? " & " : ", ")}
+                                            </span>
+                                        ))}
+                                    </h4>
+                                ) : (
+                                    "Invalid search type"
+                                )
                             }
                         </div>
                     ))}

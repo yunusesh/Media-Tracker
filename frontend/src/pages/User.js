@@ -166,8 +166,10 @@ export function User() {
             title: release.title,
             releaseDate: release["first-release-date"],
             format: release["primary-type"],
-            artistMbid: release["artist-credit"][0].artist.id,
-            artistName: release["artist-credit"][0].artist.name
+            artists: release["artist-credit"]?.map(artist => ({
+                mbid: artist.id,
+                artistName: artist.name
+            })) || [],
         })
 
         await axios.post('http://localhost:8081/api/user/top/release',{
@@ -200,6 +202,15 @@ export function User() {
 
     return (
         <div className="user-page">
+            <section className = "profile-user">
+                <img
+                    className = "profile-pfp"
+                    src="https://i.pinimg.com/1200x/83/bc/8b/83bc8b88cf6bc4b4e04d153a418cde62.jpg"
+                    alt="placeholder.png"/>
+                <h1 className = "profile-username">
+                    {username}
+                </h1>
+            </section>
             <ToastContainer className="success-alert"
                             position="bottom-center"
                             autoClose={5000}
@@ -214,7 +225,7 @@ export function User() {
                             transition={Bounce}
             />
             {isEditing ? (
-                <div className="top5-popup">
+                <section className="top5-popup">
                     {searchBarVisible ? (
                         <SearchBar className="profile-search"
                                    searchTypeProp="releases"
@@ -266,10 +277,10 @@ export function User() {
                         </DndContext>
 
                     </div>
-                </div>
+                </section>
             ) : null}
 
-            <div className="profile">
+            <section className="profile">
                 <div className="profile-categories">
                     <div className="top5-header">
                         <h1 className="category">Top 5</h1>
@@ -521,7 +532,7 @@ export function User() {
                         ))}
                     </div>
                 </div>
-            </div>
+            </section>
         </div>
     )
 }

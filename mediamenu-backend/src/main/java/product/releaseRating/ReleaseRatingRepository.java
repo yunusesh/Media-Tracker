@@ -19,14 +19,10 @@ public interface ReleaseRatingRepository extends JpaRepository<ReleaseRating, Re
                 r.mbid,
                 r.title,
                 r.releaseDate,
-                r.format,
-                r.artistId,
-                a.mbid,
-                a.artistName
+                r.format
             )
                 FROM ReleaseRating rr
                 JOIN rr.release r
-                JOIN r.artist a
                 WHERE rr.id.userId = :userId
             """)
     List<ReleaseRatingRequestDTO> findAllByUserId(@Param("userId") Integer userId);

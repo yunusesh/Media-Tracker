@@ -1,7 +1,7 @@
 body{
     overflow: auto;
     overflow-x: hidden;
-    background-color:#1E2023;
+    background: linear-gradient(0deg, #1e2023, #202328, rgba(40, 45, 52, 1));
     color: #FFFF;
 }
 

@@ -35,13 +35,18 @@ public interface ScrobbleRepository extends JpaRepository<Scrobble, Integer> {
     List<Timestamp> getReleaseScrobbleCount(@Param("userId") Integer userId, @Param("releaseId") Integer releaseId);
 
     @Query("""
-SELECT s.firstListenedAt
-FROM Scrobble s
-JOIN s.track t
-WHERE t.artistId = :artistId
-    AND s.userId = :userId
+    SELECT s.firstListenedAt
+    FROM Scrobble s
+    JOIN s.track t
+    JOIN t.artists a
+    WHERE a.id = :artistId
+      AND s.userId = :userId
 """)
-    List<Timestamp> getArtistScrobbleCount(@Param("userId") Integer userId, @Param("artistId") Integer artistId);
+    List<Timestamp> getArtistScrobbleCount(
+            @Param("userId") Integer userId,
+            @Param("artistId") Integer artistId
+    );
+
 
     @Query("""
             SELECT new product.scrobble.model.ScrobbleRequestDTO(
@@ -55,17 +60,12 @@ WHERE t.artistId = :artistId
                         r.mbid,
                         r.title,
                         r.format,
-                        a.id,
-                        a.mbid,
-                        a.artistName,
                         t.releaseMbid
                         )
             
-      
                 FROM Scrobble s
                 JOIN s.track t
                 LEFT JOIN s.release r
-                JOIN s.track.artist a
                 WHERE s.userId = :userId
             """)
     List<ScrobbleRequestDTO> findAllByUserId(@Param("userId") Integer userId);
