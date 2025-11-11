@@ -17,6 +17,7 @@ import {User} from "./pages/User";
 import {UserRatings} from "./pages/UserRatings";
 import {UserActivity} from "./pages/UserActivity";
 import {ToastContainer} from "react-toastify";
+import {Settings} from "./pages/Settings";
 
 function App() {
     const queryClient = new QueryClient();
@@ -39,6 +40,7 @@ function App() {
                             <Route path="/register" element={<Register/>}/>
                             <Route path="/user/:username/music/ratings" element={<UserRatings/>}/>
                             <Route path="/user/:username/music/activity" element={<UserActivity/>}/>
+                            <Route path = "/user/:username/settings" element = {<Settings/>}/>
                         </Routes>
                     </Router>
                 <ReactQueryDevtools/>

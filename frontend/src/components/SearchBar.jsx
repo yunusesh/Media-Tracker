@@ -110,18 +110,25 @@ export default function SearchBar({searchTypeProp, buttonsEnabled, onClickFuncti
                                 searchType === "artists" ? (
                                     <h4>{result.name}</h4>
                                 ) : searchType === "releases" || searchType === "tracks" ? (
-                                    <h4>
-                                        {result.title} -{" "}
-                                        {result["artist-credit"]?.map((artist, index, array) => (
-                                            <span
-                                                key={artist.id}
-                                                onClick={() => navigate(`/music/artist/${artist.id}`)}
-                                            >{artist.name}
-                                                {index < array.length - 1 &&
-                                                    (index === array.length - 2 ? " & " : ", ")}
+                                    <div className="result-row">
+                                        <img className="result-img"
+                                             src={`https://coverartarchive.org/release-group/${result.id}/front`}
+                                             alt="placeholder.png"/>
+                                        <div className="result-info">
+                                            <h5>{result.title} </h5>
+                                            <h5>
+                                                {result["artist-credit"]?.map((artist, index, array) => (
+                                                    <span
+                                                        key={artist.id}
+                                                        onClick={() => navigate(`/music/artist/${artist.id}`)}
+                                                    >{artist.name}
+                                                        {index < array.length - 1 &&
+                                                            (index === array.length - 2 ? " & " : ", ")}
                                             </span>
-                                        ))}
-                                    </h4>
+                                                ))}
+                                            </h5>
+                                        </div>
+                                    </div>
                                 ) : (
                                     "Invalid search type"
                                 )

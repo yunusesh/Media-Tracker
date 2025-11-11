@@ -43,38 +43,19 @@ inserted_artists AS (
     ON CONFLICT (mbid) DO UPDATE SET artist_name = EXCLUDED.artist_name
     RETURNING id, mbid
 ),
-    
-artist_final AS (
-    SELECT id
-    FROM inserted_artists
-    UNION
-    SELECT id
-    FROM artist
-    WHERE mbid IN (SELECT mbid FROM artist_data)
-),
-    
+
 inserted_release AS (
     INSERT INTO release_group (mbid,  title, release_date, format)
     SELECT :releaseMbid, :title, :releaseDate, :format
     ON CONFLICT (mbid) DO UPDATE SET release_date = EXCLUDED.release_date
     RETURNING *
 ),
-    
-existing_release AS (
-    SELECT id FROM release_group WHERE mbid = :releaseMbid
-),
-release_final AS (
-    SELECT id FROM inserted_release
-    UNION ALL
-    SELECT id FROM existing_release
-    LIMIT 1
-),
 
 insert_release_artists AS (
     INSERT INTO release_artist (release_id, artist_id)
-    SELECT rf.id, af.id
-    FROM release_final rf
-    CROSS JOIN artist_final af
+    SELECT ir.id, ia.id
+    FROM inserted_release ir
+    CROSS JOIN inserted_artists ia
     ON CONFLICT DO NOTHING
 ),
     

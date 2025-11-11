@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from "react-router-dom";
-import {useContext, useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useQuery} from "react-query";
 import "./User.css"
 import {FaRegEdit, FaStar} from "react-icons/fa";
@@ -126,7 +126,16 @@ export function User() {
                 />
                 <div className="top5-info">
                     <h5>{release.releaseTitle}</h5>
-                    <h5>{release.artistName}</h5>
+                    <h5>
+                        {release.artists.map((artist, index, array) => (
+                            <span
+                                key={artist.id}
+                            >{artist.artistName}
+                                {index < array.length - 1 &&
+                                    (index === array.length - 2 ? " & " : ", ")}
+                                            </span>
+                        ))}
+                    </h5>
                 </div>
             </div>
         );
@@ -161,7 +170,7 @@ export function User() {
     }
 
     async function addTop5Item(release) {
-        const response = await axios.post('http://localhost:8081/api/release/getOrCreate',{
+        const response = await axios.post('http://localhost:8081/api/release/getOrCreate', {
             releaseMbid: release.releaseGroupId,
             title: release.title,
             releaseDate: release["first-release-date"],
@@ -172,7 +181,7 @@ export function User() {
             })) || [],
         })
 
-        await axios.post('http://localhost:8081/api/user/top/release',{
+        await axios.post('http://localhost:8081/api/user/top/release', {
             userId: user.id,
             tier: top5.length + 1,
             releaseId: response.data.id
@@ -202,12 +211,12 @@ export function User() {
 
     return (
         <div className="user-page">
-            <section className = "profile-user">
+            <section className="profile-user">
                 <img
-                    className = "profile-pfp"
+                    className="profile-pfp"
                     src="https://i.pinimg.com/1200x/83/bc/8b/83bc8b88cf6bc4b4e04d153a418cde62.jpg"
                     alt="placeholder.png"/>
-                <h1 className = "profile-username">
+                <h1 className="profile-username">
                     {username}
                 </h1>
             </section>
@@ -234,7 +243,7 @@ export function User() {
                                        addTop5Item(release)
                                        setSearchBarVisible(false)
                                    }}/>
-                        ) : null}
+                    ) : null}
                     <div className="edit-top5">
                         <IoCloseSharp className="top5-exit" onClick={() => {
                             setIsEditing(false)
@@ -263,7 +272,7 @@ export function User() {
                                             </> :
                                             <>
                                                 <div className="top5-row"></div>
-                                                <button className="top5-add" key = {index + 1}
+                                                <button className="top5-add" key={index + 1}
                                                         onClick={() => {
                                                             setSearchBarVisible(true)
                                                         }}> Add
@@ -331,12 +340,20 @@ export function User() {
                                             Track by
                                         </h5>
                                     }
+                                    <div className = "profile-item-container">
+                                        {release.artists.map((artist, index, array) => (
+                                            <span key={artist.id}>
                                     <h4 className="profile-item-artist"
-                                        key={release.artistName}
-                                        onClick={() => {
-                                            navigate(`/music/artist/${release.artistMbid}`)
-                                        }}
-                                    >{release.artistName}</h4>
+                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                    >
+                                    {artist.artistName}
+                                    </h4>
+                                                {index < array.length - 1 && (
+                                                    <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                                )}
+                                </span>
+                                        ))}
+                                    </div>
                                 </div>
                                 <div className="top5-rank">
                                     {index + 1}
@@ -387,12 +404,20 @@ export function User() {
                                             Track by
                                         </h5>
                                     }
+                                    <div className = "profile-item-container">
+                                        {rating.artists.map((artist, index, array) => (
+                                            <span key={artist.id}>
                                     <h4 className="profile-item-artist"
-                                        key={rating.artistName}
-                                        onClick={() => {
-                                            navigate(`/music/artist/${rating.artistMbid}`)
-                                        }}
-                                    >{rating.artistName}</h4>
+                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                    >
+                                    {artist.artistName}
+                                    </h4>
+                                                {index < array.length - 1 && (
+                                                    <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                                )}
+                                </span>
+                                        ))}
+                                    </div>
                                 </div>
                                 <div className="rating-value" key={rating.mbid + rating.rating}>
                                     <h4 className={
@@ -444,12 +469,22 @@ export function User() {
                                     <h5 className="format" key={track.trackId + "format"}>
                                         Track by
                                     </h5>
+
+                                    <div className = "profile-item-container">
+                                        {track.artists.map((artist, index, array) => (
+                                            <span key={artist.id}>
                                     <h4 className="profile-item-artist"
-                                        key={track.artistName}
-                                        onClick={() => {
-                                            navigate(`/music/artist/${track.artistMbid}`)
-                                        }}
-                                    >{track.artistName}</h4>
+                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                    >
+                                    {artist.artistName}
+                                    </h4>
+                                                {index < array.length - 1 && (
+                                                    <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                                )}
+                                </span>
+                                        ))}
+                                    </div>
+
                                 </div>
                                 <div className="listen-timestamp" key={track.timestamp}>
                                     <h5>{handleDate(track.firstListenedAt)[1]}</h5>
@@ -507,12 +542,20 @@ export function User() {
                                             Track by
                                         </h5>
                                     }
+                                    <div className = "profile-item-container">
+                                        {rating.artists.map((artist, index, array) => (
+                                            <span key={artist.id}>
                                     <h4 className="profile-item-artist"
-                                        key={rating.artistName}
-                                        onClick={() => {
-                                            navigate(`/music/artist/${rating.artistMbid}`)
-                                        }}
-                                    >{rating.artistName}</h4>
+                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                    >
+                                    {artist.artistName}
+                                    </h4>
+                                                {index < array.length - 1 && (
+                                                    <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                                )}
+                                </span>
+                                        ))}
+                                    </div>
                                 </div>
                                 <div className="rating-value" key={rating.mbid + rating.rating}>
                                     <h4 className={

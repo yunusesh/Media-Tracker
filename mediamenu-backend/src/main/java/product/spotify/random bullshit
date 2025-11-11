@@ -1,0 +1,31 @@
+    https://accounts.spotify.com/authorize?client_id=861232ceb8814a5aac18d04aa73a0ca3&response_type=code&redirect_uri=https://inconsolably-blearier-catharine.ngrok-free.dev/callback&scope=SEE SCOPES!!
+SCOPES PICK WHAT YOU NEED
+✅ User Playback Scopes
+Scope	Description
+user-read-playback-state	Read current playback state (track, device, position, etc.)
+user-modify-playback-state	Control playback (play, pause, skip, change track, volume, shuffle, repeat)
+user-read-currently-playing	Read what the user is currently playing
+app-remote-control	Control playback via the Spotify app remote SDK
+streaming	Play tracks inside your app using the Web Playback SDK
+
+✅ Playlists
+Scope	Description
+playlist-read-private	Read private playlists
+playlist-read-collaborative	Read collaborative playlists
+playlist-modify-public	Create/modify public playlists
+playlist-modify-private	Create/modify private playlists
+
+✅ Listening History / Recently Played
+Scope	Description
+user-read-recently-played	Access recently played tracks
+user-top-read	Read top artists and tracks over various time ranges
+✅ User Account / Identity
+Scope	Description
+user-read-email	Read the user's email address
+user-read-private	Access private user information (country, subscription level, etc.)
+✅ Open Access Scopes (no login required)
+
+These don't require user login, but still use OAuth:
+
+Scope	Description
+ugc-image-upload	Upload images to Spotify (playlist cover image)

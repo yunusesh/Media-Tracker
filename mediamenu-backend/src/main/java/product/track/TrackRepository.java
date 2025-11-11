@@ -47,15 +47,6 @@ inserted_artists AS (
     RETURNING id, mbid
 ),
 
-artist_final AS (
-    SELECT id
-    FROM inserted_artists
-    UNION
-    SELECT id
-    FROM artist
-    WHERE mbid IN (SELECT mbid FROM artist_data)
-),
-
 inserted_release AS (
     INSERT INTO release_group (mbid, title, format)
     VALUES (:releaseMbid, :releaseTitle, :format)
@@ -91,9 +82,9 @@ insert_track_release AS (
     
 insert_track_artists AS (
     INSERT INTO track_artist (track_id, artist_id)
-    SELECT it.id, af.id
+    SELECT it.id, ia.id
     FROM inserted_track it
-    CROSS JOIN artist_final af
+    CROSS JOIN inserted_artists ia
     ON CONFLICT DO NOTHING
 ),
 

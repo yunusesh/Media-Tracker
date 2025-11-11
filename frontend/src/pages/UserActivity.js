@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useQuery} from "react-query";
 import {useNavigate, useParams} from "react-router-dom";
 import "./UserActivity.css"
@@ -69,12 +69,20 @@ export function UserActivity() {
                             <h5 className="format">
                                 Track by
                             </h5>
-                            <h5 className="profile-item-artist"
-                                key={track.artistName}
-                                onClick={() => {
-                                    navigate(`/music/artist/${track.artistMbid}`)
-                                }}
-                            >{track.artistName}</h5>
+                            <div className = "profile-item-container">
+                                {track.artists.map((artist, index, array) => (
+                                    <span key={artist.id}>
+                                    <h5 className="profile-item-artist"
+                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                    >
+                                    {artist.artistName}
+                                    </h5>
+                                        {index < array.length - 1 && (
+                                            <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                        )}
+                                </span>
+                                ))}
+                            </div>
                         </div>
                         <div className="listen-timestamp">
                             <h5>{handleDate(track.firstListenedAt)[1]}</h5>

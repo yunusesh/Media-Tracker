@@ -6,6 +6,11 @@ CREATE TABLE app_user (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE user_account(
+	user_id INTEGER REFERENCES app_user(id) NOT NULL,
+	
+);
+
 CREATE TABLE artist(
 	id SERIAL PRIMARY KEY,
 	mbid VARCHAR(36) UNIQUE,
@@ -15,7 +20,6 @@ CREATE TABLE artist(
 CREATE TABLE release_group (
 	id SERIAL PRIMARY KEY,
 	mbid VARCHAR(36) UNIQUE,
-	artist_id INTEGER REFERENCES artist(id) NOT NULL,
 	title VARCHAR NOT NULL,
 	release_date VARCHAR,
 	format VARCHAR
@@ -24,7 +28,6 @@ CREATE TABLE release_group (
 CREATE TABLE track (
 	id SERIAL PRIMARY KEY,
 	mbid VARCHAR(36) UNIQUE,
-	artist_id INTEGER REFERENCES artist(id),
 	title VARCHAR NOT NULL,
 	release_date VARCHAR,
 	cover_release_mbid VARCHAR(36)
@@ -35,7 +38,6 @@ CREATE TABLE genre (
 	mbid VARCHAR(36) UNIQUE,
 	genre_name VARCHAR NOT NULL
 );
-	
 
 CREATE TABLE track_release (
 	track_id INTEGER REFERENCES track(id) NOT NULL,
@@ -47,19 +49,19 @@ CREATE TABLE track_genre (
 	track_id INTEGER REFERENCES track(id) NOT NULL,
 	genre_id INTEGER REFERENCES genre(id) NOT NULL,
 	PRIMARY KEY (track_id, genre_id)
-)
+);
 
 CREATE TABLE artist_genre (
 	artist_id INTEGER REFERENCES artist(id) NOT NULL,
 	genre_id INTEGER REFERENCES genre(id) NOT NULL,
-	PRIMARY KEY (track_id, genre_id)
-)
+	PRIMARY KEY (artist_id, genre_id)
+);
 
 CREATE TABLE release_genre (
 	release_id INTEGER REFERENCES release_group(id) NOT NULL,
 	genre_id INTEGER REFERENCES genre(id) NOT NULL,
-	PRIMARY KEY (track_id, genre_id)
-)
+	PRIMARY KEY (release_id, genre_id)
+);
 
 CREATE TABLE scrobble(
 	id SERIAL PRIMARY KEY,
@@ -97,6 +99,18 @@ CREATE TABLE top5_tracks(
 	user_id INTEGER REFERENCES app_user(id) NOT NULL,
 	tier INTEGER CHECK (tier BETWEEN 1 AND 5),
 	track_id INTEGER REFERENCES track(id) NOT NULL
+);
+
+CREATE TABLE release_artist(
+	release_id INTEGER REFERENCES release_group(id) NOT NULL,
+	artist_id INTEGER REFERENCES artist(id) NOT NULL,
+	PRIMARY KEY (release_id, artist_id)
+);
+
+CREATE TABLE track_artist(
+	track_id INTEGER REFERENCES track(id) NOT NULL,
+	artist_id INTEGER REFERENCES artist(id) NOT NULL,
+	PRIMARY KEY (track_id, artist_id)
 );
 	
 ALTER TABLE top5_tracks ADD CONSTRAINT unique_user_track_tier UNIQUE (user_id, tier);

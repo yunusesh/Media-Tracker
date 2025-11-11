@@ -1,6 +1,6 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {FaStar} from "react-icons/fa";
 import "./UserRatings.css"
 
@@ -91,12 +91,20 @@ export function UserRatings() {
                                     Track by
                                 </h5>
                             }
-                            <h5 className="profile-item-artist"
-                                key={rating.artistName}
-                                onClick={() => {
-                                    navigate(`/music/artist/${rating.artistMbid}`)
-                                }}
-                            >{rating.artistName}</h5>
+                            <div className = "profile-item-container">
+                                {rating.artists.map((artist, index, array) => (
+                                    <span key={artist.id}>
+                                    <h5 className="profile-item-artist"
+                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                    >
+                                    {artist.artistName}
+                                    </h5>
+                                        {index < array.length - 1 && (
+                                            <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                        )}
+                                </span>
+                                ))}
+                            </div>
                         </div>
                         <div className="rating-value">
                             <h5 className={

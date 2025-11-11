@@ -67,6 +67,14 @@ export function Navbar() {
                              }}>
                             Logout
                         </div>
+                        {user && (
+                        <div className = "settings"
+                        onClick={() => {
+                            navigate(`/user/${user.username}/settings`)
+                        }}>
+                            Settings
+                        </div>
+                            )}
                     </div>
                 )}
             </div>

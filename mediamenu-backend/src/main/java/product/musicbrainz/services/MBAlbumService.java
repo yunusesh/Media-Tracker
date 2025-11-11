@@ -64,12 +64,7 @@
                 }
 
                 seenIds.add(release.getDisambiguation());
-                System.out.println(release.getDisambiguation());
                 releases.add(release);
-            }
-
-            for(MBReleaseDTO release : releases){
-                System.out.println(release.getId());
             }
 
             List<MBArtistDTO> artists = response.getBody().getArtistCredit().stream()

@@ -286,7 +286,7 @@
     cursor: pointer;
 }
 
-.profile-item-artist {
+.profile-item-container {
     color: #fff;
     white-space: nowrap;
     overflow: hidden;
@@ -296,9 +296,13 @@
     margin-top: 5px;
 }
 
-.profile-item-artist:hover {
+.profile-item-container h4:hover {
     cursor: pointer;
     text-decoration: underline;
+}
+
+.profile-item-artist{
+    display: inline;
 }
 
 .star-profile {

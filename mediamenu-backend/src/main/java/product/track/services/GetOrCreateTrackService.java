@@ -1,5 +1,7 @@
 package product.track.services;
 
+import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import product.artist.model.Artist;
@@ -15,13 +17,15 @@ import java.util.List;
 @Service
 public class GetOrCreateTrackService {
     private TrackRepository trackRepository;
-    private ReleaseRepository releaseRepository;
 
-    public GetOrCreateTrackService(TrackRepository trackRepository, ReleaseRepository releaseRepository) {
+    private EntityManager entityManager;
+
+    public GetOrCreateTrackService(TrackRepository trackRepository, EntityManager entityManager) {
         this.trackRepository = trackRepository;
-        this.releaseRepository = releaseRepository;
+        this.entityManager = entityManager;
     }
 
+    @Transactional
     public ResponseEntity<TrackDTO> execute(String trackMbid, String trackTitle, String releaseDate,
                                             String releaseMbid, String releaseTitle, String format,
                                             String[] artistMbids, String[] artistNames, String[] genreMbids,
@@ -55,16 +59,10 @@ public class GetOrCreateTrackService {
                 genreNames
         );
 
-        Release release = releaseRepository.findByMbid(releaseMbid).orElseThrow();
-        track.setReleaseMbid(release.getMbid());
+        TrackDTO trackDTO = new TrackDTO(track);
+        entityManager.clear();
 
-        if (!track.getReleases().contains(release)) {
-            track.getReleases().add(release);
-        }
-
-        trackRepository.save(track);
-
-        return ResponseEntity.ok(new TrackDTO(track));
+        return ResponseEntity.ok(trackDTO);
     }
 
 }

@@ -160,16 +160,17 @@
     z-index: 1;
 }
 
-.logout{
+.logout, .settings{
     padding: 5px 10px;
     display:block;
     align-items: center;
     white-space:nowrap;
     overflow: hidden;
     text-overflow:ellipsis;
+    width: 100%;
 }
 
-.logout:hover{
+.logout:hover, .settings:hover{
     background-color: #efefef;
     color: black;
     cursor: pointer;

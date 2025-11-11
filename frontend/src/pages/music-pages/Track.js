@@ -37,6 +37,7 @@ export function Track() {
 
     async function fetchTrackFromDB() {
         if (data) {
+            console.log(data["artist-credit"])
             const response = await axios.post(`http://localhost:8081/api/track/getOrCreate`, {
                 trackMbid: id,
                 trackTitle: data.title,

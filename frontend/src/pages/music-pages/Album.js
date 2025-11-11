@@ -71,7 +71,7 @@ export function Album() {
                 genres: data.genres?.map(genre => ({
                     mbid: genre.id,
                     genreName: genre.name
-                })) || [] //genre object naming on mbid is different from the db so we have to map to correct name
+                })) || [] //genre & artist object naming on mbid is different from the db so we have to map to correct name
             })
             return response.data
         }
@@ -159,10 +159,13 @@ export function Album() {
                     releaseMbid: id,
                     releaseTitle: albumReissue.title,
                     format: data["primary-type"],
-                    artists: track.recording["artist-credit"]?.map(artist => ({
-                        mbid: artist.id,
-                        artistName: artist.name
-                    })) || [],
+                    artists: track.recording["artist-credit"]
+                        ?.map(credit => credit.artist)
+                        ?.filter(artist => artist?.id)
+                        ?.map(artist => ({
+                            mbid: artist.id,
+                            artistName: artist.name
+                        })) || [],
                 })))
                 const tracklistData = await Promise.all(responses.map(response => response.data))
                 setTracklistDB(tracklistData)

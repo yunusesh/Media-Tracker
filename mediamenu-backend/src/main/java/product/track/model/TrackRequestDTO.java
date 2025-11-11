@@ -25,6 +25,7 @@ public class TrackRequestDTO {
     private String releaseTitle;
     private String format;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ArtistDTO> artists = new ArrayList<>();
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
