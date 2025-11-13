@@ -9,15 +9,15 @@ export function Navbar() {
     const {user, logout} = useContext(AuthContext)
     const location = useLocation();
     const navigate = useNavigate();
-        useState(
-            location.pathname.includes("/artist")
-                ? "artists"
-                : location.pathname.includes("/album")
-                    ? "releases"
-                    : location.pathname.includes("/track")
-                        ? "tracks"
-                        : ""
-        );
+    useState(
+        location.pathname.includes("/artist")
+            ? "artists"
+            : location.pathname.includes("/album")
+                ? "releases"
+                : location.pathname.includes("/track")
+                    ? "tracks"
+                    : ""
+    );
 
     const [profileHoverVisible, setProfileHoverVisible] = useState(false);
 
@@ -68,13 +68,13 @@ export function Navbar() {
                             Logout
                         </div>
                         {user && (
-                        <div className = "settings"
-                        onClick={() => {
-                            navigate(`/user/${user.username}/settings`)
-                        }}>
-                            Settings
-                        </div>
-                            )}
+                            <div className = "settings"
+                                 onClick={() => {
+                                     navigate(`/settings`)
+                                 }}>
+                                Settings
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

@@ -18,13 +18,15 @@ import {UserRatings} from "./pages/UserRatings";
 import {UserActivity} from "./pages/UserActivity";
 import {ToastContainer} from "react-toastify";
 import {Settings} from "./pages/Settings";
+import {SpotifyAuthProvider} from "./SpotifyAuthContext";
 
 function App() {
     const queryClient = new QueryClient();
 
     return (
         <AuthProvider>
-            <QueryClientProvider client={queryClient}>
+            <SpotifyAuthProvider>
+                <QueryClientProvider client={queryClient}>
                     <Router>
                         <Layout/>
                         <Routes>
@@ -40,11 +42,13 @@ function App() {
                             <Route path="/register" element={<Register/>}/>
                             <Route path="/user/:username/music/ratings" element={<UserRatings/>}/>
                             <Route path="/user/:username/music/activity" element={<UserActivity/>}/>
-                            <Route path = "/user/:username/settings" element = {<Settings/>}/>
+                            <Route path="/settings" element={<Settings/>}/>
+                            <Route path="/callback" element={<Settings />} />
                         </Routes>
                     </Router>
-                <ReactQueryDevtools/>
-            </QueryClientProvider>
+                    <ReactQueryDevtools/>
+                </QueryClientProvider>
+            </SpotifyAuthProvider>
         </AuthProvider>
     )
 

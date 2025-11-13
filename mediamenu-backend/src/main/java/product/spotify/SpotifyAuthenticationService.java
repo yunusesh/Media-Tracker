@@ -21,95 +21,37 @@ import java.util.Map;
 @Service
 public class SpotifyAuthenticationService {
 
-    @Value("${client_id}")
+    @Value("${spotify_client_id}")
     private String clientId;
 
-    @Value("${client_secret}")
+    @Value("${spotify_client_secret}")
     private String clientSecret;
 
     @Value("${redirect_uri}")
     private String redirectUri;
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
 
-    private static final String TOKEN_URL = "https://accounts.spotify.com/api/token";
-
-    private final String AUTH_CODE_URL = "https://accounts.spotify.com/authorize?";
-
-    public SpotifyAuthenticationService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
-    public String getSpotifyAccessToken() {
-        String authHeader = Base64.getEncoder()
-                .encodeToString((clientId + ":" + clientSecret).getBytes());
+    public Map exchangeCodeForToken(String code) {
 
         HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Basic " + authHeader);
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "client_credentials");
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(TOKEN_URL, request, String.class);
-
-        JsonObject json = JsonParser.parseString(response.getBody()).getAsJsonObject();
-        return json.get("access_token").getAsString();
-    }
-
-    public JsonObject exchangeCodeForTokens(String code) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        String authHeader = Base64.getEncoder().encodeToString(
-                (clientId + ":" + clientSecret).getBytes()
-        );
-        headers.set("Authorization", "Basic " + authHeader);
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("client_id", clientId);
+        body.add("client_secret", clientSecret);
         body.add("grant_type", "authorization_code");
         body.add("code", code);
         body.add("redirect_uri", redirectUri);
 
         HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(TOKEN_URL, request, String.class);
 
-        return JsonParser.parseString(response.getBody()).getAsJsonObject();
-    }
-
-    public JsonObject refreshAccessToken(String refreshToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        String authHeader = Base64.getEncoder().encodeToString(
-                (clientId + ":" + clientSecret).getBytes()
-        );
-        headers.set("Authorization", "Basic " + authHeader);
-
-        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
-        body.add("grant_type", "refresh_token");
-        body.add("refresh_token", refreshToken);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(body, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(TOKEN_URL, request, String.class);
-
-        return JsonParser.parseString(response.getBody()).getAsJsonObject();
-    }
-
-    public JsonObject getCurrentTrack(String accessToken) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + accessToken);
-
-        HttpEntity<Void> request = new HttpEntity<>(headers);
-
-        ResponseEntity<String> response = restTemplate.exchange(
-                "https://api.spotify.com/v1/me/player/currently-playing",
-                HttpMethod.GET,
+        ResponseEntity<Map> response = restTemplate.postForEntity(
+                "https://accounts.spotify.com/api/token",
                 request,
-                String.class
+                Map.class
         );
 
-        return JsonParser.parseString(response.getBody()).getAsJsonObject();
+        return response.getBody();
     }
 }

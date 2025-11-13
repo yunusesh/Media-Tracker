@@ -340,16 +340,17 @@ export function User() {
                                             Track by
                                         </h5>
                                     }
-                                    <div className = "profile-item-container">
+                                    <div className="profile-item-container">
                                         {release.artists.map((artist, index, array) => (
                                             <span key={artist.id}>
                                     <h4 className="profile-item-artist"
                                         onClick={() => navigate(`/music/artist/${artist.mbid}`)}
                                     >
                                     {artist.artistName}
-                                    </h4>
-                                                {index < array.length - 1 && (
-                                                    <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                    </h4>{index < array.length - 1 && (
+                                        <span>
+                                            {index === array.length - 2 ? " & " : ", "}
+                                        </span>
                                                 )}
                                 </span>
                                         ))}
@@ -404,7 +405,7 @@ export function User() {
                                             Track by
                                         </h5>
                                     }
-                                    <div className = "profile-item-container">
+                                    <div className="profile-item-container">
                                         {rating.artists.map((artist, index, array) => (
                                             <span key={artist.id}>
                                     <h4 className="profile-item-artist"
@@ -470,7 +471,7 @@ export function User() {
                                         Track by
                                     </h5>
 
-                                    <div className = "profile-item-container">
+                                    <div className="profile-item-container">
                                         {track.artists.map((artist, index, array) => (
                                             <span key={artist.id}>
                                     <h4 className="profile-item-artist"
@@ -542,7 +543,7 @@ export function User() {
                                             Track by
                                         </h5>
                                     }
-                                    <div className = "profile-item-container">
+                                    <div className="profile-item-container">
                                         {rating.artists.map((artist, index, array) => (
                                             <span key={artist.id}>
                                     <h4 className="profile-item-artist"
