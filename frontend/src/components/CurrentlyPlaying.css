@@ -58,9 +58,9 @@
 }
 
 .player-img{
-    width: 7vh;
-    height: 7vh;
-    margin-right: 0.5rem;
+    width: 8vh;
+    height: 8vh;
+    margin-right: 0.6rem;
 }
 
 .player-info{
@@ -112,13 +112,16 @@
     margin-left: 3rem;
 }
 
-.bar-1, .bar-2, .bar-3, .bar-4, .bar-5{
+.bar-1, .bar-2, .bar-1-active, .bar-2-active, .bar-3-active{
     width: 10%;
     background-color: #b3b3b3;
     border-radius: 2px;
     height: 100%;
     transform-origin: bottom;
-    animation: equalize 1.5s infinite alternate ease-in-out;
+}
+
+.bar-1-active, .bar-2-active, .bar-3-active{
+    animation: equalize .8s infinite alternate ease-in-out;
 }
 
 @keyframes equalize {
@@ -133,12 +136,12 @@
     }
 }
 
-.bar-1 {
+.bar-1-active {
     animation-delay: 0s;
 }
-.bar-2 {
+.bar-2-active {
     animation-delay: 0.2s;
 }
-.bar-3 {
+.bar-3-active {
     animation-delay: 0.4s;
 }

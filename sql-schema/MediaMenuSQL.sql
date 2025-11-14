@@ -6,9 +6,12 @@ CREATE TABLE app_user (
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE user_account(
-	user_id INTEGER REFERENCES app_user(id) NOT NULL,
-	
+CREATE TABLE user_spotify(
+	user_id INTEGER PRIMARY KEY REFERENCES app_user(id) NOT NULL,
+	access_token VARCHAR,
+	access_token_expiry INTEGER,
+	refresh_token VARCHAR,
+	display_name VARCHAR
 );
 
 CREATE TABLE artist(

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/frontend/src/setupTests.js" value="03407eb7-92d4-4a25-b2c2-10e9458d76a9" />
     <file url="file://$PROJECT_DIR$/mediamenu-backend/src/main/java/product/track/TrackRepository.java" value="03407eb7-92d4-4a25-b2c2-10e9458d76a9" />
   </component>
 </project>

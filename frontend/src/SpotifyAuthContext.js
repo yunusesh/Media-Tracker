@@ -1,5 +1,7 @@
 import {createContext, useState, useEffect, useContext} from "react";
 import {AuthContext} from "./AuthContext";
+import axios from "axios";
+import {useQuery} from "react-query";
 
 export const SpotifyAuthContext = createContext();
 
@@ -8,26 +10,70 @@ export const SpotifyAuthProvider = ({children}) => {
     const [spotifyToken, setSpotifyToken] = useState(null);
     const clientId = "861232ceb8814a5aac18d04aa73a0ca3";
     const redirectUri = "https://inconsolably-blearier-catharine.ngrok-free.dev/callback";
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get("code");
 
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
+        const saved = localStorage.getItem("spotifyToken");
+        if (saved) {
+            setSpotifyToken(saved);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!code || !user || spotifyToken) return;
+
+        let duplicate = false;
 
         async function getAccessToken() {
-            const code = params.get("code");
-            if (!code || spotifyToken) return;
+            if (duplicate) return
+            duplicate = true //avoids reruns
+
             const response = await fetch(`http://localhost:8081/callback?code=${code}`)
-            if (response.ok) {
+            if (response.ok && user) {
                 const data = await response.json()
+
+                await axios.post('http://localhost:8081/api/spotify/user', {
+                    userId: user.id,
+                    accessToken: data["access_token"],
+                    accessTokenExpiry: data["expires_in"],
+                    refreshToken: data["refresh_token"]
+                })
+
                 localStorage.setItem("spotifyToken", data["access_token"])
                 setSpotifyToken(data["access_token"])
 
-                window.history.replaceState({}, document.title, `/settings`)
+                window.history.replaceState({}, "", "/settings")
             }
-
         }
 
         getAccessToken()
-    }, []);
+    }, [code, user, spotifyToken]);
+
+    async function fetchUserSpotify() {
+        if (!user) return;
+        const response = await fetch(`http://localhost:8081/api/spotify/user/${user.id}`)
+
+        return response.json()
+    }
+
+    const {data: userData} = useQuery({
+        queryKey: ["userData", user],
+        queryFn: () => fetchUserSpotify(),
+        enabled: !!user
+    })
+
+    async function refreshSpotifyToken() {
+        if (!userData) return;
+        const response = await fetch(`http://localhost:8081/api/spotify/token?refresh=${userData.refreshToken}`)
+        const token = await response.json()
+        localStorage.setItem("spotifyToken", token["access_token"])
+        setSpotifyToken(token["access_token"])
+        console.log(token["access_tokenr"])
+        await axios.put(`http://localhost:8081/api/spotify/user/${userData.userId}`, {
+            accessToken: token["access_token"]
+        })
+    }
 
     async function redirectUserToSpotify() {
         const params = new URLSearchParams({
@@ -50,10 +96,20 @@ export const SpotifyAuthProvider = ({children}) => {
 
     async function fetchCurrentlyPlaying() {
         if (!spotifyToken) return;
-        const res = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
-            headers: {Authorization: `Bearer ${spotifyToken}`}
-        });
-        return res.json();
+        try {
+            const res = await fetch("https://api.spotify.com/v1/me/player/currently-playing", {
+                headers: {Authorization: `Bearer ${spotifyToken}`}
+            });
+
+            if (res.status === 401) {
+                await refreshSpotifyToken()
+            } else {
+                return res.json();
+            }
+
+        } catch (error) {
+            console.log(error, "Invalid token")
+        }
     }
 
     async function fetchRecentlyPlayed() {
@@ -71,6 +127,7 @@ export const SpotifyAuthProvider = ({children}) => {
             fetchProfile,
             fetchCurrentlyPlaying,
             fetchRecentlyPlayed,
+            refreshSpotifyToken
         }}>
             {children}
         </SpotifyAuthContext.Provider>

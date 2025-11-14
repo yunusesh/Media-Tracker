@@ -25,8 +25,8 @@ function App() {
 
     return (
         <AuthProvider>
-            <SpotifyAuthProvider>
-                <QueryClientProvider client={queryClient}>
+            <QueryClientProvider client={queryClient}>
+                <SpotifyAuthProvider>
                     <Router>
                         <Layout/>
                         <Routes>
@@ -43,12 +43,12 @@ function App() {
                             <Route path="/user/:username/music/ratings" element={<UserRatings/>}/>
                             <Route path="/user/:username/music/activity" element={<UserActivity/>}/>
                             <Route path="/settings" element={<Settings/>}/>
-                            <Route path="/callback" element={<Settings />} />
+                            <Route path="/callback" element={<Settings/>}/>
                         </Routes>
                     </Router>
                     <ReactQueryDevtools/>
-                </QueryClientProvider>
-            </SpotifyAuthProvider>
+                </SpotifyAuthProvider>
+            </QueryClientProvider>
         </AuthProvider>
     )
 
