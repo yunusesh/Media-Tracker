@@ -13,10 +13,27 @@ export const SpotifyAuthProvider = ({children}) => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
 
+    async function fetchUserSpotify() {
+        if (!user) return;
+        const response = await fetch(`http://localhost:8081/api/spotify/user/${user.id}`)
+
+        return response.json()
+    }
+
+    const {data: userData} = useQuery({
+        queryKey: ["userData", user],
+        queryFn: () => fetchUserSpotify(),
+        enabled: !!user
+    })
+
     useEffect(() => {
-        const saved = localStorage.getItem("spotifyToken");
+        const saved = localStorage.getItem("spotifyToken")
         if (saved) {
             setSpotifyToken(saved);
+        }
+        else if(userData && userData.accessToken){
+            localStorage.setItem("spotifyToken", userData.accessToken)
+            setSpotifyToken(userData.accessToken)
         }
     }, []);
 
@@ -49,19 +66,6 @@ export const SpotifyAuthProvider = ({children}) => {
 
         getAccessToken()
     }, [code, user, spotifyToken]);
-
-    async function fetchUserSpotify() {
-        if (!user) return;
-        const response = await fetch(`http://localhost:8081/api/spotify/user/${user.id}`)
-
-        return response.json()
-    }
-
-    const {data: userData} = useQuery({
-        queryKey: ["userData", user],
-        queryFn: () => fetchUserSpotify(),
-        enabled: !!user
-    })
 
     async function refreshSpotifyToken() {
         if (!userData) return;

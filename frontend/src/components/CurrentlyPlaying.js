@@ -34,7 +34,6 @@ export function CurrentlyPlaying() {
                         const textWidth = textRef.current.scrollWidth;
 
                         if (textWidth > containerWidth) {
-                            console.log(textWidth, containerWidth, textWidth - containerWidth);
                             setScrollDistance(textWidth - containerWidth);
                         } else {
                             setScrollDistance(0);

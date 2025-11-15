@@ -1,0 +1,58 @@
+.settings-page{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.connections{
+    padding: 2rem;
+    height: 1000px;
+}
+
+.connections h2{
+    position: relative;
+    margin-bottom: 1rem;
+    padding-bottom: .3rem;
+}
+
+.connections h2::after{
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 14.5%;
+    width: 30%;
+    transform: translateX(-50%);
+    border-bottom: 1px solid #4C5563;
+}
+
+.connect-spotify, .connected-spotify{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 13rem;
+    height: 3rem;
+    padding: 1rem;
+    border: 1px solid #4C5563;
+    border-radius: 6px;
+    background: #191414;
+    color: #fff;
+    gap: 10px;
+}
+
+.connect-spotify{
+    cursor: pointer;
+}
+
+.connect-spotify:hover{
+    background: #1D1D21;
+}
+
+.connected-spotify{
+    display: flex;
+    flex-direction: row;
+}
+
+.spotify-logo{
+    color: #1DB954;
+    font-size: 1.5rem;
+}
