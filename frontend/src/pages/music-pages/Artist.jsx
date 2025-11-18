@@ -158,7 +158,7 @@ export function Artist() {
                         {/* i.e. type albums becomes header Albums */}
                         <h3 className="category">{format.charAt(0).toUpperCase() + format.slice(1)}</h3>
                         <div className="category-releases">
-                            {groups.map(releaseGroup => (
+                            {groups.sort((a,b) => new Date(b["first-release-date"]) - new Date(a["first-release-date"])).map(releaseGroup => (
                                 <div className="releaseGroup-items" key={releaseGroup.id}
                                      onClick={() => navigate(`/music/album/${releaseGroup.id}`)}>
                                     <img className="releaseGroup-img"

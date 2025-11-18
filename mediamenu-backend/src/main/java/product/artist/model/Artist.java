@@ -18,6 +18,9 @@ public class Artist {
     @Column(name = "mbid")
     private String mbid;
 
+    @Column(name = "spotify_id")
+    private String spotifyId;
+
     @Column(name = "artist_name")
     private String artistName;
 

@@ -30,8 +30,7 @@ export const SpotifyAuthProvider = ({children}) => {
         const saved = localStorage.getItem("spotifyToken")
         if (saved) {
             setSpotifyToken(saved);
-        }
-        else if(userData && userData.accessToken){
+        } else if (userData && userData.accessToken) {
             localStorage.setItem("spotifyToken", userData.accessToken)
             setSpotifyToken(userData.accessToken)
         }
@@ -71,12 +70,16 @@ export const SpotifyAuthProvider = ({children}) => {
         if (!userData) return;
         const response = await fetch(`http://localhost:8081/api/spotify/token?refresh=${userData.refreshToken}`)
         const token = await response.json()
-        localStorage.setItem("spotifyToken", token["access_token"])
-        setSpotifyToken(token["access_token"])
-        console.log(token["access_tokenr"])
-        await axios.put(`http://localhost:8081/api/spotify/user/${userData.userId}`, {
-            accessToken: token["access_token"]
-        })
+        if (response.status === 401) {
+            localStorage.removeItem("spotifyToken")
+            setSpotifyToken(null)
+        } else {
+            localStorage.setItem("spotifyToken", token["access_token"])
+            setSpotifyToken(token["access_token"])
+            await axios.put(`http://localhost:8081/api/spotify/user/${userData.userId}`, {
+                accessToken: token["access_token"]
+            })
+        }
     }
 
     async function redirectUserToSpotify() {

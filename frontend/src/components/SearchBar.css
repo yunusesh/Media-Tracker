@@ -42,8 +42,7 @@
 .result-info{
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
     margin-left: .5rem;
 }
 
@@ -121,4 +120,124 @@ input:focus{
 
 .release-button.active:hover, .artist-button.active:hover, .track-button.active:hover {
     background-color: #1eFFE7;
+}
+
+
+
+
+@media (max-width: 1024px) {
+    .search-wrapper {
+        width: 24rem;
+    }
+
+    .input-wrapper {
+        height: 2.3rem;
+        padding: 6px 30px 6px 20px;
+    }
+
+    input {
+        font-size: 1.1rem;
+    }
+
+    .search-buttons {
+        gap: .75rem;
+    }
+
+    .artist-button, .release-button, .track-button {
+        width: 90px;
+        height: 36px;
+        font-size: 14px;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .search-wrapper {
+        width: 100%;
+        max-width: 22rem;
+    }
+
+    .search-result {
+        padding: 1.2rem .75rem;
+    }
+
+    .result-img {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .input-wrapper {
+        height: 2.2rem;
+        padding: 6px 32px 6px 18px;
+    }
+
+    input {
+        font-size: 1rem;
+    }
+
+    #search-icon {
+        right: 15px;
+        top: 9px;
+        font-size: 1rem;
+    }
+
+    .artist-button, .release-button, .track-button {
+        width: 80px;
+        height: 34px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .search-wrapper {
+        width: 95%;
+        margin: auto;
+    }
+
+    .search-buttons {
+        flex-wrap: wrap;
+        gap: .5rem;
+        justify-content: center;
+    }
+
+    .artist-button, .release-button, .track-button {
+        width: 75px;
+        height: 32px;
+        font-size: 12px;
+    }
+
+    .input-wrapper {
+        height: 2rem;
+        padding: 5px 30px 5px 14px;
+    }
+
+    input {
+        font-size: .95rem;
+    }
+
+    #search-icon {
+        font-size: 1rem;
+        right: 12px;
+        top: 7px;
+    }
+
+    .results-list {
+        max-height: 220px;
+        border-radius: 8px;
+        width: 100%;
+    }
+
+    .search-result {
+        padding: 1rem .5rem;
+    }
+
+    .result-img {
+        width: 2.3rem;
+        height: 2.3rem;
+    }
+
+    .result-info {
+        margin-left: .4rem;
+    }
 }

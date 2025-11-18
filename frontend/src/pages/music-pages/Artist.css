@@ -10,7 +10,9 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    padding: 1rem 3rem 1rem 3rem;
 }
+
 .artist-img{
     height: 50vh;
     width: 50vh;
@@ -82,3 +84,64 @@
     text-transform: uppercase;
     letter-spacing: 2px;
 }
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .artist-page{
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .category-releases {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    }
+
+    .artist-img{
+        max-width: 300px;
+    }
+}
+
+/* Large phones */
+@media (max-width: 768px) {
+    .artist-page{
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .artist-page-left{
+        padding: 1rem;
+        width: 100%;
+        max-width: none;
+    }
+
+    .category-releases{
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 1rem;
+    }
+
+    .artist-name{
+        font-size: 1.6rem;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+    .artist-img{
+        max-width: 250px;
+        border-width: 3px;
+    }
+
+    .category-releases{
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    }
+
+    .releaseGroup-img{
+        max-width: 100px;
+    }
+
+    .releaseGroup-title{
+        max-width: 100px;
+        font-size: 0.85rem;
+    }
+}
+

@@ -10,6 +10,7 @@ import java.util.List;
 public class ReleaseDTO {
     private Integer id;
     private String mbid;
+    private String spotifyId;
     private String title;
     private String releaseDate;
     private String format;
@@ -21,6 +22,7 @@ public class ReleaseDTO {
     public ReleaseDTO(Release release){
         this.id = release.getId();
         this.mbid = release.getMbid();
+        this.spotifyId = release.getSpotifyId();
         this.title = release.getTitle();
         this.releaseDate = release.getReleaseDate();
         this.format = release.getFormat();

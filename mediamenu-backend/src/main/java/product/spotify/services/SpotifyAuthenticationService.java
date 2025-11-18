@@ -1,4 +1,4 @@
-package product.spotify;
+package product.spotify.services;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import product.spotify.UserSpotifyRepository;
 import product.spotify.model.UpdateUserSpotifyCommand;
 import product.spotify.model.UserSpotify;
 import product.spotify.model.UserSpotifyDTO;

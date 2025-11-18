@@ -24,11 +24,12 @@ public class ScrobbleRequestDTO {
     private String format;
     private String altReleaseMbid;
     private List<ArtistDTO> artists;
+    private String spotifyId;
 
     public ScrobbleRequestDTO(Integer id, Integer userId, Integer trackId,
                               Integer releaseId, String trackMbid, String trackTitle,
                               Timestamp firstListenedAt, String releaseMbid, String releaseTitle,
-                              String format, String altReleaseMbid) {
+                              String format, String altReleaseMbid, String spotifyId) {
         this.id = id;
         this.userId = userId;
         this.trackId = trackId;
@@ -40,5 +41,6 @@ public class ScrobbleRequestDTO {
         this.releaseTitle = releaseTitle;
         this.format = format;
         this.altReleaseMbid = altReleaseMbid;
+        this.spotifyId = spotifyId;
     }
 }

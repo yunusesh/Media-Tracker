@@ -145,3 +145,88 @@
 .bar-3-active {
     animation-delay: 0.4s;
 }
+
+
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .currently-playing-container,
+    .currently-playing-container-pinned {
+        width: 50%;
+    }
+
+    .equalizer-container {
+        width: 25%;
+        margin-right: 1rem;
+        margin-left: 1rem;
+    }
+
+    .player-img {
+        width: 6vh;
+        height: 6vh;
+    }
+}
+
+/* Large Phones */
+@media (max-width: 768px) {
+    .currently-playing-container,
+    .currently-playing-container-pinned {
+        width: 50%;
+        height: 4rem;
+    }
+
+    .player-left {
+        width: 70%;
+        margin-left: 0.5rem;
+    }
+
+    .equalizer-container {
+        width: 20%;
+        gap: 3px;
+        margin-left: 1rem;
+        margin-right: 0.6rem;
+    }
+
+    .player-img {
+        width: 5.5vh;
+        height: 5.5vh;
+    }
+
+    .pin,
+    .pin-active {
+        font-size: 1.2rem;
+    }
+}
+
+/* Small Phones */
+@media (max-width: 480px) {
+
+    .currently-playing-container,
+    .currently-playing-container-pinned {
+        width: 50%;
+        height: 3.6rem;
+    }
+
+    .player-img {
+        width: 4.5vh;
+        height: 4.5vh;
+        margin-right: 0.4rem;
+    }
+
+    .player-track {
+        font-size: 0.95rem;
+    }
+
+    .player-artist {
+        font-size: 0.8rem;
+    }
+
+    .equalizer-container {
+        display: none; /* hides equalizer on very small screens */
+    }
+
+    .pin,
+    .pin-active {
+        font-size: 1rem;
+    }
+}

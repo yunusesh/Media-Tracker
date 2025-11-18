@@ -17,12 +17,14 @@ CREATE TABLE user_spotify(
 CREATE TABLE artist(
 	id SERIAL PRIMARY KEY,
 	mbid VARCHAR(36) UNIQUE,
+	spotify_id VARCHAR UNIQUE,
 	artist_name VARCHAR NOT NULL
 );
 
 CREATE TABLE release_group (
 	id SERIAL PRIMARY KEY,
 	mbid VARCHAR(36) UNIQUE,
+	spotify_id VARCHAR UNIQUE,
 	title VARCHAR NOT NULL,
 	release_date VARCHAR,
 	format VARCHAR
@@ -31,6 +33,7 @@ CREATE TABLE release_group (
 CREATE TABLE track (
 	id SERIAL PRIMARY KEY,
 	mbid VARCHAR(36) UNIQUE,
+	spotify_id VARCHAR UNIQUE,
 	title VARCHAR NOT NULL,
 	release_date VARCHAR,
 	cover_release_mbid VARCHAR(36)

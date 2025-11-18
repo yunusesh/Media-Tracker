@@ -72,12 +72,9 @@ public class MBArtistService implements Query<String, MBArtistDTO> {
                 MBArtistResponse.class
         );
         int numOfReleaseGroups = Integer.parseInt(releaseGroupsResponse.getBody().getReleaseGroupCount());
-        /*JESUS CHRIST!!! If num of releases > 100, then some releases spill over to another page.
-        So we use the offset parameter in the url to iterate through all pages, then flatten them into one list
 
-        #TO-DO - filter out the duplicates and unofficial releases from the front end
-         */
-
+        offset = 100;
+        //iterate through all the offsets of artist releases
         if(numOfReleaseGroups > 100) {
             List<ResponseEntity<MBArtistResponse>> releaseGroupPages = new ArrayList<>();
             releaseGroupPages.add(releaseGroupsResponse);

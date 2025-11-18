@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import product.spotify.model.UpdateUserSpotifyCommand;
 import product.spotify.model.UserSpotify;
 import product.spotify.model.UserSpotifyDTO;
+import product.spotify.services.SpotifyAuthenticationService;
 
 import java.util.Map;
 
@@ -23,7 +24,7 @@ public class SpotifyController {
     }
 
     @GetMapping("/api/spotify/token")
-    public ResponseEntity<Map> getToken(@RequestParam("refresh") String refresh){
+    public ResponseEntity<Map> getTokenRefresh(@RequestParam("refresh") String refresh){
         return ResponseEntity.ok(spotifyAuthenticationService.exchangeRefreshForToken(refresh));
     }
 

@@ -60,7 +60,8 @@ public interface ScrobbleRepository extends JpaRepository<Scrobble, Integer> {
                         r.mbid,
                         r.title,
                         r.format,
-                        t.releaseMbid
+                        t.releaseMbid,
+                        t.spotifyId
                         )
             
                 FROM Scrobble s

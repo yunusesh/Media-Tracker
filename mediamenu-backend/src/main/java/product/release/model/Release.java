@@ -24,6 +24,9 @@ public class Release {
     @Column(name = "mbid")
     private String mbid;
 
+    @Column(name = "spotify_id")
+    private String spotifyId;
+
     @Column(name = "title")
     private String title;
 

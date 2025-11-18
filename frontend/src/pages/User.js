@@ -108,7 +108,7 @@ export function User() {
         }
     }, [userTopReleases])
 
-    // basically copy pasted from dnd kit docs
+    //uses drag and drop kit to let user sort their top 5
     function SortableItem({release}) {
         const {attributes, listeners, setNodeRef, transform, transition} =
             useSortable({id: release.releaseMbid});

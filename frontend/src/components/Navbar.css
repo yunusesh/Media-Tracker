@@ -176,3 +176,138 @@
     cursor: pointer;
 }
 
+    @media (max-width: 1024px) {
+
+        .navbarLink {
+            padding: 10px 10px;
+            height: 70px;
+        }
+
+        .nav--list {
+            justify-content: center;
+        }
+
+        .item {
+            width: 120px;
+            margin: 0 20px;
+            font-size: 14px;
+        }
+
+        .profile-nav {
+            padding: 25px;
+        }
+
+        .pfp {
+            height: 5vh;
+            width: 5vh;
+        }
+    }
+
+
+    @media (max-width: 768px) {
+
+        .navbarLink {
+            padding: 10px 5px;
+            height: 65px;
+        }
+
+        .nav--list {
+            justify-content: center;
+        }
+
+        .item {
+            transform: none;            /* Prevent extreme skew on small screens */
+            width: 100px;
+            height: 35px;
+            margin: 0 10px;
+            font-size: 12px;
+            letter-spacing: 2px;
+        }
+
+        .item:not(.active),
+        .item:hover:not(.active) {
+            transform: none; /* disable skew animations */
+        }
+
+        .item:before,
+        .item:after {
+            display: none; /* pseudo-3D edges removed on small screens */
+        }
+
+        .profile-nav {
+            padding: 20px;
+        }
+
+        .pfp {
+            height: 45px;
+            width: 45px;
+        }
+
+        .pfp-hover {
+            height: auto;
+            padding: 0.5rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+
+        .navbarLink {
+            flex-direction: column;
+            height: auto;
+            padding: 10px 0;
+        }
+
+        .nav--list {
+            flex-direction: column;
+            width: 100%;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item {
+            width: 85%;
+            height: 40px;
+            margin: 5px 0;
+            font-size: 14px;
+            transform: none;
+            background: rgba(29, 111, 163, 0.75);
+            border-radius: 5px;
+        }
+
+        .item.active {
+            background: rgba(0, 255, 213, 0.75);
+        }
+
+        .item:before,
+        .item:after {
+            display: none;
+        }
+
+        .profile-nav {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            padding: 10px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .pfp {
+            height: 40px;
+            width: 40px;
+            margin-bottom: 3px;
+        }
+
+        .pfp-hover {
+            width: auto;
+            font-size: 12px;
+        }
+
+        .logout,
+        .settings {
+            font-size: 12px;
+            padding: 4px 8px;
+        }
+    }
+
+

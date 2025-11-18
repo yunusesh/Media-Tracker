@@ -15,6 +15,7 @@ import java.util.List;
 public class ArtistDTO {
     private Integer id;
     private String mbid;
+    private String spotifyId;
     private String artistName;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<GenreDTO> genres = new ArrayList<>();
@@ -23,6 +24,7 @@ public class ArtistDTO {
     public ArtistDTO(Artist artist) {
         this.id = artist.getId();
         this.mbid = artist.getMbid();
+        this.spotifyId = artist.getSpotifyId();
         this.artistName = artist.getArtistName();
         this.genres = artist.getGenres().stream().map(GenreDTO::new).toList();
     }
