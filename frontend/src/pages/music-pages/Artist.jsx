@@ -60,7 +60,7 @@ export function Artist() {
     const {data: artistDB} = useQuery({
         queryKey: ['artistDB', id],
         queryFn: () => fetchArtistFromDB(),
-        enabled: !!id
+        enabled: !!id && !!data
     })
 
     async function fetchUserScrobbles() {

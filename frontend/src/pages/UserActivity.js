@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {useQuery} from "react-query";
 import {useNavigate, useParams} from "react-router-dom";
 import "./UserActivity.css"
 
 export function UserActivity() {
-    const {username} = useParams()
+    const {username, page} = useParams()
     const navigate = useNavigate()
     const [listened, setListened] = useState([])
 
@@ -30,11 +30,19 @@ export function UserActivity() {
         enabled: !!userData?.id
     })
 
+
+    const sortedListens = useMemo(() => {
+        if (!userListens) return [];
+
+        return [...userListens].sort(
+            (a, b) => new Date(b.firstListenedAt) - new Date(a.firstListenedAt)
+        );
+    }, [userListens]);
+
     useEffect(() => {
-        if (userListens) {
-            setListened(userListens.sort((a, b) => new Date(b.firstListenedAt) - new Date(a.firstListenedAt)))
-        }
-    }, [userListens])
+        setListened(sortedListens.slice(60 * (page - 1), 60 * page));
+    }, [sortedListens, page]);
+
 
     function handleDate(sqlDate) {
         const timestamp = new Date(sqlDate).toLocaleString()
@@ -46,14 +54,14 @@ export function UserActivity() {
         <div className="user-ratings-page">
             <h1 className="category">All Activity</h1>
             <div className="user-ratings">
-                {listened.map(track => (
-                    <div className="ratings-page-item" key={track.trackMbid}>
+                {listened.map((track, i) => (
+                    <div className="ratings-page-item" key={i}>
                         <img className="ratings-item-img"
                              src={
-                            track.releaseMbid ?
-                                 `https://coverartarchive.org/release-group/${track.releaseMbid}/front` :
-                                `https://coverartarchive.org/release-group/${track.altReleaseMbid}/front`
-                        }
+                                 track.releaseMbid ?
+                                     `https://coverartarchive.org/release-group/${track.releaseMbid}/front` :
+                                     `https://coverartarchive.org/release-group/${track.altReleaseMbid}/front`
+                             }
                              alt="placeholder.png"
                              onClick={() => {
                                  navigate(`/music/track/${track.trackMbid}`)
@@ -61,7 +69,6 @@ export function UserActivity() {
                         />
                         <div className="ratings-release-info">
                             <h5 className="profile-item-title"
-                                key={track.trackTitle}
                                 onClick={() => {
                                     navigate(`/music/track/${track.trackMbid}`)
                                 }}
@@ -69,9 +76,9 @@ export function UserActivity() {
                             <h5 className="format">
                                 Track by
                             </h5>
-                            <div className = "profile-item-container">
+                            <div className="profile-item-container">
                                 {track.artists.map((artist, index, array) => (
-                                    <span key={artist.id}>
+                                    <span key={index}>
                                     <h5 className="profile-item-artist"
                                         onClick={() => navigate(`/music/artist/${artist.mbid}`)}
                                     >
@@ -91,6 +98,17 @@ export function UserActivity() {
                     </div>
                 ))}
             </div>
+            <footer className="pages">
+                {Array.from({length: Math.ceil(userListens?.length / 60)}).map((_, i) => (
+                    <button className="page-button"
+                            key={i}
+                            onClick={() => {
+                                navigate(`/user/${username}/activity/${i + 1}`)
+                            }}>
+                        {i + 1}
+                    </button>
+                ))}
+            </footer>
         </div>
     )
 }

@@ -66,20 +66,18 @@ export function Track() {
     const {data: trackDB} = useQuery({
         queryKey: ['trackDB', id],
         queryFn: () => fetchTrackFromDB(),
-        enabled: !!id
+        enabled: !!id && !!data
     })
 
     async function fetchRating() {
-        if (user && trackDB) {
-            const response = await fetch(`http://localhost:8081/api/track-rating/user/${user.id}/track/${trackDB.id}`)
-            return response.json()
-        }
+        const response = await fetch(`http://localhost:8081/api/track-rating/user/${user.id}/track/${trackDB.id}`)
+        return response.json()
     }
 
     const {data: userRating} = useQuery({
         queryKey: ['userRating', user?.id, trackDB?.id],
         queryFn: () => fetchRating(),
-        enabled: !!user && !!trackDB
+        enabled: !!user?.id && !!trackDB?.id
     })
 
     useEffect(() => {
@@ -90,16 +88,15 @@ export function Track() {
 
 
     async function fetchUserScrobbles() {
-        if (user && trackDB) {
-            const response = await fetch(`http://localhost:8081/api/scrobble/user/${user.id}/track/${trackDB.id}`)
-            return response.json()
-        }
+        const response = await fetch(`http://localhost:8081/api/scrobble/user/${user.id}/track/${trackDB.id}`)
+        return response.json()
+
     }
 
     const {data: userScrobbles} = useQuery({
         queryKey: ['userScrobbles', user?.id, trackDB?.id],
         queryFn: () => fetchUserScrobbles(),
-        enabled: !!user && !!trackDB
+        enabled: !!user?.id && !!trackDB?.id
     })
 
     useEffect(() => {
@@ -171,18 +168,18 @@ export function Track() {
                     <div className="title-date-artist">
                         <h1 className="title">{data?.title}</h1>
                         <h3 className="date">{data?.["first-release-date"]?.substring(0, 4)} • Track by </h3>
-                            {data?.["artist-credit"]?.map((artist, index, array) => (
-                                <span key={artist.id}>
+                        {data?.["artist-credit"]?.map((artist, index, array) => (
+                            <span key={artist.id}>
                                     <h2 className="artist"
                                         onClick={() => navigate(`/music/artist/${artist.id}`)}
                                     >
                                     {artist.name}
                                     </h2>
-                                    {index < array.length - 1 && (
-                                        <span>{index === array.length - 2 ? " & " : ", "}</span>
-                                    )}
+                                {index < array.length - 1 && (
+                                    <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                )}
                                 </span>
-                            ))}
+                        ))}
                     </div>
                     <h3 className="releases">Appears on</h3>
                     {data?.releases?.map(releaseGroup =>

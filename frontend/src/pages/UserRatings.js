@@ -1,11 +1,11 @@
 import {useNavigate, useParams} from "react-router-dom";
 import {useQuery} from "react-query";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {FaStar} from "react-icons/fa";
 import "./UserRatings.css"
 
 export function UserRatings() {
-    const {username} = useParams()
+    const {username, page} = useParams()
     const navigate = useNavigate()
     const [ratings, setRatings] = useState([])
 
@@ -42,18 +42,24 @@ export function UserRatings() {
         enabled: !!userData?.id,
     })
 
+
+    const userRatings = useMemo(() => {
+        if (!userTrackRatings || !userReleaseRatings) return [];
+        return [...userTrackRatings, ...userReleaseRatings].sort(
+            (a, b) => new Date(b.ratedAt) - new Date(a.ratedAt));
+    }, [userTrackRatings, userReleaseRatings]);
+
     useEffect(() => {
-        if (userTrackRatings && userReleaseRatings) {
-            const userRatings = userTrackRatings.concat(userReleaseRatings)
-            setRatings(userRatings.sort((a, b) => new Date(b.ratedAt) - new Date(a.ratedAt)))
-        }
-    }, [userTrackRatings, userReleaseRatings])
+        setRatings(userRatings.slice(60 * (page - 1), 60 * page))
+
+    }, [userRatings, page])
+
     return (
         <div className="user-ratings-page">
             <h1 className="category">All Ratings</h1>
             <div className="user-ratings">
-                {ratings.map(rating => (
-                    <div className="ratings-page-item" key={rating.mbid}>
+                {ratings.map((rating, i) => (
+                    <div className="ratings-page-item" key={i}>
                         <img className="ratings-item-img"
                              src={`https://coverartarchive.org/release-group/${rating.releaseMbid}/front`}
                              alt="placeholder.png"
@@ -68,14 +74,12 @@ export function UserRatings() {
                         <div className="ratings-release-info">
                             {rating.title ?
                                 <h5 className="profile-item-title"
-                                    key={rating.title}
                                     onClick={() => {
                                         navigate(`/music/album/${rating.releaseMbid}`)
                                     }}
                                 >{rating.title} </h5>
                                 :
                                 <h5 className="profile-item-title"
-                                    key={rating.trackTitle}
                                     onClick={() => {
                                         navigate(`/music/track/${rating.trackMbid}`)
                                     }}
@@ -83,15 +87,15 @@ export function UserRatings() {
 
                             }
                             {rating.format ?
-                                <h5 className="format" key={rating.format}>
+                                <h5 className="format">
                                     {rating.format.charAt(0).toUpperCase() + rating.format.slice(1)} by
                                 </h5>
                                 :
-                                <h5 className="format" key="track">
+                                <h5 className="format">
                                     Track by
                                 </h5>
                             }
-                            <div className = "profile-item-container">
+                            <div className="profile-item-container">
                                 {rating.artists.map((artist, index, array) => (
                                     <span key={artist.id}>
                                     <h5 className="profile-item-artist"
@@ -115,7 +119,7 @@ export function UserRatings() {
                                                 rating.rating >= 1 && rating.rating <= 3 ? "rating-value-low" :
                                                     "rating-value-zero"
 
-                            } key={rating.id}>
+                            }>
                                 <FaStar className="star-profile"/>
                                 {rating.rating}/10
                             </h5>
@@ -123,6 +127,17 @@ export function UserRatings() {
                     </div>
                 ))}
             </div>
+            <footer className="pages">
+                {Array.from({length: Math.ceil(userRatings.length / 60)}).map((_, i) => (
+                    <button className="page-button"
+                            key = {i}
+                            onClick={() => {
+                                navigate(`/user/${username}/ratings/${i + 1}`)
+                            }}>
+                        {i + 1}
+                    </button>
+                ))}
+            </footer>
         </div>
     )
 }

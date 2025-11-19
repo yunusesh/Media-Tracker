@@ -18,7 +18,7 @@ export function Album() {
     const currentMonth = currentDate.getMonth()
     const currentDay = currentDate.getDay()
     const [visible, setVisible] = useState(false);
-    const [albumImage, setAlbumImage] = useState("")
+    const [albumImage, setAlbumImage] = useState(null)
     const [albumTitle, setAlbumTitle] = useState("")
     const [albumDate, setAlbumDate] = useState("")
     const [albumReissue, setAlbumReissue] = useState("")
@@ -41,10 +41,10 @@ export function Album() {
     const {data, status} = useQuery({
         queryKey: ['album', id],
         queryFn: () => fetchAlbum(id),
-        enabled: !!id //refetch and update page when key (id) changes (we are now on a new album page)
+        enabled: !!id
     })
 
-    //this only exists to dynamically update page contents based on what reissue is selected, default to releaseGroup
+    //this exists to dynamically update page contents based on what reissue is selected, default to releaseGroup
     useEffect(() => {
         if (data) {
             setAlbumImage(`https://coverartarchive.org/release-group/${data.id}/front`)
@@ -58,7 +58,7 @@ export function Album() {
     }, [data])
 
     async function fetchReleaseFromDB() {
-        if (data) {
+            console.log(releaseDB)
             const response = await axios.post(`http://localhost:8081/api/release/getOrCreate`, {
                 releaseMbid: id,
                 title: data.title,
@@ -74,26 +74,25 @@ export function Album() {
                 })) || [] //genre & artist object naming on mbid is different from the db so we have to map to correct name
             })
             return response.data
-        }
+
     }
 
     const {data: releaseDB} = useQuery({
         queryKey: ['releaseDB', id],
         queryFn: () => fetchReleaseFromDB(),
-        enabled: !!id
+        enabled: !!id && !!data
     })
 
     async function fetchRating() {
-        if (user && releaseDB) {
-            const response = await fetch(`http://localhost:8081/api/release-rating/user/${user.id}/release/${releaseDB.id}`)
-            return response.json()
-        }
+        const response = await fetch(`http://localhost:8081/api/release-rating/user/${user.id}/release/${releaseDB.id}`)
+        return response.json()
     }
 
     const {data: userRating} = useQuery({
         queryKey: ['userRating', user?.id, releaseDB?.id],
         queryFn: () => fetchRating(),
-        enabled: !!user && !!releaseDB
+        enabled: !!user || !!releaseDB,
+        refetchOnWindowFocus: false
     })
 
     useEffect(() => {

@@ -34,7 +34,7 @@ public class SpotifyAutoScrobbleService {
     private boolean scrobbled;
 
     @Async
-    @Scheduled(fixedRate = 5000)
+    //@Scheduled(fixedRate = 5000)
     public void autoScrobble() {
         UserSpotify user = userSpotifyRepository.findById(4)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -53,6 +53,11 @@ public class SpotifyAutoScrobbleService {
                     request,
                     JsonNode.class
             );
+
+            if(response.getBody() == null){
+                System.out.println("No track playing");
+                return;
+            }
 
             long duration = Long.parseLong(response.getBody().get("item").get("duration_ms").toString());
 
@@ -88,6 +93,9 @@ public class SpotifyAutoScrobbleService {
                 userSpotifyRepository.save(user);
                 return;
 
+            }
+            if(error.getStatusCode() == HttpStatus.NO_CONTENT){
+                System.out.println("No track playing");
             }
         }
 

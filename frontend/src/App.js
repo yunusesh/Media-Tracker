@@ -40,8 +40,8 @@ function App() {
                             <Route path="/login" element={<Login/>}/>
                             <Route path="/user/:username" element={<User/>}/>
                             <Route path="/register" element={<Register/>}/>
-                            <Route path="/user/:username/music/ratings" element={<UserRatings/>}/>
-                            <Route path="/user/:username/music/activity" element={<UserActivity/>}/>
+                            <Route path="/user/:username/ratings/:page" element={<UserRatings/>}/>
+                            <Route path="/user/:username/activity/:page" element={<UserActivity/>}/>
                             <Route path="/settings" element={<Settings/>}/>
                             <Route path="/callback" element={<Settings/>}/>
                         </Routes>
