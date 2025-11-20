@@ -1,7 +1,9 @@
 package product.scrobble.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import product.release.model.Release;
 import product.track.model.Track;
@@ -11,6 +13,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Data
+@NoArgsConstructor
 @Table(name = "scrobble")
 public class Scrobble {
     @Id
@@ -42,4 +45,10 @@ public class Scrobble {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "release_id", insertable = false, updatable = false)
     private Release release;
+
+    public Scrobble (Integer userId, Integer trackId, Integer releaseId){
+        this.userId = userId;
+        this.trackId = trackId;
+        this.releaseId = releaseId;
+    }
 }

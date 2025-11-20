@@ -21,7 +21,12 @@ public interface TrackRepository extends JpaRepository<Track, Integer> {
        also creates a link between the track and release
      */
     @Query(value = """
-WITH genre_data AS (
+WITH lock AS (
+    -- acquire an advisory lock for this release MBID for the life of the current transaction
+    SELECT pg_advisory_xact_lock(hashtext(:releaseMbid)::bigint) AS lk
+),
+
+genre_data AS (
     SELECT UNNEST(:genreMbids) AS mbid,
            UNNEST(:genreNames) AS genre_name
 ),
@@ -79,7 +84,7 @@ insert_track_release AS (
     CROSS JOIN release_final rf
     ON CONFLICT DO NOTHING
 ),
-    
+
 insert_track_artists AS (
     INSERT INTO track_artist (track_id, artist_id)
     SELECT it.id, ia.id
@@ -96,13 +101,14 @@ insert_track_genres AS (
     ON CONFLICT DO NOTHING
 )
 
-            SELECT *
-            FROM inserted_track
-            UNION ALL
-            SELECT *
-            FROM track
-            WHERE mbid = :trackMbid
-            LIMIT 1;
+SELECT *
+FROM inserted_track
+UNION ALL
+SELECT *
+FROM track
+WHERE mbid = :trackMbid
+LIMIT 1;
+
 """, nativeQuery = true)
     Track upsertTrack(
             @Param("trackMbid") String trackMbid,

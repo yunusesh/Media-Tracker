@@ -57,7 +57,18 @@ export function UserRatings() {
     return (
         <div className="user-ratings-page">
             <h1 className="category">All Ratings</h1>
-            <div className="user-ratings">
+            <header className="pages">
+                {Array.from({length: Math.ceil(userRatings.length / 60)}).map((_, i) => (
+                    <button className="page-button"
+                            key = {i}
+                            onClick={() => {
+                                navigate(`/user/${username}/ratings/${i + 1}`)
+                            }}>
+                        {i + 1}
+                    </button>
+                ))}
+            </header>
+            <div className="user-ratings" id = "top">
                 {ratings.map((rating, i) => (
                     <div className="ratings-page-item" key={i}>
                         <img className="ratings-item-img"
@@ -133,6 +144,8 @@ export function UserRatings() {
                             key = {i}
                             onClick={() => {
                                 navigate(`/user/${username}/ratings/${i + 1}`)
+                                document.getElementById("top")
+                                    .scrollIntoView({block: "end", behavior: "smooth"})
                             }}>
                         {i + 1}
                     </button>

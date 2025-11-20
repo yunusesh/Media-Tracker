@@ -12,7 +12,7 @@
     justify-items: center;
     width: 70%;
     position: relative;
-    padding-bottom: 3rem;
+    padding-bottom: 1rem;
 }
 
 .user-ratings::after{
@@ -71,6 +71,7 @@
 .pages{
     display: flex;
     gap: 1rem;
+    padding: 1rem 0 1rem 0;
 }
 
 .page-button{
