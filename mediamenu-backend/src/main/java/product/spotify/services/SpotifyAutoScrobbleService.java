@@ -18,10 +18,11 @@ import product.spotify.UserSpotifyRepository;
 import product.spotify.model.UserSpotify;
 import product.track.model.TrackDTO;
 import product.track.services.GetOrCreateTrackService;
-
+import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.StreamSupport;
 
 @Service
 public class SpotifyAutoScrobbleService {
@@ -118,15 +119,18 @@ public class SpotifyAutoScrobbleService {
 
     @Async
     public void scrobblePipeline(JsonNode trackData) {
+        //TRACK first try matching by isrc DONE, then by spotify link, then by fuzzy search
+        //RELEASE GROUP first try matching by spotify link DONE, then by fuzzy search, then by recording -> release -> first release group DONE
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "MediaMenu/1.0 (yunuseshesh@gmail.com)");
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         String isrc = trackData.get("item").get("external_ids").get("isrc").asText();
 
+        String releaseUrl = trackData.get("item").get("album").get("external_urls").get("spotify").asText();
+
         CompletableFuture<ResponseEntity<JsonNode>> isrcResponse =
                 CompletableFuture.supplyAsync(() ->
-                        // add try catch
                         restTemplate.exchange(
                                 "https://musicbrainz.org/ws/2/isrc/" + isrc + "?inc=release-rels&fmt=json",
                                 HttpMethod.GET,
@@ -135,26 +139,18 @@ public class SpotifyAutoScrobbleService {
                         )
                 );
 
-        String trackMbid = isrcResponse.join()
-                .getBody()
-                .get("recordings")
-                .get(0)
-                .get("id")
-                .asText();
+        JsonNode recordings = isrcResponse.join().getBody().get("recordings");
 
-        String trackTitle = isrcResponse.join()
-                .getBody()
-                .get("recordings")
-                .get(0)
-                .get("title")
-                .asText();
+        //sometimes multiple instances of the same track can have the same isrc, so get the earliest one
 
-        String releaseDate = isrcResponse.join()
-                .getBody()
-                .get("recordings")
-                .get(0)
-                .get("first-release-date")
-                .asText();
+        JsonNode earliestRecording = StreamSupport.stream(recordings.spliterator(), false)
+                .min(Comparator.comparing(r -> r.get("first-release-date").asText()))
+                .get();
+
+        String trackMbid = earliestRecording.get("id").asText();
+        String trackTitle = earliestRecording.get("title").asText();
+        String releaseDate = earliestRecording.get("first-release-date").asText();
+
 
         CompletableFuture<ResponseEntity<JsonNode>> recordingResponse =
                 isrcResponse.thenCompose(json ->
@@ -170,13 +166,44 @@ public class SpotifyAutoScrobbleService {
                         ));
 
         CompletableFuture<ResponseEntity<MBAlbumDTO>> releaseGroupResponse =
-                recordingResponse.thenCompose(json ->
-                        CompletableFuture.supplyAsync(() ->
-                                mbAlbumService.execute(
-                                        json.getBody().get("releases").get(0).get("release-group").get("id").asText()
-                                )
-                        )
-                );
+                CompletableFuture.supplyAsync(() -> {
+                    // Attempt to get release-group via spotify URL
+                    JsonNode urlResponse = restTemplate.exchange(
+                            "https://musicbrainz.org/ws/2/url?resource=" + releaseUrl +
+                                    "&fmt=json&inc=release-rels",
+                            HttpMethod.GET,
+                            entity,
+                            JsonNode.class
+                    ).getBody();
+
+                    String releaseId = urlResponse.get("relations").get(0)
+                            .get("release").get("id").asText();
+
+                    JsonNode releaseResponse = restTemplate.exchange(
+                            "https://musicbrainz.org/ws/2/release/" + releaseId +
+                                    "?inc=release-groups&fmt=json",
+                            HttpMethod.GET,
+                            entity,
+                            JsonNode.class
+                    ).getBody();
+
+                    String releaseGroupId = releaseResponse.get("release-group")
+                            .get("id").asText();
+
+                    return mbAlbumService.execute(releaseGroupId);
+
+                }).exceptionallyCompose(ex -> {
+                    // Fallback: use recordingResponse if MB URL lookup fails
+                    return recordingResponse.thenCompose(json ->
+                            CompletableFuture.supplyAsync(() ->
+                                    mbAlbumService.execute(
+                                            json.getBody()
+                                                    .get("releases").get(0)
+                                                    .get("release-group").get("id").asText()
+                                    )
+                            )
+                    );
+                });
 
         releaseGroupResponse.thenAccept(result -> {
             ResponseEntity<TrackDTO> track = getOrCreateTrackService.execute(
@@ -198,16 +225,15 @@ public class SpotifyAutoScrobbleService {
 
             Optional<Release> releaseOptional = releaseRepository.findByMbid(result.getBody().getId());
 
-            if (releaseOptional.isPresent()){
+            if (releaseOptional.isPresent()) {
                 Scrobble scrobble = new Scrobble(
                         4,
                         track.getBody().getId(),
                         releaseOptional.get().getId()
-                        );
+                );
 
                 createScrobbleService.execute(scrobble);
-            }
-            else{
+            } else {
                 System.out.println("Release not found");
             }
         });

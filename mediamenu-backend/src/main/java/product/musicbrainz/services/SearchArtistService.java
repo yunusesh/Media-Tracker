@@ -41,7 +41,6 @@ public class SearchArtistService implements Query<String, SearchArtistDTO> {
                 MBArtistResponse.class
         );
 
-        System.out.println(url + name + "&fmt=json");
         List<MBArtistDTO> artists = response.getBody().getArtists().stream()
                 .map(artist -> new MBArtistDTO(artist.getName(), artist.getId()))
                 .toList();

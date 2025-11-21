@@ -30,10 +30,6 @@ export function Navbar() {
                         >Home</Link>
                         <Link to="/music" className={`item ${location.pathname.includes("/music") ? "active" : ""}`}
                         >Music</Link>
-                        <Link to="/movies" className={`item ${location.pathname.includes("/movies") ? "active" : ""}`}
-                        >Movies</Link>
-                        <Link to="/tv" className={`item ${location.pathname.includes("/tv") ? "active" : ""}`}
-                        >TV</Link>
                     </ul>
                     <SearchBar buttonsEnabled={true}/>
                 </nav>

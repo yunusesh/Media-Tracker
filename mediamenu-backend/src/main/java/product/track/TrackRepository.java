@@ -21,12 +21,7 @@ public interface TrackRepository extends JpaRepository<Track, Integer> {
        also creates a link between the track and release
      */
     @Query(value = """
-WITH lock AS (
-    -- acquire an advisory lock for this release MBID for the life of the current transaction
-    SELECT pg_advisory_xact_lock(hashtext(:releaseMbid)::bigint) AS lk
-),
-
-genre_data AS (
+WITH genre_data AS (
     SELECT UNNEST(:genreMbids) AS mbid,
            UNNEST(:genreNames) AS genre_name
 ),

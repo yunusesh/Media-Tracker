@@ -58,22 +58,21 @@ export function Album() {
     }, [data])
 
     async function fetchReleaseFromDB() {
-            console.log(releaseDB)
-            const response = await axios.post(`http://localhost:8081/api/release/getOrCreate`, {
-                releaseMbid: id,
-                title: data.title,
-                releaseDate: data["first-release-date"],
-                format: data["primary-type"],
-                artists: data["artist-credit"]?.map(artist => ({
-                    mbid: artist.id,
-                    artistName: artist.name
-                })) || [],
-                genres: data.genres?.map(genre => ({
-                    mbid: genre.id,
-                    genreName: genre.name
-                })) || [] //genre & artist object naming on mbid is different from the db so we have to map to correct name
-            })
-            return response.data
+        const response = await axios.post(`http://localhost:8081/api/release/getOrCreate`, {
+            releaseMbid: id,
+            title: data.title,
+            releaseDate: data["first-release-date"],
+            format: data["primary-type"],
+            artists: data["artist-credit"]?.map(artist => ({
+                mbid: artist.id,
+                artistName: artist.name
+            })) || [],
+            genres: data.genres?.map(genre => ({
+                mbid: genre.id,
+                genreName: genre.name
+            })) || [] //genre & artist object naming on mbid is different from the db so we have to map to correct name
+        })
+        return response.data
 
     }
 
@@ -84,14 +83,16 @@ export function Album() {
     })
 
     async function fetchRating() {
-        const response = await fetch(`http://localhost:8081/api/release-rating/user/${user.id}/release/${releaseDB.id}`)
-        return response.json()
+        if (user && releaseDB) {
+            const response = await fetch(`http://localhost:8081/api/release-rating/user/${user.id}/release/${releaseDB.id}`)
+            return response.json()
+        }
     }
 
     const {data: userRating} = useQuery({
         queryKey: ['userRating', user?.id, releaseDB?.id],
         queryFn: () => fetchRating(),
-        enabled: !!user || !!releaseDB,
+        enabled: !!user && !!releaseDB,
         refetchOnWindowFocus: false
     })
 
@@ -149,9 +150,13 @@ export function Album() {
 
 
     useEffect(() => {
-        const fetchTrackListFromDB = async () => {
-            try {
-                const responses = await Promise.all(albumReissue?.tracklist.map(track => axios.post('http://localhost:8081/api/track/getOrCreate', {
+        if (!albumReissue || !data) return;
+
+        (async () => {
+            const tracklistData = [];
+
+            for (const track of albumReissue.tracklist) {
+                const response = await axios.post('http://localhost:8081/api/track/getOrCreate', {
                     trackMbid: track.recording.id,
                     trackTitle: track.title,
                     releaseDate: track.recording["first-release-date"],
@@ -159,23 +164,21 @@ export function Album() {
                     releaseTitle: albumReissue.title,
                     format: data["primary-type"],
                     artists: track.recording["artist-credit"]
-                        ?.map(credit => credit.artist)
-                        ?.filter(artist => artist?.id)
-                        ?.map(artist => ({
-                            mbid: artist.id,
-                            artistName: artist.name
+                        ?.map(c => c.artist)
+                        ?.filter(a => a?.id)
+                        ?.map(a => ({
+                            mbid: a.id,
+                            artistName: a.name
                         })) || [],
-                })))
-                const tracklistData = await Promise.all(responses.map(response => response.data))
-                setTracklistDB(tracklistData)
-            } catch (error) {
-                console.error("Failed to fetch tracklist", error)
+                });
+
+                tracklistData.push(response.data);
             }
-        }
-        if (albumReissue && data) {
-            fetchTrackListFromDB()
-        }
-    }, [id, albumReissue, data])
+
+            setTracklistDB(tracklistData);
+        })();
+    }, [id, albumReissue, data]);
+
 
     const logSuccess = () => toast.success('Release Logged', {
         position: "bottom-center",

@@ -59,11 +59,12 @@
             List<MBReleaseDTO> releases = new ArrayList<>();
             Set<String> seenIds = new HashSet<>();
             for(MBReleaseDTO release : response.getBody().getReleases()){
-                if(seenIds.contains(release.getDisambiguation())){
+                if(seenIds.contains(release.getTitle()) && seenIds.contains(release.getDisambiguation())){
                     continue;
                 }
 
                 seenIds.add(release.getDisambiguation());
+                seenIds.add(release.getTitle());
                 releases.add(release);
             }
 
