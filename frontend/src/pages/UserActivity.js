@@ -75,13 +75,13 @@ export function UserActivity() {
                              }
                              alt="placeholder.png"
                              onClick={() => {
-                                 navigate(`/music/track/${track.trackMbid}`)
+                                 navigate(`/track/${track.trackMbid}`)
                              }}
                         />
                         <div className="ratings-release-info">
                             <h5 className="profile-item-title"
                                 onClick={() => {
-                                    navigate(`/music/track/${track.trackMbid}`)
+                                    navigate(`/track/${track.trackMbid}`)
                                 }}
                             >{track.trackTitle} </h5>
                             <h5 className="format">
@@ -91,7 +91,7 @@ export function UserActivity() {
                                 {track.artists.map((artist, index, array) => (
                                     <span key={index}>
                                     <h5 className="profile-item-artist"
-                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                        onClick={() => navigate(`/artist/${artist.mbid}`)}
                                     >
                                     {artist.artistName}
                                     </h5>

@@ -90,18 +90,18 @@ export default function SearchBar({searchTypeProp, buttonsEnabled, onClickFuncti
             )}
             <div className="results-list">
                 {
-                    results.map((result) => (
-                        <div className="search-result"
+                    results.map((result, index) => (
+                        <div className="search-result" key ={index}
                              onClick={() => {
                                  if (searchType === "artists") {
-                                     navigate(`/music/artist/${result.id}`)
+                                     navigate(`/artist/${result.id}`)
                                  } else if (searchType === "releases") {
                                      {
-                                         buttonsEnabled ? navigate(`/music/album/${result.id}`) :
+                                         buttonsEnabled ? navigate(`/album/${result.id}`) :
                                              onClickFunction(result)
                                      }
                                  } else if (searchType === "tracks") {
-                                     navigate(`/music/track/${result.id}`)
+                                     navigate(`/track/${result.id}`)
                                  } else alert('Invalid search type')
                              }
                              }
@@ -120,7 +120,7 @@ export default function SearchBar({searchTypeProp, buttonsEnabled, onClickFuncti
                                                 {result["artist-credit"]?.map((artist, index, array) => (
                                                     <span
                                                         key={artist.id}
-                                                        onClick={() => navigate(`/music/artist/${artist.id}`)}
+                                                        onClick={() => navigate(`/artist/${artist.id}`)}
                                                     >{artist.name}
                                                         {index < array.length - 1 &&
                                                             (index === array.length - 2 ? " & " : ", ")}

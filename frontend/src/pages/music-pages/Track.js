@@ -171,7 +171,7 @@ export function Track() {
                         {data?.["artist-credit"]?.map((artist, index, array) => (
                             <span key={artist.id}>
                                     <h2 className="artist"
-                                        onClick={() => navigate(`/music/artist/${artist.id}`)}
+                                        onClick={() => navigate(`/artist/${artist.id}`)}
                                     >
                                     {artist.name}
                                     </h2>
@@ -185,7 +185,7 @@ export function Track() {
                     {data?.releases?.map(releaseGroup =>
                         <div className="release-format">
                             <h2 className="release" key={releaseGroup?.id}
-                                onClick={() => navigate(`/music/album/${releaseGroup?.id}`)}
+                                onClick={() => navigate(`/album/${releaseGroup?.id}`)}
                             >{releaseGroup?.title} </h2>
                             <h4 className="format"> {releaseGroup["first-release-date"].substring(0, 4)} • {releaseGroup["primary-type"]} </h4>
                         </div>

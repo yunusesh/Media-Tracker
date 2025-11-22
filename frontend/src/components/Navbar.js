@@ -28,8 +28,6 @@ export function Navbar() {
                     <ul className="nav--list">
                         <Link to="/" className={`item ${location.pathname === "/" ? "active" : ""}`}
                         >Home</Link>
-                        <Link to="/music" className={`item ${location.pathname.includes("/music") ? "active" : ""}`}
-                        >Music</Link>
                     </ul>
                     <SearchBar buttonsEnabled={true}/>
                 </nav>

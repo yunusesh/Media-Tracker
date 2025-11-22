@@ -239,7 +239,7 @@ export function Album() {
                             {data["artist-credit"]?.map((artist, index, array) => (
                                 <span key={artist.id}>
                                     <h2 className="artist"
-                                        onClick={() => navigate(`/music/artist/${artist.id}`)}
+                                        onClick={() => navigate(`/artist/${artist.id}`)}
                                     >
                                     {artist.name}
                                     </h2>
@@ -292,7 +292,7 @@ export function Album() {
                             <h3 className="tracklist-items"
                                 key={track.id}
                                 onClick={() => {
-                                    navigate(`/music/track/${track?.recording?.id}`)
+                                    navigate(`/track/${track?.recording?.id}`)
                                 }}
 
                             >{track.title}</h3>

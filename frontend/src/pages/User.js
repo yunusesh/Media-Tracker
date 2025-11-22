@@ -96,7 +96,7 @@ export function User() {
         return response.json()
     }
 
-    const {data: userTopReleases} = useQuery({
+    const {data: userTopReleases, refetch: refetchTop5} = useQuery({
         queryKey: ["userTopReleases", userData?.id],
         queryFn: () => fetchUserTop5(),
         enabled: !!userData?.id
@@ -157,16 +157,27 @@ export function User() {
     }
 
     async function handleTop5Save() {
-        await Promise.all(top5.map((item, newTier) => axios.put(`http://localhost:8081/api/user/${user.id}/top/releases`, {
-            userId: user.id,
-            tier: newTier + 1, //tiers are 1-5, index is 1-4
-            releaseId: item.releaseId
-        })))
+        console.log(top5)
+        await Promise.all(Array.from({length: 5}).map((_, index) => {
+            if (index + 1 > top5.length){
+                axios.delete(`http://localhost:8081/api/user/${user.id}/top/releases/${index + 1}`)
+            }
+            else{
+                axios.put(`http://localhost:8081/api/user/${user.id}/top/releases`, {
+                    userId: user.id,
+                    tier: index + 1, //tiers are 1-5, index is 1-4
+                    releaseId: top5[index].releaseId
+                })
+            }
+
+        }))
+
         saveSuccess()
     }
 
-    async function removeTop5Item(index) {
-        await axios.delete(`http://localhost:8081/api/user/${user.id}/top/releases/${index}`)
+    function removeTop5Item(index) {
+        const tempTop5 = top5.filter((_, i) => i + 1 !== index);
+        setTop5(tempTop5)
     }
 
     async function addTop5Item(release) {
@@ -175,18 +186,28 @@ export function User() {
             title: release.title,
             releaseDate: release["first-release-date"],
             format: release["primary-type"],
-            artists: release["artist-credit"]?.map(artist => ({
-                mbid: artist.id,
-                artistName: artist.name
-            })) || [],
+            artists: release["artist-credit"]
+                ?.map(c => c.artist)
+                ?.filter(a => a?.id)
+                ?.map(a => ({
+                    mbid: a.id,
+                    artistName: a.name
+                })) || [],
         })
 
-        await axios.post('http://localhost:8081/api/user/top/release', {
-            userId: user.id,
+        const newItem  = {
             tier: top5.length + 1,
-            releaseId: response.data.id
-        })
-        handleTop5Save()
+            userId: user.id,
+            releaseId: response.data.id,
+            releaseMbid: release.releaseGroupId,
+            releaseTitle: release.title,
+            format: release["primary-type"],
+            artists: response.data.artists
+        }
+
+        const tempTop5 = [...top5]
+        tempTop5.push(newItem)
+        setTop5(tempTop5)
     }
 
     const saveSuccess = () => toast.success('Saved Changes', {
@@ -309,8 +330,8 @@ export function User() {
                                      onClick={() => {
                                          navigate(
                                              release.releaseTitle ?
-                                                 `/music/album/${release.releaseMbid}` :
-                                                 `/music/track/${release.trackMbid}`
+                                                 `/album/${release.releaseMbid}` :
+                                                 `/track/${release.trackMbid}`
                                          )
                                      }}
                                      key={index}
@@ -319,13 +340,13 @@ export function User() {
                                     {release.releaseTitle ?
                                         <h4 className="profile-item-title"
                                             onClick={() => {
-                                                navigate(`/music/album/${release.releaseMbid}`)
+                                                navigate(`/album/${release.releaseMbid}`)
                                             }}
                                         >{release.releaseTitle} </h4>
                                         :
                                         <h4 className="profile-item-title"
                                             onClick={() => {
-                                                navigate(`/music/track/${release.trackMbid}`)
+                                                navigate(`/track/${release.trackMbid}`)
                                             }}
                                         >{release.trackTitle} </h4>
                                     }
@@ -342,7 +363,7 @@ export function User() {
                                         {release.artists.map((artist, index, array) => (
                                             <span key={index}>
                                     <h4 className="profile-item-artist"
-                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                        onClick={() => navigate(`/artist/${artist.mbid}`)}
                                     >
                                     {artist.artistName}
                                     </h4>{index < array.length - 1 && (
@@ -372,8 +393,8 @@ export function User() {
                                      onClick={() => {
                                          navigate(
                                              rating.title ?
-                                                 `/music/album/${rating.releaseMbid}` :
-                                                 `/music/track/${rating.trackMbid}`
+                                                 `/album/${rating.releaseMbid}` :
+                                                 `/track/${rating.trackMbid}`
                                          )
                                      }}
                                 />
@@ -381,13 +402,13 @@ export function User() {
                                     {rating.title ?
                                         <h4 className="profile-item-title"
                                             onClick={() => {
-                                                navigate(`/music/album/${rating.releaseMbid}`)
+                                                navigate(`/album/${rating.releaseMbid}`)
                                             }}
                                         >{rating.title} </h4>
                                         :
                                         <h4 className="profile-item-title"
                                             onClick={() => {
-                                                navigate(`/music/track/${rating.trackMbid}`)
+                                                navigate(`/track/${rating.trackMbid}`)
                                             }}
                                         >{rating.trackTitle} </h4>
                                     }
@@ -404,7 +425,7 @@ export function User() {
                                         {rating.artists.map((artist, index, array) => (
                                             <span key={index}>
                                     <h4 className="profile-item-artist"
-                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                        onClick={() => navigate(`/artist/${artist.mbid}`)}
                                     >
                                     {artist.artistName}
                                     </h4>
@@ -452,13 +473,13 @@ export function User() {
                                      }
                                      alt="placeholder.png"
                                      onClick={() => {
-                                         navigate(`/music/track/${track.trackMbid}`)
+                                         navigate(`/track/${track.trackMbid}`)
                                      }}
                                 />
                                 <div className="release-info">
                                     <h4 className="profile-item-title"
                                         onClick={() => {
-                                            navigate(`/music/track/${track.trackMbid}`)
+                                            navigate(`/track/${track.trackMbid}`)
                                         }}> {track.trackTitle}</h4>
                                     <h5 className="format">
                                         Track by
@@ -468,7 +489,7 @@ export function User() {
                                         {track.artists.map((artist, index, array) => (
                                             <span key={index}>
                                     <h4 className="profile-item-artist"
-                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                        onClick={() => navigate(`/artist/${artist.mbid}`)}
                                     >
                                     {artist.artistName}
                                     </h4>
@@ -505,8 +526,8 @@ export function User() {
                                      onClick={() => {
                                          navigate(
                                              rating.title ?
-                                                 `/music/album/${rating.releaseMbid}` :
-                                                 `/music/track/${rating.trackMbid}`
+                                                 `/album/${rating.releaseMbid}` :
+                                                 `/track/${rating.trackMbid}`
                                          )
                                      }}
                                 />
@@ -514,13 +535,13 @@ export function User() {
                                     {rating.title ?
                                         <h4 className="profile-item-title"
                                             onClick={() => {
-                                                navigate(`/music/album/${rating.releaseMbid}`)
+                                                navigate(`/album/${rating.releaseMbid}`)
                                             }}
                                         >{rating.title} </h4>
                                         :
                                         <h4 className="profile-item-title"
                                             onClick={() => {
-                                                navigate(`/music/track/${rating.trackMbid}`)
+                                                navigate(`/track/${rating.trackMbid}`)
                                             }}
                                         >{rating.trackTitle} </h4>
                                     }
@@ -537,7 +558,7 @@ export function User() {
                                         {rating.artists.map((artist, index, array) => (
                                             <span key={index}>
                                     <h4 className="profile-item-artist"
-                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                        onClick={() => navigate(`/artist/${artist.mbid}`)}
                                     >
                                     {artist.artistName}
                                     </h4>

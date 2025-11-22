@@ -160,7 +160,7 @@ export function Artist() {
                         <div className="category-releases">
                             {groups.filter(release => release["first-release-date"] != "").sort((a,b) => new Date(b["first-release-date"]) - new Date(a["first-release-date"])).map(releaseGroup => (
                                 <div className="releaseGroup-items" key={releaseGroup.id}
-                                     onClick={() => navigate(`/music/album/${releaseGroup.id}`)}>
+                                     onClick={() => navigate(`/album/${releaseGroup.id}`)}>
                                     <img className="releaseGroup-img"
                                          src={`https://coverartarchive.org/release-group/${releaseGroup.id}/front`}
                                          alt="placeholder.jpg"/>

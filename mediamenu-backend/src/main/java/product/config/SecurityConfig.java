@@ -56,7 +56,7 @@ public class SecurityConfig {
                 "http://localhost:8081",
                 "http://localhost:3000",
                 "https://inconsolably-blearier-catharine.ngrok-free.dev"));
-        configuration.setAllowedMethods(List.of("GET","POST", "PUT", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization","Content-Type"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

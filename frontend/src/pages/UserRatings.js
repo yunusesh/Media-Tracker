@@ -77,8 +77,8 @@ export function UserRatings() {
                              onClick={() => {
                                  navigate(
                                      rating.title ?
-                                         `/music/album/${rating.releaseMbid}` :
-                                         `/music/track/${rating.trackMbid}`
+                                         `/album/${rating.releaseMbid}` :
+                                         `/track/${rating.trackMbid}`
                                  )
                              }}
                         />
@@ -86,13 +86,13 @@ export function UserRatings() {
                             {rating.title ?
                                 <h5 className="profile-item-title"
                                     onClick={() => {
-                                        navigate(`/music/album/${rating.releaseMbid}`)
+                                        navigate(`/album/${rating.releaseMbid}`)
                                     }}
                                 >{rating.title} </h5>
                                 :
                                 <h5 className="profile-item-title"
                                     onClick={() => {
-                                        navigate(`/music/track/${rating.trackMbid}`)
+                                        navigate(`/track/${rating.trackMbid}`)
                                     }}
                                 >{rating.trackTitle} </h5>
 
@@ -110,7 +110,7 @@ export function UserRatings() {
                                 {rating.artists.map((artist, index, array) => (
                                     <span key={artist.id}>
                                     <h5 className="profile-item-artist"
-                                        onClick={() => navigate(`/music/artist/${artist.mbid}`)}
+                                        onClick={() => navigate(`/artist/${artist.mbid}`)}
                                     >
                                     {artist.artistName}
                                     </h5>

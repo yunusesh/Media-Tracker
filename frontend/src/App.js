@@ -27,9 +27,9 @@ function App() {
                         <Layout/>
                         <Routes>
                             <Route path="/" element={<Home/>}/>
-                            <Route path="/music/artist/:id" element={<Artist/>}/>
-                            <Route path="/music/album/:id" element={<Album/>}/>
-                            <Route path="/music/track/:id" element={<Track/>}/>
+                            <Route path="/artist/:id" element={<Artist/>}/>
+                            <Route path="/album/:id" element={<Album/>}/>
+                            <Route path="/track/:id" element={<Track/>}/>
                             <Route path="/login" element={<Login/>}/>
                             <Route path="/user/:username" element={<User/>}/>
                             <Route path="/register" element={<Register/>}/>
