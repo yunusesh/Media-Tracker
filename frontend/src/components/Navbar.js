@@ -28,6 +28,8 @@ export function Navbar() {
                     <ul className="nav--list">
                         <Link to="/" className={`item ${location.pathname === "/" ? "active" : ""}`}
                         >Home</Link>
+                        <Link to= {user ? `/user/${user.username}` : "/login"} className={`item ${location.pathname.includes("/user") ? "active" : ""}`}
+                        >Profile</Link>
                     </ul>
                     <SearchBar buttonsEnabled={true}/>
                 </nav>

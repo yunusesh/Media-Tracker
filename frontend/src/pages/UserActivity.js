@@ -55,7 +55,7 @@ export function UserActivity() {
             <h1 className="category" id = "top">All Activity</h1>
             <header className="pages">
                 {Array.from({length: Math.ceil(userListens?.length / 60)}).map((_, i) => (
-                    <button className="page-button"
+                    <button className= {i + 1 == page ? "current-page-button" : "page-button"}
                             key={i}
                             onClick={() => {
                                 navigate(`/user/${username}/activity/${i + 1}`)
@@ -111,7 +111,7 @@ export function UserActivity() {
             </div>
             <footer className="pages">
                 {Array.from({length: Math.ceil(userListens?.length / 60)}).map((_, i) => (
-                    <button className="page-button"
+                    <button className= {i + 1 == page ? "current-page-button" : "page-button"}
                             key={i}
                             onClick={() => {
                                 navigate(`/user/${username}/activity/${i + 1}`)

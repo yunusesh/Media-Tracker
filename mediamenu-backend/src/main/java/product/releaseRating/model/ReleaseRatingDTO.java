@@ -3,6 +3,7 @@ package product.releaseRating.model;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Data
@@ -10,7 +11,7 @@ import java.sql.Timestamp;
 public class ReleaseRatingDTO {
     private Integer userId;
     private Integer releaseId;
-    private Integer rating;
+    private BigDecimal rating;
     private Timestamp ratedAt;
 
     public ReleaseRatingDTO(ReleaseRating rating) {

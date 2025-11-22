@@ -572,10 +572,10 @@ export function User() {
                                 <div className="rating-value">
                                     <h4 className={
                                         rating.rating == 10 ? "rating-value-ten" :
-                                            rating.rating >= 8 && rating.rating <= 9 ? "rating-value-high" :
-                                                rating.rating >= 6 && rating.rating <= 7 ? "rating-value-med" :
-                                                    rating.rating >= 4 && rating.rating <= 5 ? "rating-value-medlow" :
-                                                        rating.rating >= 1 && rating.rating <= 3 ? "rating-value-low" :
+                                            rating.rating >= 8 && rating.rating <= 9.9 ? "rating-value-high" :
+                                                rating.rating >= 6 && rating.rating <= 7.9 ? "rating-value-med" :
+                                                    rating.rating >= 4 && rating.rating <= 5.9 ? "rating-value-medlow" :
+                                                        rating.rating >= 1 && rating.rating <= 3.9 ? "rating-value-low" :
                                                             "rating-value-zero"
 
                                     }>

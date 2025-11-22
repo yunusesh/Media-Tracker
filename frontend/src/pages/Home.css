@@ -1,0 +1,89 @@
+.home-page{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2rem;
+}
+
+.charts{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 90%;
+    height: 90%;
+}
+
+.charts h1{
+    padding-bottom: 1rem;
+}
+
+.charts-wrapper{
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.top-tracks, .top-releases{
+    display: grid;
+    grid-template-columns:repeat(3, 0fr);
+    row-gap: 0;
+    border: 2px solid black;
+    width: 32rem;
+    height: 100%;
+}
+
+.releases-header, .tracks-header{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.track{
+    position: relative;
+}
+
+.chart-img{
+    display: block;
+    width: 10.6rem;
+    height: 10.6rem;
+    border: 2px solid black;
+    margin: 0;
+    cursor: pointer;
+}
+
+.chart-img:hover{
+    border: 2px solid #1eFFE7;
+}
+
+.chart-track-info {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 10.6rem;
+
+    display: flex;
+    flex-direction: column; /* STACKS the h5’s */
+    align-items: center;    /* centers horizontally */
+    gap: 2px;               /* optional spacing */
+
+    background: rgba(0, 0, 0, 0.55);
+    padding: 0.3rem;
+}
+
+.chart-track-info h5 {
+    margin: 0;
+    width: 100%;
+    text-align: center;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    opacity: 0.8;
+}

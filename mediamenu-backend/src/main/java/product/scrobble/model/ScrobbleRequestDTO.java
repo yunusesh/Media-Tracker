@@ -25,6 +25,8 @@ public class ScrobbleRequestDTO {
     private String altReleaseMbid;
     private List<ArtistDTO> artists;
     private String spotifyId;
+    private Integer trackScrobbles;
+    private Integer releaseScrobbles;
 
     public ScrobbleRequestDTO(Integer id, Integer userId, Integer trackId,
                               Integer releaseId, String trackMbid, String trackTitle,

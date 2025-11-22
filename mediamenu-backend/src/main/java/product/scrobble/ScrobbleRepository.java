@@ -48,6 +48,8 @@ public interface ScrobbleRepository extends JpaRepository<Scrobble, Integer> {
     );
 
 
+
+
     @Query("""
             SELECT new product.scrobble.model.ScrobbleRequestDTO(
                         s.id,

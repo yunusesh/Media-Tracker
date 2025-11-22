@@ -7,6 +7,7 @@ import product.artist.model.ArtistDTO;
 import product.release.model.Release;
 import product.release.model.ReleaseDTO;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import java.util.List;
 public class TrackRatingRequestDTO {
     private Integer userId;
     private Integer trackId;
-    private Integer rating;
+    private BigDecimal rating;
     private Timestamp ratedAt;
     private String trackMbid;
     private String trackTitle;
@@ -25,7 +26,7 @@ public class TrackRatingRequestDTO {
     private List<ArtistDTO> artists = new ArrayList<>();
     private String releaseMbid;
 
-    public TrackRatingRequestDTO(Integer userId, Integer trackId, Integer rating,
+    public TrackRatingRequestDTO(Integer userId, Integer trackId, BigDecimal rating,
                                  Timestamp ratedAt, String trackMbid, String trackTitle,
                                  String trackReleaseDate, String releaseMbid) {
         this.userId = userId;

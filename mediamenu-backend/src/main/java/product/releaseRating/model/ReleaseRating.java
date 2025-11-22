@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import product.release.model.Release;
 import product.user.model.AppUser;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
@@ -19,7 +20,7 @@ public class ReleaseRating {
     private ReleaseRatingId id;
 
     @Column(name = "rating")
-    private Integer rating;
+    private BigDecimal rating;
 
     @CreationTimestamp
     @Column(name = "rated_at")
@@ -33,7 +34,7 @@ public class ReleaseRating {
     @JoinColumn(name = "release_id", insertable = false, updatable = false)
     private Release release;
 
-    public ReleaseRating(ReleaseRatingId id, Integer rating, Timestamp ratedAt){
+    public ReleaseRating(ReleaseRatingId id, BigDecimal rating, Timestamp ratedAt){
         this.id = id;
         this.rating = rating;
         this.ratedAt = ratedAt;

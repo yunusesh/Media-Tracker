@@ -209,10 +209,10 @@ export function Track() {
                                 <h3 className={
                                     !rating ? "rating-absent" :
                                         rating == 10 ? "rating-ten" :
-                                            rating >= 8 && rating <= 9 ? "rating-high" :
-                                                rating >= 6 && rating <= 7 ? "rating-med" :
-                                                    rating >= 4 && rating <= 5 ? "rating-medlow" :
-                                                        rating >= 1 && rating <= 3 ? "rating-low" :
+                                            rating >= 8 && rating <= 9.9 ? "rating-high" :
+                                                rating >= 6 && rating <= 7.9 ? "rating-med" :
+                                                    rating >= 4 && rating <= 5.9 ? "rating-medlow" :
+                                                        rating >= 1 && rating <= 3.9 ? "rating-low" :
                                                             "rating-zero"
 
                                 }>
@@ -224,9 +224,34 @@ export function Track() {
                                 <FaStar className="star"/>
                                 <input
                                     placeholder="0-10"
-                                    type="number"
                                     value={rating}
-                                    onChange={(e) => setRating(e.target.value)}
+                                    onChange={(e) => {
+                                        let val = e.target.value;
+                                        if (val === "") {
+                                            setRating(val);
+                                            return;
+                                        }
+
+                                        // Only allow digits, optional dot, max 1 decimal
+                                        if (!/^\d{0,2}(\.\d?)?$/.test(val)) return;
+
+                                        let num = parseFloat(val);
+                                        if (num > 10) val = val.substring(0,1);
+                                        if (num < 0) val = "0";
+
+                                        // Round to 1 decimal and remove infinite zeros
+                                        if (val.includes(".")) {
+                                            const parts = val.split(".");
+                                            // Keep only 1 decimal place
+                                            parts[1] = parts[1].substring(0, 1);
+                                            val = parts.join(".");
+                                        }
+
+                                        if (val.length > 3) val = val.substring(0, 3);
+
+                                        setRating(val);
+                                    }
+                                    }
                                 />
                                 <button className="manual-log"
                                         onClick={handleLog}>

@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import product.artist.model.ArtistDTO;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ import java.util.List;
 public class ReleaseRatingRequestDTO {
     private Integer userId;
     private Integer releaseId;
-    private Integer rating;
+    private BigDecimal rating;
     private Timestamp ratedAt;
     private String releaseMbid;
     private String title;
@@ -23,7 +24,7 @@ public class ReleaseRatingRequestDTO {
     private String format;
     private List<ArtistDTO> artists = new ArrayList<>();
 
-    public ReleaseRatingRequestDTO(Integer userId, Integer releaseId, Integer rating,
+    public ReleaseRatingRequestDTO(Integer userId, Integer releaseId, BigDecimal rating,
                                    Timestamp ratedAt, String releaseMbid, String title,
                                    String releaseDate, String format) {
         this.userId = userId;

@@ -31,6 +31,8 @@ GetAllUserScrobblesService implements Query<Integer, List<ScrobbleRequestDTO>> {
             Track track = trackRepository.findById(scrobble.getTrackId()).orElseThrow();
 
             scrobble.setArtists(track.getArtists().stream().map(ArtistDTO::new).toList());
+            scrobble.setTrackScrobbles(scrobbleRepository.getTrackScrobbleCount(userId, scrobble.getTrackId()).size());
+            scrobble.setReleaseScrobbles(scrobbleRepository.getReleaseScrobbleCount(userId, scrobble.getReleaseId()).size());
         }
 
         return ResponseEntity.ok(scrobbles);

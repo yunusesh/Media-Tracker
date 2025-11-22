@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import product.track.model.Track;
 import product.user.model.AppUser;
 
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 
 @Entity
@@ -19,7 +20,7 @@ public class TrackRating {
     private TrackRatingId id;
 
     @Column(name = "rating")
-    private Integer rating;
+    private BigDecimal rating;
 
     @CreationTimestamp
     @Column(name = "rated_at")
@@ -33,7 +34,7 @@ public class TrackRating {
     @JoinColumn(name = "track_id", insertable = false, updatable = false)
     private Track track;
 
-    public TrackRating(TrackRatingId id, Integer rating, Timestamp ratedAt) {
+    public TrackRating(TrackRatingId id, BigDecimal rating, Timestamp ratedAt) {
         this.id = id;
         this.rating = rating;
         this.ratedAt = ratedAt;
