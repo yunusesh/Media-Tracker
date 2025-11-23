@@ -4,7 +4,7 @@ CREATE TABLE app_user (
 	hashed_password VARCHAR NOT NULL,
 	email VARCHAR NOT NULL,
 	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+);	
 
 CREATE TABLE user_spotify(
 	user_id INTEGER PRIMARY KEY REFERENCES app_user(id) NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE scrobble(
 CREATE TABLE release_rating(
 	user_id INTEGER REFERENCES app_user(id) NOT NULL,
 	release_id INTEGER REFERENCES release_group(id) NOT NULL,
-	rating INTEGER check (rating between 0 and 10),
+	rating NUMERIC(3,1) CHECK (rating >= 0 AND rating <= 10 AND rating = ROUND(rating,1)),
 	rated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (user_id, release_id)
 );
@@ -88,11 +88,12 @@ CREATE TABLE release_rating(
 CREATE TABLE track_rating(
 	user_id INTEGER REFERENCES app_user(id) NOT NULL,
 	track_id INTEGER REFERENCES track(id) NOT NULL,
-	rating INTEGER check (rating between 0 and 10),
+	rating NUMERIC(3,1) CHECK (rating >= 0 AND rating <= 10 AND rating = ROUND(rating,1)),
 	rated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 	PRIMARY KEY (user_id, track_id)
 );
 
+	
 CREATE TABLE top5_releases(
 	id SERIAL PRIMARY KEY,
 	user_id INTEGER REFERENCES app_user(id) NOT NULL,

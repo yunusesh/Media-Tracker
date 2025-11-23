@@ -14,10 +14,6 @@
     height: 90%;
 }
 
-.charts h1{
-    padding-bottom: 1rem;
-}
-
 .charts-wrapper{
     display: flex;
     flex-direction: row;
@@ -32,16 +28,55 @@
     display: grid;
     grid-template-columns:repeat(3, 0fr);
     row-gap: 0;
-    border: 2px solid black;
     width: 32rem;
     height: 100%;
 }
 
-.releases-header, .tracks-header{
+.releases-wrapper, .tracks-wrapper{
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
+}
+
+.releases-header, .tracks-header{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+    gap: .3rem;
+    margin-bottom: 1rem;
+}
+
+.releases-header::after, .tracks-header::after{
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+    border-bottom: 1px solid #4C5563;
+}
+
+.category-wrapper{
+    display: flex;
+    justify-content: flex-end;
+    flex: 2;
+}
+
+.switch-wrapper{
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    color: #525457;
+    cursor: pointer;
+    text-decoration: underline;
+    height: 100%;
+    gap: .2rem;
 }
 
 .track{
