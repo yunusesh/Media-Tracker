@@ -11,10 +11,11 @@ export function Artist() {
     const {user} = useContext(AuthContext);
     const navigate = useNavigate()
     const [genres, setGenres] = useState([])
-    const currentDate = new Date()
-    const currentYear = currentDate.getFullYear()
-    const currentMonth = currentDate.getMonth()
-    const currentDay = currentDate.getDay()
+    const now = Date.now();
+    const oneDay = 24 * 60 * 60 * 1000;
+    const oneWeek = 7 * oneDay;
+    const oneMonth = 30 * oneDay;
+    const oneYear = 365 * oneDay;
     const [totalScrobbles, setTotalScrobbles] = useState([])
     const [yearScrobbles, setYearScrobbles] = useState([])
     const [monthScrobbles, setMonthScrobbles] = useState([])
@@ -79,9 +80,9 @@ export function Artist() {
     useEffect(() => {
         if (userScrobbles) {
             setTotalScrobbles(userScrobbles.length)
-            setYearScrobbles(userScrobbles.filter(date => new Date(date).getFullYear() === currentYear).length)
-            setMonthScrobbles(userScrobbles.filter(date => new Date(date).getMonth() === currentMonth).length)
-            setDayScrobbles(userScrobbles.filter(date => new Date(date).getDay() === currentDay).length)
+            setYearScrobbles(userScrobbles.filter(date => new Date(date) >= now - oneYear).length)
+            setMonthScrobbles(userScrobbles.filter(date => new Date(date) >= now - oneMonth).length)
+            setDayScrobbles(userScrobbles.filter(date => new Date(date) >= now - oneDay).length)
         }
     }, [userScrobbles]);
 

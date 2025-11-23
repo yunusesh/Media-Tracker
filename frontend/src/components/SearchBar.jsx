@@ -120,7 +120,7 @@ export default function SearchBar({searchTypeProp, buttonsEnabled, onClickFuncti
                                                 {result["artist-credit"]?.map((artist, index, array) => (
                                                     <span
                                                         key={artist.id}
-                                                        onClick={() => navigate(`/artist/${artist.id}`)}
+
                                                     >{artist.name}
                                                         {index < array.length - 1 &&
                                                             (index === array.length - 2 ? " & " : ", ")}

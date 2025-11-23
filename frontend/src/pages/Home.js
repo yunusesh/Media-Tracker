@@ -18,7 +18,7 @@ export function Home() {
     const now = Date.now();
     const oneDay = 24 * 60 * 60 * 1000;
     const oneWeek = 7 * oneDay;
-    const oneMonth = 30 * oneDay; // or calculate real months if needed
+    const oneMonth = 30 * oneDay;
     const oneYear = 365 * oneDay;
 
 
@@ -34,8 +34,10 @@ export function Home() {
     })
 
     async function fetchUserListens() {
-        const response = await fetch(`http://localhost:8081/api/scrobble/user/${user.id}`)
-        return response.json()
+        if (user) {
+            const response = await fetch(`http://localhost:8081/api/scrobble/user/${user.id}`)
+            return response.json()
+        }
     }
 
     const {data: userListens} = useQuery({
@@ -44,81 +46,66 @@ export function Home() {
         enabled: !!user
     })
 
+    const windows = {
+        day: oneDay,
+        week: oneWeek,
+        month: oneMonth,
+        year: oneYear
+    };
+
+    function getUniqueScrobbles(releases, window, idType) {
+        const filtered = releases.filter(r =>
+            new Date(r.firstListenedAt).getTime() >= now - window
+        );
+
+        const seen = new Set();
+        const unique = filtered.filter(r => {
+            if (seen.has(r[idType])) return false;
+            seen.add(r[idType]);
+            return true;
+        });
+
+        return unique.slice(0, 9);
+    }
+
+
     useEffect(() => {
         if (userListens) {
-            const seen = new Set();
-
             const sortedTracks = [...userListens].sort((a, b) => b.trackScrobbles - a.trackScrobbles);
-            const uniqueTracks = sortedTracks.filter(track => {
-                if (seen.has(track.trackId)) return false;
-                seen.add(track.trackId);
-                return true;
-            });
-            const sortedReleases = [...userListens].sort((a, b) => b.releaseScrobbles - a.releaseScrobbles);
-            const uniqueReleases = sortedReleases.filter(release => {
-                if (seen.has(release.releaseId)) return false;
-                seen.add(release.releaseId);
-                return true;
-            });
+            if(trackFilter in windows)
+                setUser3x3Tracks(
+                    getUniqueScrobbles(sortedTracks, windows[trackFilter], "trackId")
+                );
+            else if (trackFilter === "overall"){
+                const seen = new Set();
+                setUser3x3Tracks(sortedTracks.filter(track => {
+                    if (seen.has(track.trackId)) return false;
+                    seen.add(track.trackId);
+                    return true;
+                }).slice(0, 9))
 
-            if (trackFilter === "day") {
-                setUser3x3Tracks(uniqueTracks
-                    .filter(t => new Date(t.firstListenedAt) >= now - oneDay)
-                    .slice(0, 9)
-                );
-            }
-            else if (trackFilter === "week") {
-                setUser3x3Tracks(uniqueTracks
-                    .filter(t => new Date(t.firstListenedAt) >= now - oneWeek)
-                    .slice(0, 9)
-                );
-            }
-            else if (trackFilter === "month") {
-                setUser3x3Tracks(uniqueTracks
-                    .filter(t => new Date(t.firstListenedAt) >= now - oneMonth)
-                    .slice(0, 9)
-                );
-            }
-            else if (trackFilter === "year") {
-                setUser3x3Tracks(uniqueTracks
-                    .filter(t => new Date(t.firstListenedAt) >= now - oneYear)
-                    .slice(0, 9)
-                );
-            }
-
-            else if (trackFilter === "overall") {
-                setUser3x3Tracks(uniqueTracks.slice(0, 9));
-            }
-
-            if (releaseFilter === "day") {
-                setUser3x3Releases(uniqueReleases
-                    .filter(r => new Date(r.firstListenedAt) >= now - oneDay)
-                    .slice(0, 9)
-                );
-            }
-            else if (releaseFilter === "week") {
-                setUser3x3Releases(uniqueReleases
-                    .filter(r => new Date(r.firstListenedAt) >= now - oneWeek)
-                    .slice(0, 9)
-                );
-            }
-            else if (releaseFilter === "month") {
-                setUser3x3Releases(uniqueReleases
-                    .filter(r => new Date(r.firstListenedAt) >= now - oneMonth)
-                    .slice(0, 9)
-                );
-            }
-            else if (releaseFilter === "year") {
-                setUser3x3Releases(uniqueReleases
-                    .filter(r => new Date(r.firstListenedAt) >= now - oneYear)
-                    .slice(0, 9)
-                );
-            }
-            else if (releaseFilter === "overall") {
-                setUser3x3Releases(uniqueReleases.slice(0, 9));
             }
         }
-    }, [userListens, trackFilter, releaseFilter]);
+    }, [user, userListens, trackFilter])
+
+    useEffect(() => {
+        if (userListens) {
+            const sortedReleases = [...userListens].sort((a, b) => b.releaseScrobbles - a.releaseScrobbles);
+            if(releaseFilter in windows)
+            setUser3x3Releases(
+                getUniqueScrobbles(sortedReleases, windows[releaseFilter], "releaseId")
+            );
+            else if (releaseFilter === "overall"){
+                const seen = new Set();
+                setUser3x3Releases(sortedReleases.filter(release => {
+                    if (seen.has(release.releaseId)) return false;
+                    seen.add(release.releaseId);
+                    return true;
+                }).slice(0, 9))
+
+            }
+        }
+    }, [user, userListens, releaseFilter]);
 
     return (
         <div className="home-page">
@@ -130,20 +117,26 @@ export function Home() {
                                 <div className="category-wrapper">
                                     <h1 className="category">Top Tracks</h1>
                                 </div>
-                                <div
-                                    className="switch-wrapper"
-                                    onClick={() => {
+                                <div className="switch-wrapper">
+                                    <GrPowerCycle
+                                        className="switch"
+                                        onClick={() => {
+                                            setTrackFilter(filters[nextTrackFilter]);
+                                            if (nextTrackFilter + 1 >= filters.length) {
+                                                setNextTrackFilter(0);
+                                            } else {
+                                                setNextTrackFilter(nextTrackFilter + 1);
+                                            }
+                                        }}
+                                    />
+                                    <h4 onClick={() => {
                                         setTrackFilter(filters[nextTrackFilter]);
                                         if (nextTrackFilter + 1 >= filters.length) {
                                             setNextTrackFilter(0);
                                         } else {
                                             setNextTrackFilter(nextTrackFilter + 1);
                                         }
-                                    }}
-                                >
-                                    <GrPowerCycle
-                                        className="switch"/>
-                                    <h4>{trackFilter}</h4>
+                                    }}>{trackFilter}</h4>
                                 </div>
                             </div>
                             <div className="top-tracks">
@@ -181,18 +174,25 @@ export function Home() {
                                 <div className="category-wrapper">
                                     <h1 className="category">Top Releases</h1>
                                 </div>
-                                <div className="switch-wrapper"
-                                     onClick={() => {
-                                         setReleaseFilter(filters[nextReleaseFilter]);
-                                         if (nextReleaseFilter + 1 >= filters.length) {
-                                             setNextReleaseFilter(0);
-                                         } else {
-                                             setNextReleaseFilter(nextReleaseFilter + 1);
-                                         }
-                                     }}
-                                >
-                                    <GrPowerCycle className="switch"/>
-                                    <h4>{releaseFilter}</h4>
+                                <div className="switch-wrapper">
+                                    <GrPowerCycle
+                                        className="switch"
+                                        onClick={() => {
+                                            setReleaseFilter(filters[nextReleaseFilter]);
+                                            if (nextReleaseFilter + 1 >= filters.length) {
+                                                setNextReleaseFilter(0);
+                                            } else {
+                                                setNextReleaseFilter(nextReleaseFilter + 1);
+                                            }
+                                        }}/>
+                                    <h4 onClick={() => {
+                                        setReleaseFilter(filters[nextReleaseFilter]);
+                                        if (nextReleaseFilter + 1 >= filters.length) {
+                                            setNextReleaseFilter(0);
+                                        } else {
+                                            setNextReleaseFilter(nextReleaseFilter + 1);
+                                        }
+                                    }}>{releaseFilter}</h4>
                                 </div>
                             </div>
                             <div className="top-releases">

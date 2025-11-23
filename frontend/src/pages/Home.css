@@ -1,18 +1,18 @@
 .home-page{
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding-bottom: 2rem;
+    height: 1000px;
 }
 
 .charts{
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    width: 90%;
-    height: 90%;
-}
+    width: 100%;
+    height: 100%;}
 
 .charts-wrapper{
     display: flex;
@@ -20,23 +20,15 @@
     gap: 3rem;
     width: 100%;
     height: 100%;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-}
-
-.top-tracks, .top-releases{
-    display: grid;
-    grid-template-columns:repeat(3, 0fr);
-    row-gap: 0;
-    width: 32rem;
-    height: 100%;
 }
 
 .releases-wrapper, .tracks-wrapper{
     display: flex;
-    align-items: center;
-    justify-content: center;
     flex-direction: column;
+    width: 32rem;
+    height: 100%;
 }
 
 .releases-header, .tracks-header{
@@ -60,6 +52,16 @@
     border-bottom: 1px solid #4C5563;
 }
 
+.top-tracks, .top-releases{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    gap: 0;
+    width: 32rem;
+    height: 32rem;
+    border: 2px solid black;
+}
+
 .category-wrapper{
     display: flex;
     justify-content: flex-end;
@@ -73,10 +75,13 @@
     justify-content: flex-start;
     flex-direction: row;
     color: #525457;
-    cursor: pointer;
     text-decoration: underline;
     height: 100%;
     gap: .2rem;
+}
+
+.switch-wrapper h4, .switch{
+    cursor: pointer;
 }
 
 .track{
