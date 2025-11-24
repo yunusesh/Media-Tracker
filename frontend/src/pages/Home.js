@@ -8,13 +8,21 @@ import {GrPowerCycle} from "react-icons/gr";
 export function Home() {
     const {user} = useContext(AuthContext);
     const navigate = useNavigate();
-    const [user3x3Tracks, setUser3x3Tracks] = useState([]);
-    const [user3x3Releases, setUser3x3Releases] = useState([]);
+
     const filters = ["day", "week", "month", "year", "overall"]
     const [trackFilter, setTrackFilter] = useState(filters[1]);
     const [nextTrackFilter, setNextTrackFilter] = useState(2);
     const [releaseFilter, setReleaseFilter] = useState(filters[1]);
     const [nextReleaseFilter, setNextReleaseFilter] = useState(2);
+
+    const [trackTopster, setTrackTopster] = useState([]);
+    const [releaseTopster, setReleaseTopster] = useState([]);
+    const topsterSizes = [9, 16, 25, 36, 100]
+    const [releaseTopsterSize, setReleaseTopsterSize] = useState(topsterSizes[0]);
+    const [trackTopsterSize, setTrackTopsterSize] = useState(topsterSizes[0]);
+    const [nextTrackTopsterSize, setNextTrackTopsterSize] = useState(1);
+    const [nextReleaseTopsterSize, setNextReleaseTopsterSize] = useState(1);
+
     const now = Date.now();
     const oneDay = 24 * 60 * 60 * 1000;
     const oneWeek = 7 * oneDay;
@@ -65,47 +73,46 @@ export function Home() {
             return true;
         });
 
-        return unique.slice(0, 9);
+        return unique.slice(0)
     }
-
 
     useEffect(() => {
         if (userListens) {
             const sortedTracks = [...userListens].sort((a, b) => b.trackScrobbles - a.trackScrobbles);
-            if(trackFilter in windows)
-                setUser3x3Tracks(
-                    getUniqueScrobbles(sortedTracks, windows[trackFilter], "trackId")
+            if (trackFilter in windows)
+                setTrackTopster(
+                    getUniqueScrobbles(sortedTracks, windows[trackFilter], "trackId").slice(0, trackTopsterSize)
                 );
-            else if (trackFilter === "overall"){
+            else if (trackFilter === "overall") {
                 const seen = new Set();
-                setUser3x3Tracks(sortedTracks.filter(track => {
+                setTrackTopster(sortedTracks.filter(track => {
                     if (seen.has(track.trackId)) return false;
                     seen.add(track.trackId);
                     return true;
-                }).slice(0, 9))
+                }).slice(0, trackTopsterSize))
 
             }
         }
-    }, [user, userListens, trackFilter])
+    }, [user, userListens, trackFilter, trackTopsterSize])
 
     useEffect(() => {
         if (userListens) {
             const sortedReleases = [...userListens].sort((a, b) => b.releaseScrobbles - a.releaseScrobbles);
-            if(releaseFilter in windows)
-            setUser3x3Releases(
-                getUniqueScrobbles(sortedReleases, windows[releaseFilter], "releaseId")
-            );
-            else if (releaseFilter === "overall"){
+            if (releaseFilter in windows)
+                setReleaseTopster(
+                    getUniqueScrobbles(sortedReleases, windows[releaseFilter], "releaseId").slice(0, releaseTopsterSize)
+                );
+            else if (releaseFilter === "overall") {
                 const seen = new Set();
-                setUser3x3Releases(sortedReleases.filter(release => {
+                setReleaseTopster(sortedReleases.filter(release => {
                     if (seen.has(release.releaseId)) return false;
                     seen.add(release.releaseId);
                     return true;
-                }).slice(0, 9))
+                }).slice(0, releaseTopsterSize))
 
             }
         }
-    }, [user, userListens, releaseFilter]);
+    }, [user, userListens, releaseFilter, releaseTopsterSize]);
 
     return (
         <div className="home-page">
@@ -114,6 +121,27 @@ export function Home() {
                     <div className="charts-wrapper">
                         <div className="tracks-wrapper">
                             <div className="tracks-header">
+                                <div className="size-switch-wrapper">
+                                    <h4 onClick={() => {
+                                        setTrackTopsterSize(topsterSizes[nextTrackTopsterSize]);
+                                        if (nextTrackTopsterSize + 1 >= topsterSizes.length) {
+                                            setNextTrackTopsterSize(0);
+                                        } else {
+                                            setNextTrackTopsterSize(nextTrackTopsterSize + 1);
+                                        }
+                                    }}>{Math.sqrt(trackTopsterSize)}x{Math.sqrt(trackTopsterSize)}</h4>
+                                    <GrPowerCycle
+                                        className="switch"
+                                        onClick={() => {
+                                            setTrackTopsterSize(topsterSizes[nextTrackTopsterSize]);
+                                            if (nextTrackTopsterSize + 1 >= topsterSizes.length) {
+                                                setNextTrackTopsterSize(0);
+                                            } else {
+                                                setNextTrackTopsterSize(nextTrackTopsterSize + 1);
+                                            }
+                                        }}
+                                    />
+                                </div>
                                 <div className="category-wrapper">
                                     <h1 className="category">Top Tracks</h1>
                                 </div>
@@ -139,8 +167,14 @@ export function Home() {
                                     }}>{trackFilter}</h4>
                                 </div>
                             </div>
-                            <div className="top-tracks">
-                                {user3x3Tracks.map((track, index) => (
+                            <div
+                                className="top-tracks"
+                                style={{
+                                    gridTemplateColumns: `repeat(${Math.sqrt(trackTopsterSize)}, 1fr)`,
+                                    gridTemplateRows: `repeat(${Math.sqrt(trackTopsterSize)}, 1fr)`,
+                                }}
+                            >
+                                {trackTopster.map((track, index) => (
                                     <div className="track" key={index}>
                                         <img className="chart-img"
                                              src={track.releaseMbid ?
@@ -152,7 +186,7 @@ export function Home() {
                                                  navigate(`/track/${track.trackMbid}`)
                                              }}
                                         />
-                                        <div className="chart-track-info">
+                                        <div className={trackTopsterSize == 100 ? "chart-track-info-small" : "chart-track-info"}>
                                             <h5>{track.trackTitle}</h5>
                                             <h5>{track.artists.map((artist, index, array) => (
                                                 <span
@@ -171,6 +205,27 @@ export function Home() {
 
                         <div className="releases-wrapper">
                             <div className="releases-header">
+                                <div className="size-switch-wrapper">
+                                    <h4 onClick={() => {
+                                        setReleaseTopsterSize(topsterSizes[nextReleaseTopsterSize]);
+                                        if (nextReleaseTopsterSize + 1 >= topsterSizes.length) {
+                                            setNextReleaseTopsterSize(0);
+                                        } else {
+                                            setNextReleaseTopsterSize(nextReleaseTopsterSize + 1);
+                                        }
+                                    }}>{Math.sqrt(releaseTopsterSize)}x{Math.sqrt(releaseTopsterSize)}</h4>
+                                    <GrPowerCycle
+                                        className="switch"
+                                        onClick={() => {
+                                            setTrackTopsterSize(topsterSizes[nextTrackTopsterSize]);
+                                            if (nextTrackTopsterSize + 1 >= topsterSizes.length) {
+                                                setNextTrackTopsterSize(0);
+                                            } else {
+                                                setNextTrackTopsterSize(nextTrackTopsterSize + 1);
+                                            }
+                                        }}
+                                    />
+                                </div>
                                 <div className="category-wrapper">
                                     <h1 className="category">Top Releases</h1>
                                 </div>
@@ -195,8 +250,12 @@ export function Home() {
                                     }}>{releaseFilter}</h4>
                                 </div>
                             </div>
-                            <div className="top-releases">
-                                {user3x3Releases.map((release, index) => (
+                            <div className="top-releases"
+                                 style={{
+                                     gridTemplateColumns: `repeat(${Math.sqrt(releaseTopsterSize)}, 1fr)`,
+                                     gridTemplateRows: `repeat(${Math.sqrt(releaseTopsterSize)}, 1fr)`
+                                 }}>
+                                {releaseTopster.map((release, index) => (
                                     <div className="release" key={index}>
                                         <img className="chart-img"
                                              src={`https://coverartarchive.org/release-group/${release.releaseMbid}/front`}

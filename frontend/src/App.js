@@ -15,6 +15,7 @@ import {UserRatings} from "./pages/UserRatings";
 import {UserActivity} from "./pages/UserActivity";
 import {Settings} from "./pages/Settings";
 import {SpotifyAuthProvider} from "./SpotifyAuthContext";
+import GlobalImageErrorHandler from "./GlobalImageErrorHandler";
 
 function App() {
     const queryClient = new QueryClient();
@@ -23,6 +24,7 @@ function App() {
         <AuthProvider>
             <QueryClientProvider client={queryClient}>
                 <SpotifyAuthProvider>
+                    <GlobalImageErrorHandler fallbackSrc="/missing.jpg"/>
                     <Router>
                         <Layout/>
                         <Routes>
