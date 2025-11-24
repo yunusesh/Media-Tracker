@@ -18,6 +18,7 @@ import product.spotify.UserSpotifyRepository;
 import product.spotify.model.UserSpotify;
 import product.track.model.TrackDTO;
 import product.track.services.GetOrCreateTrackService;
+
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
@@ -119,51 +120,83 @@ public class SpotifyAutoScrobbleService {
 
     @Async
     public void scrobblePipeline(JsonNode trackData) {
-        //TRACK first try matching by isrc DONE, then by spotify link, then by fuzzy search
-        //RELEASE GROUP first try matching by spotify link DONE, then by fuzzy search, then by recording -> release -> first release group DONE
+        //TRACK first try matching by isrc DONE, then by fuzzy search, ? spotify link maybe idk
+        //RELEASE GROUP first try matching by spotify link DONE, then by fuzzy search DONE, then by recording -> release -> first release group DONE
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "MediaMenu/1.0 (yunuseshesh@gmail.com)");
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        String isrc = trackData.get("item").get("external_ids").get("isrc").asText();
+        String fuzzyTitle = trackData.get("item").get("name").asText();
+        String fuzzyArtist = trackData.get("item").get("artists").get(0).get("name").asText();
+        String fuzzyAlbum = trackData.get("item").get("album").get("name").asText();
 
         String releaseUrl = trackData.get("item").get("album").get("external_urls").get("spotify").asText();
 
-        CompletableFuture<ResponseEntity<JsonNode>> isrcResponse =
-                CompletableFuture.supplyAsync(() ->
-                        restTemplate.exchange(
-                                "https://musicbrainz.org/ws/2/isrc/" + isrc + "?inc=release-rels&fmt=json",
-                                HttpMethod.GET,
-                                entity,
-                                JsonNode.class
-                        )
-                );
+        String isrc = trackData.get("item").get("external_ids").get("isrc").asText();
 
-        JsonNode recordings = isrcResponse.join().getBody().get("recordings");
+        CompletableFuture<String> trackId =
+                CompletableFuture.supplyAsync(() -> {
+                            JsonNode isrcResponse = restTemplate.exchange(
+                                    "https://musicbrainz.org/ws/2/isrc/" + isrc + "?inc=release-rels&fmt=json",
+                                    HttpMethod.GET,
+                                    entity,
+                                    JsonNode.class
+                            ).getBody();
 
-        //sometimes multiple instances of the same track can have the same isrc, so get the earliest one
+                            JsonNode recordings = isrcResponse.get("recordings");
 
-        JsonNode earliestRecording = StreamSupport.stream(recordings.spliterator(), false)
-                .min(Comparator.comparing(r -> r.get("first-release-date").asText()))
-                .get();
+                            JsonNode earliestRecording = StreamSupport.stream(recordings.spliterator(), false)
+                                    .min(Comparator.comparing(r -> r.get("first-release-date").asText()))
+                                    .get();
 
-        String trackMbid = earliestRecording.get("id").asText();
-        String trackTitle = earliestRecording.get("title").asText();
-        String releaseDate = earliestRecording.get("first-release-date").asText();
+                            return earliestRecording.get("id").asText();
+                        }
+                ).exceptionallyCompose(ex -> CompletableFuture.supplyAsync(() -> {
 
+                    JsonNode fuzzyResponse = restTemplate.exchange(
+                            "https://api.listenbrainz.org/1/metadata/lookup/" +
+                                    "?recording_name=" + fuzzyTitle +
+                                    "&artist_name=" + fuzzyArtist +
+                                    "&release_name=" + fuzzyAlbum,
+                            HttpMethod.GET,
+                            entity,
+                            JsonNode.class
+                    ).getBody();
+
+                    return fuzzyResponse.get("recording_mbid").asText();
+                }));
+
+
+        String trackMbid = trackId.join();
 
         CompletableFuture<ResponseEntity<JsonNode>> recordingResponse =
-                isrcResponse.thenCompose(json ->
+                trackId.thenCompose(json ->
                         CompletableFuture.supplyAsync(() ->
                                 restTemplate.exchange(
                                         "https://musicbrainz.org/ws/2/recording/" +
-                                                json.getBody().get("recordings").get(0).get("id").asText() +
-                                                "?inc=releases+release-groups&fmt=json",
+                                                trackMbid +
+                                                "?inc=releases+release-groups+artist-credits&fmt=json",
                                         HttpMethod.GET,
                                         entity,
                                         JsonNode.class
                                 )
                         ));
+
+        String trackTitle = recordingResponse.join().getBody().get("title").asText();
+
+        String releaseDate = recordingResponse.join().getBody().get("first-release-date").asText();
+
+        JsonNode artistCredits = recordingResponse.join()
+                .getBody()
+                .get("artist-credit");
+
+        String[] trackArtistNames = StreamSupport.stream(artistCredits.spliterator(), false)
+                .map(ac -> ac.get("artist").get("name").asText())
+                .toArray(String[]::new);
+
+        String[] trackArtistMbids = StreamSupport.stream(artistCredits.spliterator(), false)
+                .map(ac -> ac.get("artist").get("id").asText())
+                .toArray(String[]::new);
 
         CompletableFuture<ResponseEntity<MBAlbumDTO>> releaseGroupResponse =
                 CompletableFuture.supplyAsync(() -> {
@@ -193,7 +226,36 @@ public class SpotifyAutoScrobbleService {
                     return mbAlbumService.execute(releaseGroupId);
 
                 }).exceptionallyCompose(ex -> {
-                    // Fallback: use recordingResponse if MB URL lookup fails
+                    // Fallback: Use fuzzy search
+                    return CompletableFuture.supplyAsync(() -> {
+                                JsonNode fuzzyResponse = restTemplate.exchange(
+                                        "https://api.listenbrainz.org/1/metadata/lookup/" +
+                                                "?recording_name=" + fuzzyTitle +
+                                                "&artist_name=" + fuzzyArtist +
+                                                "&release_name=" + fuzzyAlbum,
+                                        HttpMethod.GET,
+                                        entity,
+                                        JsonNode.class
+                                ).getBody();
+
+                                String releaseId = fuzzyResponse.get("release_mbid").asText();
+
+                                JsonNode releaseResponse = restTemplate.exchange(
+                                        "https://musicbrainz.org/ws/2/release/" + releaseId +
+                                                "?inc=release-groups&fmt=json",
+                                        HttpMethod.GET,
+                                        entity,
+                                        JsonNode.class
+                                ).getBody();
+
+                                String releaseGroupId = releaseResponse.get("release-group")
+                                        .get("id").asText();
+
+                                return mbAlbumService.execute(releaseGroupId);
+                            }
+                    );
+                }).exceptionallyCompose(ex -> {
+                    // Fallback: use recordingResponse
                     return recordingResponse.thenCompose(json ->
                             CompletableFuture.supplyAsync(() ->
                                     mbAlbumService.execute(
@@ -213,11 +275,8 @@ public class SpotifyAutoScrobbleService {
                     result.getBody().getId(),
                     result.getBody().getTitle(),
                     result.getBody().getPrimaryType(),
-                    result.getBody().getArtistCredit().stream()
-                            .map(artist -> artist.getId())
-                            .toArray(String[]::new),
-                    result.getBody().getArtistCredit().stream()
-                            .map(artist -> artist.getName()).toArray(String[]::new),
+                    trackArtistMbids,
+                    trackArtistNames,
                     new String[]{},
                     new String[]{}
             );
