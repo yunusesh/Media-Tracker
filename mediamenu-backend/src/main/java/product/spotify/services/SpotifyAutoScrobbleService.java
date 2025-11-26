@@ -1,6 +1,7 @@
 package product.spotify.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import jakarta.validation.constraints.Null;
 import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,6 +24,7 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -102,7 +104,7 @@ public class SpotifyAutoScrobbleService {
             }
 
             //scrobble when the current listen hasn't been scrobbled and at 1/2 song length or 4 minutes
-            if (!scrobbled && (total >= duration / 2 || total == 240000)) {
+            if (!scrobbled && (total >= duration / 2 || total == 10000)) {
                 scrobblePipeline(response.getBody());
                 scrobbled = true;
             }
@@ -120,8 +122,8 @@ public class SpotifyAutoScrobbleService {
 
     @Async
     public void scrobblePipeline(JsonNode trackData) {
-        //TRACK first try matching by isrc DONE, then by fuzzy search, ? spotify link maybe idk
-        //RELEASE GROUP first try matching by spotify link DONE, then by fuzzy search DONE, then by recording -> release -> first release group DONE
+        //TRACK first try matching by isrc, then by fuzzy search, then add without mbid
+        //RELEASE GROUP first try matching by spotify link, then by fuzzy search, then by recording -> release -> first release group, then add without mbid
         HttpHeaders headers = new HttpHeaders();
         headers.set("User-Agent", "MediaMenu/1.0 (yunuseshesh@gmail.com)");
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -130,171 +132,211 @@ public class SpotifyAutoScrobbleService {
         String fuzzyArtist = trackData.get("item").get("artists").get(0).get("name").asText();
         String fuzzyAlbum = trackData.get("item").get("album").get("name").asText();
 
-        String releaseUrl = trackData.get("item").get("album").get("external_urls").get("spotify").asText();
 
-        String isrc = trackData.get("item").get("external_ids").get("isrc").asText();
+        String releaseUrl = trackData.get("item").get("album").get("external_urls").get("spotify") != null ?
+                trackData.get("item").get("album").get("external_urls").get("spotify").asText() :
+                null;
 
-        CompletableFuture<String> trackId =
-                CompletableFuture.supplyAsync(() -> {
-                            JsonNode isrcResponse = restTemplate.exchange(
-                                    "https://musicbrainz.org/ws/2/isrc/" + isrc + "?inc=release-rels&fmt=json",
-                                    HttpMethod.GET,
-                                    entity,
-                                    JsonNode.class
-                            ).getBody();
+        String isrc = trackData.get("item").get("external_ids").get("isrc") != null ?
+                trackData.get("item").get("external_ids").get("isrc").asText() :
+                null;
 
-                            JsonNode recordings = isrcResponse.get("recordings");
-
-                            JsonNode earliestRecording = StreamSupport.stream(recordings.spliterator(), false)
-                                    .min(Comparator.comparing(r -> r.get("first-release-date").asText()))
-                                    .get();
-
-                            return earliestRecording.get("id").asText();
-                        }
-                ).exceptionallyCompose(ex -> CompletableFuture.supplyAsync(() -> {
-
-                    JsonNode fuzzyResponse = restTemplate.exchange(
-                            "https://api.listenbrainz.org/1/metadata/lookup/" +
-                                    "?recording_name=" + fuzzyTitle +
-                                    "&artist_name=" + fuzzyArtist +
-                                    "&release_name=" + fuzzyAlbum,
-                            HttpMethod.GET,
-                            entity,
-                            JsonNode.class
-                    ).getBody();
-
-                    return fuzzyResponse.get("recording_mbid").asText();
-                }));
-
-
-        String trackMbid = trackId.join();
-
-        CompletableFuture<ResponseEntity<JsonNode>> recordingResponse =
-                trackId.thenCompose(json ->
-                        CompletableFuture.supplyAsync(() ->
-                                restTemplate.exchange(
-                                        "https://musicbrainz.org/ws/2/recording/" +
-                                                trackMbid +
-                                                "?inc=releases+release-groups+artist-credits&fmt=json",
-                                        HttpMethod.GET,
-                                        entity,
-                                        JsonNode.class
-                                )
-                        ));
-
-        String trackTitle = recordingResponse.join().getBody().get("title").asText();
-
-        String releaseDate = recordingResponse.join().getBody().get("first-release-date").asText();
-
-        JsonNode artistCredits = recordingResponse.join()
-                .getBody()
-                .get("artist-credit");
-
-        String[] trackArtistNames = StreamSupport.stream(artistCredits.spliterator(), false)
-                .map(ac -> ac.get("artist").get("name").asText())
-                .toArray(String[]::new);
-
-        String[] trackArtistMbids = StreamSupport.stream(artistCredits.spliterator(), false)
-                .map(ac -> ac.get("artist").get("id").asText())
-                .toArray(String[]::new);
-
-        CompletableFuture<ResponseEntity<MBAlbumDTO>> releaseGroupResponse =
-                CompletableFuture.supplyAsync(() -> {
-                    // Attempt to get release-group via spotify URL
-                    JsonNode urlResponse = restTemplate.exchange(
-                            "https://musicbrainz.org/ws/2/url?resource=" + releaseUrl +
-                                    "&fmt=json&inc=release-rels",
-                            HttpMethod.GET,
-                            entity,
-                            JsonNode.class
-                    ).getBody();
-
-                    String releaseId = urlResponse.get("relations").get(0)
-                            .get("release").get("id").asText();
-
-                    JsonNode releaseResponse = restTemplate.exchange(
-                            "https://musicbrainz.org/ws/2/release/" + releaseId +
-                                    "?inc=release-groups&fmt=json",
-                            HttpMethod.GET,
-                            entity,
-                            JsonNode.class
-                    ).getBody();
-
-                    String releaseGroupId = releaseResponse.get("release-group")
-                            .get("id").asText();
-
-                    return mbAlbumService.execute(releaseGroupId);
-
-                }).exceptionallyCompose(ex -> {
-                    // Fallback: Use fuzzy search
-                    return CompletableFuture.supplyAsync(() -> {
-                                JsonNode fuzzyResponse = restTemplate.exchange(
-                                        "https://api.listenbrainz.org/1/metadata/lookup/" +
-                                                "?recording_name=" + fuzzyTitle +
-                                                "&artist_name=" + fuzzyArtist +
-                                                "&release_name=" + fuzzyAlbum,
+        try {
+            CompletableFuture<String> trackId =
+                    CompletableFuture.supplyAsync(() -> {
+                                JsonNode isrcResponse = restTemplate.exchange(
+                                        "https://musicbrainz.org/ws/2/isrc/" + isrc + "?inc=release-rels&fmt=json",
                                         HttpMethod.GET,
                                         entity,
                                         JsonNode.class
                                 ).getBody();
 
-                                String releaseId = fuzzyResponse.get("release_mbid").asText();
+                                JsonNode recordings = isrcResponse.get("recordings");
 
-                                JsonNode releaseResponse = restTemplate.exchange(
-                                        "https://musicbrainz.org/ws/2/release/" + releaseId +
-                                                "?inc=release-groups&fmt=json",
-                                        HttpMethod.GET,
-                                        entity,
-                                        JsonNode.class
-                                ).getBody();
+                                JsonNode earliestRecording = StreamSupport.stream(recordings.spliterator(), false)
+                                        .min(Comparator.comparing(r -> r.get("first-release-date").asText()))
+                                        .get();
 
-                                String releaseGroupId = releaseResponse.get("release-group")
-                                        .get("id").asText();
-
-                                return mbAlbumService.execute(releaseGroupId);
+                                return earliestRecording.get("id").asText();
                             }
-                    );
-                }).exceptionallyCompose(ex -> {
-                    // Fallback: use recordingResponse
-                    return recordingResponse.thenCompose(json ->
+                    ).exceptionallyCompose(ex -> CompletableFuture.supplyAsync(() -> {
+
+                        JsonNode fuzzyResponse = restTemplate.exchange(
+                                "https://api.listenbrainz.org/1/metadata/lookup/" +
+                                        "?recording_name=" + fuzzyTitle +
+                                        "&artist_name=" + fuzzyArtist +
+                                        "&release_name=" + fuzzyAlbum,
+                                HttpMethod.GET,
+                                entity,
+                                JsonNode.class
+                        ).getBody();
+
+                        return fuzzyResponse.get("recording_mbid").asText();
+                    }));
+
+
+            String trackMbid = trackId.join();
+
+            CompletableFuture<ResponseEntity<JsonNode>> recordingResponse =
+                    trackId.thenCompose(json ->
                             CompletableFuture.supplyAsync(() ->
-                                    mbAlbumService.execute(
-                                            json.getBody()
-                                                    .get("releases").get(0)
-                                                    .get("release-group").get("id").asText()
+                                    restTemplate.exchange(
+                                            "https://musicbrainz.org/ws/2/recording/" +
+                                                    trackMbid +
+                                                    "?inc=releases+release-groups+artist-credits&fmt=json",
+                                            HttpMethod.GET,
+                                            entity,
+                                            JsonNode.class
                                     )
-                            )
-                    );
-                });
+                            ));
 
-        releaseGroupResponse.thenAccept(result -> {
-            ResponseEntity<TrackDTO> track = getOrCreateTrackService.execute(
-                    trackMbid,
-                    trackTitle,
-                    releaseDate,
-                    result.getBody().getId(),
-                    result.getBody().getTitle(),
-                    result.getBody().getPrimaryType(),
-                    trackArtistMbids,
-                    trackArtistNames,
-                    new String[]{},
-                    new String[]{}
-            );
+            String trackTitle = recordingResponse.join().getBody().get("title").asText();
 
+            String releaseDate = recordingResponse.join().getBody().get("first-release-date").asText();
 
-            Optional<Release> releaseOptional = releaseRepository.findByMbid(result.getBody().getId());
+            JsonNode artistCredits = recordingResponse.join()
+                    .getBody()
+                    .get("artist-credit");
 
-            if (releaseOptional.isPresent()) {
-                Scrobble scrobble = new Scrobble(
-                        4,
-                        track.getBody().getId(),
-                        releaseOptional.get().getId()
+            String[] trackArtistNames = StreamSupport.stream(artistCredits.spliterator(), false)
+                    .map(ac -> ac.get("artist").get("name").asText())
+                    .toArray(String[]::new);
+
+            String[] trackArtistMbids = StreamSupport.stream(artistCredits.spliterator(), false)
+                    .map(ac -> ac.get("artist").get("id").asText())
+                    .toArray(String[]::new);
+
+            CompletableFuture<ResponseEntity<MBAlbumDTO>> releaseGroupResponse =
+                    CompletableFuture.supplyAsync(() -> {
+                        // Attempt to get release-group via spotify URL
+                        JsonNode urlResponse = restTemplate.exchange(
+                                "https://musicbrainz.org/ws/2/url?resource=" + releaseUrl +
+                                        "&fmt=json&inc=release-rels",
+                                HttpMethod.GET,
+                                entity,
+                                JsonNode.class
+                        ).getBody();
+
+                        String releaseId = urlResponse.get("relations").get(0)
+                                .get("release").get("id").asText();
+
+                        JsonNode releaseResponse = restTemplate.exchange(
+                                "https://musicbrainz.org/ws/2/release/" + releaseId +
+                                        "?inc=release-groups&fmt=json",
+                                HttpMethod.GET,
+                                entity,
+                                JsonNode.class
+                        ).getBody();
+
+                        String releaseGroupId = releaseResponse.get("release-group")
+                                .get("id").asText();
+
+                        return mbAlbumService.execute(releaseGroupId);
+
+                    }).exceptionallyCompose(ex -> {
+                        // Fallback: Use fuzzy search
+                        return CompletableFuture.supplyAsync(() -> {
+                                    JsonNode fuzzyResponse = restTemplate.exchange(
+                                            "https://api.listenbrainz.org/1/metadata/lookup/" +
+                                                    "?recording_name=" + fuzzyTitle +
+                                                    "&artist_name=" + fuzzyArtist +
+                                                    "&release_name=" + fuzzyAlbum,
+                                            HttpMethod.GET,
+                                            entity,
+                                            JsonNode.class
+                                    ).getBody();
+
+                                    String releaseId = fuzzyResponse.get("release_mbid").asText();
+
+                                    JsonNode releaseResponse = restTemplate.exchange(
+                                            "https://musicbrainz.org/ws/2/release/" + releaseId +
+                                                    "?inc=release-groups&fmt=json",
+                                            HttpMethod.GET,
+                                            entity,
+                                            JsonNode.class
+                                    ).getBody();
+
+                                    String releaseGroupId = releaseResponse.get("release-group")
+                                            .get("id").asText();
+
+                                    return mbAlbumService.execute(releaseGroupId);
+                                }
+                        );
+                    }).exceptionallyCompose(ex -> {
+                        // Fallback: use recordingResponse
+                        return recordingResponse.thenCompose(json ->
+                                CompletableFuture.supplyAsync(() ->
+                                        mbAlbumService.execute(
+                                                json.getBody()
+                                                        .get("releases").get(0)
+                                                        .get("release-group").get("id").asText()
+                                        )
+                                )
+                        );
+                    });
+
+            releaseGroupResponse.thenAccept(result -> {
+                ResponseEntity<TrackDTO> track = getOrCreateTrackService.execute(
+                        trackMbid,
+                        trackTitle,
+                        releaseDate,
+                        result.getBody().getId(),
+                        result.getBody().getTitle(),
+                        result.getBody().getPrimaryType(),
+                        trackArtistMbids,
+                        trackArtistNames,
+                        new String[]{},
+                        new String[]{}
                 );
 
-                createScrobbleService.execute(scrobble);
+
+                Optional<Release> releaseOptional = releaseRepository.findByMbid(result.getBody().getId());
+
+                if (releaseOptional.isPresent()) {
+                    Scrobble scrobble = new Scrobble(
+                            4,
+                            track.getBody().getId(),
+                            releaseOptional.get().getId()
+                    );
+
+                    createScrobbleService.execute(scrobble);
+                } else {
+                    System.out.println("Release not found");
+                }
+            });
+        } catch (CompletionException ce) {
+            if (ce.getCause() instanceof NullPointerException) {
+                ResponseEntity<TrackDTO> track = getOrCreateTrackService.execute(
+                        null,
+                        fuzzyTitle,
+                        trackData.get("item").get("album").get("release_date").asText(),
+                        null,
+                        fuzzyAlbum,
+                        trackData.get("item").get("album").get("album_type").asText(),
+                        new String[]{},
+                        StreamSupport.stream(trackData.get("item").get("artists").spliterator(), false)
+                                .map(ac -> ac.get("name").asText())
+                                .toArray(String[]::new),
+                        new String[]{},
+                        new String[]{}
+                );
+
+                Optional<Release> releaseOptional = releaseRepository.findByArtistAndTitle(fuzzyArtist, fuzzyAlbum);
+
+                if (releaseOptional.isPresent()) {
+                    Scrobble scrobble = new Scrobble(
+                            4,
+                            track.getBody().getId(),
+                            releaseOptional.get().getId()
+                    );
+
+                    createScrobbleService.execute(scrobble);
+                } else {
+                    System.out.println("Release not found");
+                }
             } else {
-                System.out.println("Release not found");
+                throw ce;
             }
-        });
+        }
     }
 }

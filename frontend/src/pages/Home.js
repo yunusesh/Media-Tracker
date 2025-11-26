@@ -217,11 +217,11 @@ export function Home() {
                                     <GrPowerCycle
                                         className="switch"
                                         onClick={() => {
-                                            setTrackTopsterSize(topsterSizes[nextTrackTopsterSize]);
-                                            if (nextTrackTopsterSize + 1 >= topsterSizes.length) {
-                                                setNextTrackTopsterSize(0);
+                                            setReleaseTopsterSize(topsterSizes[nextReleaseTopsterSize]);
+                                            if (nextReleaseTopsterSize + 1 >= topsterSizes.length) {
+                                                setNextReleaseTopsterSize(0);
                                             } else {
-                                                setNextTrackTopsterSize(nextTrackTopsterSize + 1);
+                                                setNextReleaseTopsterSize(nextReleaseTopsterSize + 1);
                                             }
                                         }}
                                     />

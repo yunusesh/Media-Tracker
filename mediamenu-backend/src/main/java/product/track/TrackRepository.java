@@ -54,17 +54,6 @@ inserted_release AS (
     RETURNING id
 ),
 
-existing_release AS (
-    SELECT id FROM release_group WHERE mbid = :releaseMbid
-),
-
-release_final AS (
-    SELECT id FROM inserted_release
-    UNION ALL
-    SELECT id FROM existing_release
-    LIMIT 1
-),
-
 inserted_track AS (
     INSERT INTO track (mbid, title, release_date)
     VALUES (:trackMbid, :trackTitle, :trackReleaseDate)
@@ -74,9 +63,9 @@ inserted_track AS (
 
 insert_track_release AS (
     INSERT INTO track_release(track_id, release_id)
-    SELECT it.id, rf.id
+    SELECT it.id, ir.id
     FROM inserted_track it
-    CROSS JOIN release_final rf
+    CROSS JOIN inserted_release ir
     ON CONFLICT DO NOTHING
 ),
 
@@ -84,6 +73,14 @@ insert_track_artists AS (
     INSERT INTO track_artist (track_id, artist_id)
     SELECT it.id, ia.id
     FROM inserted_track it
+    CROSS JOIN inserted_artists ia
+    ON CONFLICT DO NOTHING
+),
+    
+insert_release_artists AS (
+    INSERT INTO release_artist (release_id, artist_id)
+    SELECT ir.id, ia.id
+    FROM inserted_release ir
     CROSS JOIN inserted_artists ia
     ON CONFLICT DO NOTHING
 ),

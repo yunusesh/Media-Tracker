@@ -15,6 +15,15 @@ public interface ReleaseRepository extends JpaRepository<Release, Integer> {
 
     Optional<Release> findByMbid(String mbid);
 
+    @Query(value = """
+        SELECT r
+        FROM Release r
+        JOIN r.artists a
+        WHERE r.title = :title
+        AND a.artistName = :artist
+""")
+    Optional<Release> findByArtistAndTitle(String artist, String title);
+
     /* try to create a new artist, if the artist exists then update the name from mbid in case of change
     * also select the artist if it already exists (as a fallback)
     * the final artist returned is whichever exists, the inserted or existing (another fallback) limits to 1

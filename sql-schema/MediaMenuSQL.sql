@@ -23,7 +23,7 @@ CREATE TABLE artist(
 
 CREATE TABLE release_group (
 	id SERIAL PRIMARY KEY,
-	mbid VARCHAR(36) UNIQUE,
+	mbid VARCHAR(36) UNIQUE
 	spotify_id VARCHAR UNIQUE,
 	title VARCHAR NOT NULL,
 	release_date VARCHAR,
@@ -34,6 +34,7 @@ CREATE TABLE track (
 	id SERIAL PRIMARY KEY,
 	mbid VARCHAR(36) UNIQUE,
 	spotify_id VARCHAR UNIQUE,
+	isrc VARCHAR UNIQUE,
 	title VARCHAR NOT NULL,
 	release_date VARCHAR,
 	cover_release_mbid VARCHAR(36)
