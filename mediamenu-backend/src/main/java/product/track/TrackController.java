@@ -43,12 +43,15 @@ public class TrackController {
     public ResponseEntity<TrackDTO> getOrCreateTrack(@RequestBody TrackRequestDTO track) {
         TrackDTO trackDTO = getOrCreateTrackService.execute(
                 track.getTrackMbid(),
+                track.getIsrc(),
                 track.getTrackTitle(),
                 track.getReleaseDate(),
                 track.getReleaseMbid(),
+                track.getReleaseSpotifyId(),
                 track.getReleaseTitle(),
                 track.getFormat(),
                 track.getArtists().stream().map(ArtistDTO::getMbid).toArray(String[]::new),
+                track.getArtists().stream().map(ArtistDTO::getSpotifyId).toArray(String[]::new),
                 track.getArtists().stream().map(ArtistDTO::getArtistName).toArray(String[]::new),
                 track.getGenres().stream().map(GenreDTO::getMbid).toArray(String[]:: new),
                 track.getGenres().stream().map(GenreDTO::getGenreName).toArray(String[]:: new)

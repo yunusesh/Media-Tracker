@@ -40,13 +40,16 @@ export function Track() {
         if (data) {
             const response = await axios.post(`http://localhost:8081/api/track/getOrCreate`, {
                 trackMbid: id,
+                isrc: null,
                 trackTitle: data.title,
                 releaseDate: data["first-release-date"],
                 releaseMbid: data.releases[0].id,
+                releaseSpotifyId: null,
                 releaseTitle: data.releases[0].title,
                 format: data.releases[0]["primary-type"],
                 artists: data["artist-credit"]?.map(artist => ({
                     mbid: artist.id,
+                    spotifyId: null,
                     artistName: artist.name
                 })) || [],
                 genres: data.genres?.map(genre => ({

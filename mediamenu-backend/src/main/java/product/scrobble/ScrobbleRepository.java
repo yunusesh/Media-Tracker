@@ -57,13 +57,14 @@ public interface ScrobbleRepository extends JpaRepository<Scrobble, Integer> {
                         s.trackId,
                         s.releaseId,
                         t.mbid,
+                        t.isrc,
                         t.title,
                         s.firstListenedAt,
                         r.mbid,
+                        r.spotifyId,
                         r.title,
                         r.format,
-                        t.releaseMbid,
-                        t.spotifyId
+                        t.releaseMbid
                         )
             
                 FROM Scrobble s

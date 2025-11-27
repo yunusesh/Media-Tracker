@@ -18,10 +18,12 @@ import java.util.List;
 public class TrackRequestDTO {
     private Integer trackId;
     private String trackMbid;
+    private String isrc;
     private String trackTitle;
     private String releaseDate;
     private Integer releaseId;
     private String releaseMbid;
+    private String releaseSpotifyId;
     private String releaseTitle;
     private String format;
 

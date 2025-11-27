@@ -24,6 +24,9 @@ public class Track {
     @Column(name = "spotify_id")
     private String spotifyId;
 
+    @Column(name = "isrc")
+    private String isrc;
+
     @Column(name = "title")
     private String title;
 

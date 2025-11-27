@@ -28,6 +28,7 @@ WITH genre_data AS (
 
 artist_data AS (
     SELECT UNNEST(:artistMbids) AS mbid,
+           UNNEST(:artistSpotifyIds) AS spotify_id,
            UNNEST(:artistNames) AS artist_name
 ),
 
@@ -35,81 +36,120 @@ inserted_genres AS (
     INSERT INTO genre (mbid, genre_name)
     SELECT gd.mbid, gd.genre_name
     FROM genre_data gd
-    ON CONFLICT (mbid) DO UPDATE SET genre_name = EXCLUDED.genre_name
+    WHERE gd.genre_name IS NOT NULL
+      AND gd.mbid IS NOT NULL
+    ON CONFLICT (mbid) DO UPDATE
+    SET genre_name = EXCLUDED.genre_name
     RETURNING id, mbid
 ),
 
 inserted_artists AS (
-    INSERT INTO artist (mbid, artist_name)
-    SELECT ad.mbid, ad.artist_name
+    INSERT INTO artist (mbid, spotify_id, artist_name)
+    SELECT ad.mbid, ad.spotify_id, ad.artist_name
     FROM artist_data ad
     ON CONFLICT (mbid) DO UPDATE SET artist_name = EXCLUDED.artist_name
-    RETURNING id, mbid
+    RETURNING id, mbid, spotify_id
+),
+
+existing_artists AS (
+    SELECT a.id
+    FROM artist a
+    JOIN artist_data ad
+    ON a.mbid = ad.mbid
+    OR a.spotify_id = ad.spotify_id
+),
+
+artists_final AS (
+    SELECT id FROM inserted_artists
+    UNION ALL
+    SELECT id FROM existing_artists
+    LIMIT 1
 ),
 
 inserted_release AS (
-    INSERT INTO release_group (mbid, title, format)
-    VALUES (:releaseMbid, :releaseTitle, :format)
+    INSERT INTO release_group (mbid, spotify_id, title, format)
+    VALUES (:releaseMbid, :releaseSpotifyId, :releaseTitle, :format)
     ON CONFLICT (mbid) DO UPDATE SET title = EXCLUDED.title
     RETURNING id
 ),
+    
+existing_release AS (
+    SELECT id FROM release_group WHERE mbid = :releaseMbid OR spotify_id = :releaseSpotifyId
+),
 
+release_final AS (
+    SELECT id FROM inserted_release
+    UNION ALL
+    SELECT id FROM existing_release
+    LIMIT 1
+),
+    
 inserted_track AS (
-    INSERT INTO track (mbid, title, release_date)
-    VALUES (:trackMbid, :trackTitle, :trackReleaseDate)
+    INSERT INTO track (mbid, isrc, title, release_date)
+    VALUES (:trackMbid, :isrc, :trackTitle, :trackReleaseDate)
     ON CONFLICT (mbid) DO UPDATE SET title = EXCLUDED.title
-    RETURNING *
+    RETURNING id
+),
+    
+existing_track AS (
+    SELECT id FROM track WHERE mbid = :trackMbid OR isrc = :isrc
+),
+    
+track_final AS (
+    SELECT id FROM inserted_track
+    UNION ALL
+    SELECT id FROM existing_track
+    LIMIT 1
 ),
 
 insert_track_release AS (
     INSERT INTO track_release(track_id, release_id)
-    SELECT it.id, ir.id
-    FROM inserted_track it
-    CROSS JOIN inserted_release ir
+    SELECT tf.id, rf.id
+    FROM track_final tf
+    CROSS JOIN release_final rf
     ON CONFLICT DO NOTHING
 ),
 
 insert_track_artists AS (
     INSERT INTO track_artist (track_id, artist_id)
-    SELECT it.id, ia.id
-    FROM inserted_track it
-    CROSS JOIN inserted_artists ia
+    SELECT tf.id, af.id
+    FROM track_final tf
+    CROSS JOIN artists_final af
     ON CONFLICT DO NOTHING
 ),
     
 insert_release_artists AS (
     INSERT INTO release_artist (release_id, artist_id)
-    SELECT ir.id, ia.id
-    FROM inserted_release ir
-    CROSS JOIN inserted_artists ia
+    SELECT rf.id, af.id
+    FROM release_final rf
+    CROSS JOIN artists_final af
     ON CONFLICT DO NOTHING
 ),
 
 insert_track_genres AS (
     INSERT INTO track_genre (track_id, genre_id)
-    SELECT it.id, ig.id
-    FROM inserted_track it
+    SELECT tf.id, ig.id
+    FROM track_final tf
     CROSS JOIN inserted_genres ig
     ON CONFLICT DO NOTHING
 )
 
-SELECT *
-FROM inserted_track
-UNION ALL
-SELECT *
-FROM track
-WHERE mbid = :trackMbid
+SELECT t.*
+FROM track t
+JOIN track_final tf ON tf.id = t.id
 LIMIT 1;
-
 """, nativeQuery = true)
     Track upsertTrack(
             @Param("trackMbid") String trackMbid,
+            @Param("isrc") String isrc,
             @Param("trackTitle") String trackTitle,
             @Param("trackReleaseDate") String trackReleaseDate,
             @Param("releaseMbid") String releaseMbid,
+            @Param("releaseSpotifyId") String releaseSpotifyId,
             @Param("releaseTitle") String releaseTitle,
             @Param("format") String format,
             @Param("artistMbids") String[] artistMbids,
+            @Param("artistSpotifyIds") String[] artistSpotifyIds,
             @Param("artistNames") String[] artistNames,
             @Param("genreMbids") String[] genreMbids,
             @Param("genreNames") String[] genreNames

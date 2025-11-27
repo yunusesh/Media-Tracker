@@ -26,34 +26,50 @@ public class GetOrCreateTrackService {
     }
 
     @Transactional
-    public ResponseEntity<TrackDTO> execute(String trackMbid, String trackTitle, String releaseDate,
-                                            String releaseMbid, String releaseTitle, String format,
-                                            String[] artistMbids, String[] artistNames, String[] genreMbids,
+    public ResponseEntity<TrackDTO> execute(String trackMbid, String trackIsrc, String trackTitle, String releaseDate,
+                                            String releaseMbid, String releaseSpotifyId, String releaseTitle, String format,
+                                            String[] artistMbids, String[] artistSpotifyIds, String[] artistNames, String[] genreMbids,
                                             String[] genreNames) {
-        if (genreMbids == null) {
+        if (genreMbids == null || genreMbids.length == 0) {
             genreMbids = new String[0];
         }
 
-        if (genreNames == null) {
+        if (genreNames == null || genreNames.length == 0) {
             genreNames = new String[0];
+        }
+
+        if (genreMbids.length == 0) {
+            genreMbids = new String[]{null};
+            genreNames = new String[]{null};
         }
 
         if (artistMbids == null) {
             artistMbids = new String[0];
         }
 
+        if(artistSpotifyIds == null) {
+            artistSpotifyIds = new String[0];
+        }
+
         if(artistNames == null) {
             artistNames = new String[0];
         }
 
+        if (artistMbids.length != artistNames.length || artistNames.length != artistSpotifyIds.length){
+            throw new IllegalArgumentException("Artist arrays must have the same length");
+        }
+
         Track track = trackRepository.upsertTrack(
                 trackMbid,
+                trackIsrc,
                 trackTitle,
                 releaseDate,
                 releaseMbid,
+                releaseSpotifyId,
                 releaseTitle,
                 format,
                 artistMbids,
+                artistSpotifyIds,
                 artistNames,
                 genreMbids,
                 genreNames

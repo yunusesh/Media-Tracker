@@ -159,9 +159,11 @@ export function Album() {
             for (const track of albumReissue.tracklist) {
                 const response = await axios.post('http://localhost:8081/api/track/getOrCreate', {
                     trackMbid: track.recording.id,
+                    isrc: null,
                     trackTitle: track.title,
                     releaseDate: track.recording["first-release-date"],
                     releaseMbid: id,
+                    releaseSpotifyId: null,
                     releaseTitle: albumReissue.title,
                     format: data["primary-type"],
                     artists: track.recording["artist-credit"]
@@ -169,6 +171,7 @@ export function Album() {
                         ?.filter(a => a?.id)
                         ?.map(a => ({
                             mbid: a.id,
+                            spotifyId: null,
                             artistName: a.name
                         })) || [],
                 });

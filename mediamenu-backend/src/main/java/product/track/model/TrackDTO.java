@@ -12,6 +12,7 @@ public class TrackDTO {
     private Integer id;
     private String mbid;
     private String spotifyId;
+    private String isrc;
     private String releaseDate;
     private String title;
     private String releaseMbid;
@@ -25,6 +26,7 @@ public class TrackDTO {
         this.id = track.getId();
         this.mbid = track.getMbid();
         this.spotifyId = track.getSpotifyId();
+        this.isrc = track.getIsrc();
         this.title = track.getTitle();
         this.releaseDate = track.getReleaseDate();
         this.releaseMbid = track.getReleaseMbid();

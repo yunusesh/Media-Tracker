@@ -20,6 +20,7 @@ import product.spotify.model.UserSpotify;
 import product.track.model.TrackDTO;
 import product.track.services.GetOrCreateTrackService;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Optional;
@@ -132,7 +133,6 @@ public class SpotifyAutoScrobbleService {
         String fuzzyArtist = trackData.get("item").get("artists").get(0).get("name").asText();
         String fuzzyAlbum = trackData.get("item").get("album").get("name").asText();
 
-
         String releaseUrl = trackData.get("item").get("album").get("external_urls").get("spotify") != null ?
                 trackData.get("item").get("album").get("external_urls").get("spotify").asText() :
                 null;
@@ -144,7 +144,7 @@ public class SpotifyAutoScrobbleService {
         try {
             CompletableFuture<String> trackId =
                     CompletableFuture.supplyAsync(() -> {
-                                JsonNode isrcResponse = restTemplate.exchange(
+                        JsonNode isrcResponse = restTemplate.exchange(
                                         "https://musicbrainz.org/ws/2/isrc/" + isrc + "?inc=release-rels&fmt=json",
                                         HttpMethod.GET,
                                         entity,
@@ -157,7 +157,7 @@ public class SpotifyAutoScrobbleService {
                                         .min(Comparator.comparing(r -> r.get("first-release-date").asText()))
                                         .get();
 
-                                return earliestRecording.get("id").asText();
+                        return earliestRecording.get("id").asText();
                             }
                     ).exceptionallyCompose(ex -> CompletableFuture.supplyAsync(() -> {
 
@@ -276,19 +276,38 @@ public class SpotifyAutoScrobbleService {
                     });
 
             releaseGroupResponse.thenAccept(result -> {
+
+                System.out.println(trackMbid);
+                System.out.println(isrc);
+                System.out.println(trackTitle);
+                System.out.println(releaseDate);
+                System.out.println(result.getBody().getId());
+                System.out.println(trackData.get("item").get("album").get("id").asText());
+                System.out.println(result.getBody().getTitle());
+                System.out.println(result.getBody().getPrimaryType());
+                System.out.println(Arrays.toString(trackArtistNames));
+                System.out.println(Arrays.toString(trackArtistMbids));
+                System.out.println(Arrays.toString(StreamSupport.stream(trackData.get("item").get("artists").spliterator(), false)
+                        .map(ac -> ac.get("id").asText())
+                        .toArray(String[]::new)));
+
                 ResponseEntity<TrackDTO> track = getOrCreateTrackService.execute(
                         trackMbid,
+                        isrc,
                         trackTitle,
                         releaseDate,
                         result.getBody().getId(),
+                        trackData.get("item").get("album").get("id").asText(),
                         result.getBody().getTitle(),
                         result.getBody().getPrimaryType(),
                         trackArtistMbids,
+                        StreamSupport.stream(trackData.get("item").get("artists").spliterator(), false)
+                                .map(ac -> ac.get("id").asText())
+                                .toArray(String[]::new),
                         trackArtistNames,
                         new String[]{},
                         new String[]{}
                 );
-
 
                 Optional<Release> releaseOptional = releaseRepository.findByMbid(result.getBody().getId());
 
@@ -305,18 +324,32 @@ public class SpotifyAutoScrobbleService {
                 }
             });
         } catch (CompletionException ce) {
+
+            String[] artistSpotifyIds = StreamSupport.stream(trackData.get("item").get("artists").spliterator(), false)
+                    .map(ac -> ac.get("id").asText())
+                    .toArray(String[]::new);
+
+            String[] artistNames = StreamSupport.stream(trackData.get("item").get("artists").spliterator(), false)
+                    .map(ac -> ac.get("name").asText())
+                    .toArray(String[]::new);
+
+            String[] artistMbids = new String[artistNames.length];
+
+            Arrays.fill(artistMbids, null);
+
             if (ce.getCause() instanceof NullPointerException) {
                 ResponseEntity<TrackDTO> track = getOrCreateTrackService.execute(
                         null,
+                        isrc,
                         fuzzyTitle,
                         trackData.get("item").get("album").get("release_date").asText(),
                         null,
+                        trackData.get("item").get("album").get("id").asText(),
                         fuzzyAlbum,
                         trackData.get("item").get("album").get("album_type").asText(),
-                        new String[]{},
-                        StreamSupport.stream(trackData.get("item").get("artists").spliterator(), false)
-                                .map(ac -> ac.get("name").asText())
-                                .toArray(String[]::new),
+                        artistMbids,
+                        artistSpotifyIds,
+                        artistNames,
                         new String[]{},
                         new String[]{}
                 );
