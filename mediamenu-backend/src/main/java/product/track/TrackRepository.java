@@ -88,24 +88,13 @@ inserted_track AS (
     INSERT INTO track (mbid, isrc, title, release_date)
     VALUES (:trackMbid, :isrc, :trackTitle, :trackReleaseDate)
     ON CONFLICT (mbid) DO UPDATE SET title = EXCLUDED.title
-    RETURNING id
-),
-    
-existing_track AS (
-    SELECT id FROM track WHERE mbid = :trackMbid OR isrc = :isrc
-),
-    
-track_final AS (
-    SELECT id FROM inserted_track
-    UNION ALL
-    SELECT id FROM existing_track
-    LIMIT 1
+    RETURNING *
 ),
 
 insert_track_release AS (
     INSERT INTO track_release(track_id, release_id)
     SELECT tf.id, rf.id
-    FROM track_final tf
+    FROM inserted_track tf
     CROSS JOIN release_final rf
     ON CONFLICT DO NOTHING
 ),
@@ -113,7 +102,7 @@ insert_track_release AS (
 insert_track_artists AS (
     INSERT INTO track_artist (track_id, artist_id)
     SELECT tf.id, af.id
-    FROM track_final tf
+    FROM inserted_track tf
     CROSS JOIN artists_final af
     ON CONFLICT DO NOTHING
 ),
@@ -129,14 +118,17 @@ insert_release_artists AS (
 insert_track_genres AS (
     INSERT INTO track_genre (track_id, genre_id)
     SELECT tf.id, ig.id
-    FROM track_final tf
+    FROM inserted_track tf
     CROSS JOIN inserted_genres ig
     ON CONFLICT DO NOTHING
 )
 
-SELECT t.*
-FROM track t
-JOIN track_final tf ON tf.id = t.id
+SELECT *
+FROM inserted_track
+UNION ALL
+SELECT *
+FROM track
+WHERE mbid = :trackMbid
 LIMIT 1;
 """, nativeQuery = true)
     Track upsertTrack(
