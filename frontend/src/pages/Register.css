@@ -1,0 +1,57 @@
+.register-page{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.register{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: 3px solid #4C5563;
+    width: 80vh;
+    height: 50vh;
+    margin-bottom: 100px;
+}
+.email-wrapper{
+    background-color: #4c4c4c;
+    border-radius: 10px;
+    height: 5vh;
+    padding: 8px 35px 6px 10px;
+    display: flex;
+    align-items: center;
+    width: 40vh;
+    margin-bottom:10px;
+}
+
+.register-button-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.register-button{
+    margin-top: 10px;
+    width: 100px;
+    height: 40px;
+    font-size: 16px;
+    font-family: Monaco, monospace;
+    color: #ffffff;
+    background-color: #1d6fa3;
+    box-shadow: 2px 2px 1px black;
+    border: #1E2023;
+    outline: none;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease-in-out;
+}
+
+.register-button:hover {
+    background-color: #1090e0;
+}
+
+.register-button:active{
+    background-color: #30DBBF;
+}

@@ -1,0 +1,569 @@
+.album-page{
+    padding: 30px;
+    position: relative;
+}
+.album-info {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    margin-bottom: 1rem;
+    margin-left: 4.3rem;
+}
+
+.album-info::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 95%;
+    transform: translateX(-50%);
+    border-bottom: 1px solid #4C5563;
+}
+
+.img{
+    height: 50vh;
+    width: 50vh;
+}
+
+.title, .artist, .date-format, .title-box, .date-artist{
+    display:inline;
+}
+
+.title{
+    text-align: center;
+    text-shadow: 2px 2px 1px #333;
+    user-select: none;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 2px;
+    text-decoration: none;
+}
+
+.date-format{
+    display: inline-block;
+    white-space: pre;
+    color: #525457;
+    letter-spacing: 1px;
+}
+.artist{
+    display: inline-block;
+    white-space: pre;
+    text-shadow: 2px 2px 1px #333;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.artist:hover{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.tracklist{
+    overflow: auto;
+}
+
+.tracklist-items{
+    width: auto;
+    color: #fff;
+    letter-spacing: 1px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
+.tracklist-items:hover{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.links-under-img {
+    display: flex;
+    flex-direction: column; /* stack link under image */
+    align-items: center;
+    justify-content: center;
+    width: 40%;
+    padding-right: 1rem;
+}
+
+.album-links{
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+
+    font-family: serif;
+    font-variant: normal;
+}
+
+.list-under-title{
+    position: relative;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 50vh;
+}
+
+.reissues-container{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 35vh;
+    margin-right: 15vh;
+}
+
+.reissues{
+    width: 21vh;
+    height: 40px;
+    font-size: 16px;
+    font-family: Monaco, monospace;
+    color: #ffffff;
+    background-color: #1d6fa3;
+    box-shadow: 2px 2px 1px black;
+    border: #1E2023;
+    border-radius: 5px;
+    outline: none;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease-in-out;
+}
+
+.reissues:hover {
+    background-color: #1090e0;
+}
+
+.reissues.active{
+    background-color: #30DBBF;
+}
+
+.reissues.active:hover {
+    background-color: #1eFFE7;
+}
+
+.reissues-list{
+    width: 47vh;
+    max-height: 300px;
+    background-color: #4c4c4c;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0px 0px 8px #4c4c4c;
+    border-radius: 10px;
+    margin-top: 1rem;
+    max-height: 300px;
+    overflow-y: scroll;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.reissues-result{
+    padding: 10px 20px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.reissues-result:hover{
+    background-color: #efefef;
+    color: black;
+    cursor: pointer;
+}
+
+.genres {
+    position: relative;
+    color: #525457;
+    width: 75%;
+    height: 100%;
+    bottom: 0;
+    padding-bottom: .5rem;
+    padding-top: .5rem;
+    font-family: "Malgun Gothic Semilight";
+}
+
+.user-album{
+    margin-left: 3.5rem;
+}
+
+.stats{
+    font-family: "Malgun Gothic Semilight";
+    font-size: 1.5rem;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    border: .1rem solid #4C5563;
+    width: 20rem;
+}
+
+.stats-editing{
+    font-family: "Malgun Gothic Semilight";
+    font-size: 1.5rem;
+    padding: 10px;
+    align-items: center;
+    justify-content: center;
+    border: 2.5px solid #4C5563;
+    min-width: 50vh;
+    max-width: 60vh;
+    position: relative;
+}
+
+.rating{
+    display: inline;
+    padding: 5px;
+}
+.star{
+    display: inline;
+    color:orange;
+    font-size: 22px;
+}
+
+.rating-absent, .rating-ten, .rating-high, .rating-med, .rating-medlow, .rating-low, .rating-zero{
+    font-size: 22px;
+    display: inline;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 2px;
+    padding: 5px;
+}
+
+.rating-ten{
+    color: #1eFFE7;
+}
+
+.rating-high{
+    color: #2EFF66;
+}
+
+.rating-med{
+    color: #7BFF00;
+}
+
+.rating-medlow{
+    color: #FFF700;
+}
+
+.rating-low{
+    color: #FF8C00;
+}
+
+.rating-zero{
+    color: #FF0000;
+}
+
+.rating-absent{
+    color: gray;
+    font-weight: lighter;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.rating-buttons{
+    position: relative;
+}
+
+.rate-button{
+    position: absolute;
+    bottom: 0;
+    right: 3.8rem;
+    margin: 0 1.5rem;
+}
+
+.cancel-rate-button{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.rate-button, .cancel-rate-button {
+    height: 25px;
+    width: 75px;
+    font-size: 16px;
+    box-shadow: 2px 2px 1px black;
+    color: #D9D9D9;
+    background-color: #4C5563;
+    border: #1E2023;
+    font-family: "Malgun Gothic Semilight";
+    outline: none;
+    cursor: pointer;
+
+    transition: all 0.2s ease-in-out;
+}
+
+.rate-button:hover, .cancel-rate-button:hover{
+    background-color: #687487;
+}
+
+.manual-log{
+    height: 25px;
+    width: 90px;
+    font-size: 16px;
+    box-shadow: 2px 2px 1px black;
+    color: #D9D9D9;
+    background-color: #1d6fa3;
+    border: #1E2023;
+    font-family: "Malgun Gothic Semilight";
+    outline: none;
+    cursor: pointer;
+
+    transition: all 0.2s ease-in-out;
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 15px;
+}
+
+.manual-log:hover{
+    background-color: #1090e0;
+}
+.activity{
+    padding: 5px;
+    font-size: 22px;
+}
+
+.activity h4{
+    font-family: "Malgun Gothic Semilight";
+}
+
+.edit{
+    vertical-align: text-after-edge;
+    margin-left: 5px;
+    font-size: 20px;
+    cursor:pointer;
+}
+
+.edit:hover{
+    color: #A8A8A8;
+}
+
+.success-alert{
+    font-family: "Malgun Gothic Semilight";
+}
+
+@media (max-width: 1024px) {
+
+    .album-info {
+        margin-left: 2rem;
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .img {
+        width: 35vh;
+        height: 35vh;
+        max-width: 280px;
+        max-height: 280px;
+    }
+
+    .links-under-img {
+        width: auto;
+        margin-top: 1rem;
+    }
+
+    .user-album {
+        margin-left: 2rem;
+    }
+
+    .list-under-title{
+        align-items: center;
+        justify-content: center;
+    }
+    .reissues-container {
+        position: relative;
+        margin-right: 0;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+
+    .reissues-list {
+        width: 100%;
+        max-width: 350px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .album-page {
+        padding: 20px;
+    }
+
+    .album-info {
+        flex-direction: column;
+        align-items: center;
+        margin-left: 0;
+    }
+
+    .album-info::after {
+        width: 100%;
+    }
+
+    .img {
+        width: 45vw;
+        height: 45vw;
+        max-width: 250px;
+        max-height: 250px;
+    }
+
+    .links-under-img {
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .list-under-title {
+        min-height: auto;
+        margin-top: 1rem;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .reissues-container {
+        width: 100%;
+        position: relative;
+        margin: 1rem 0 0 0;
+    }
+
+    .reissues {
+        width: 160px;
+        height: 38px;
+        font-size: 14px;
+    }
+
+    .reissues-list {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .stats {
+        width: 100%;
+        max-width: 18rem;
+        margin: auto;
+    }
+
+    .stats-editing {
+        min-width: auto;
+        max-width: 90%;
+        margin: auto;
+    }
+
+    .manual-log {
+        margin: 10px;
+        right: 10px;
+        top: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .album-page {
+        padding: 15px;
+    }
+
+    .album-info {
+        margin-left: 0;
+        text-align: center;
+    }
+
+    .img {
+        width: 80vw;
+        height: 80vw;
+        max-width: 320px;
+        max-height: 320px;
+    }
+
+    .title {
+        font-size: 1.3rem;
+        letter-spacing: 1px;
+    }
+
+    .artist {
+        font-size: 1rem;
+    }
+
+    .date-format {
+        font-size: .85rem;
+    }
+
+    .list-under-title {
+        align-items: center;
+        justify-content: center;
+    }
+    .tracklist-items {
+        margin-left: 0;
+        font-size: .95rem;
+    }
+
+    .genres {
+        width: 100%;
+        padding: .5rem 0;
+        text-align: center;
+    }
+
+    .user-album {
+        margin-left: 0;
+        margin-top: 1rem;
+        text-align: center;
+    }
+
+    .stats, .stats-editing {
+        width: 100%;
+        max-width: 100%;
+        font-size: 1.1rem;
+        padding: 8px;
+    }
+
+    .rating .star,
+    .rating-ten,
+    .rating-high,
+    .rating-med,
+    .rating-medlow,
+    .rating-low,
+    .rating-zero,
+    .rating-absent {
+        font-size: 18px;
+    }
+
+    .rating-buttons {
+        position: relative;
+        margin-top: .5rem;
+    }
+
+    .rate-button,
+    .cancel-rate-button {
+        width: 65px;
+        height: 25px;
+        font-size: 14px;
+    }
+
+    .manual-log {
+        width: 75px;
+        height: 24px;
+        font-size: 13px;
+        top: 5px;
+        right: 5px;
+        margin: 0;
+    }
+
+    .reissues-container {
+        margin-top: 1rem;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .reissues {
+        width: 130px;
+        height: 36px;
+        font-size: 14px;
+    }
+
+    .reissues-list {
+        width: 100%;
+        max-width: 100%;
+        max-height: 220px;
+    }
+}

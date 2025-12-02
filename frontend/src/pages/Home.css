@@ -1,0 +1,141 @@
+.home-page{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2rem;
+}
+
+.charts{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;}
+
+.charts-wrapper{
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+.releases-wrapper, .tracks-wrapper, .artists-wrapper{
+    display: flex;
+    flex-direction: column;
+    width: 40rem;
+    height: 100%;
+}
+
+.releases-header, .tracks-header, .artists-header{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: row;
+    width: 100%;
+    gap: .3rem;
+    margin-bottom: 1rem;
+}
+
+.releases-header::after, .tracks-header::after, .artists-header::after{
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+    border-bottom: 1px solid #4C5563;
+}
+
+.top-tracks, .top-releases, .top-artists{
+    display: grid;
+    aspect-ratio: 1;
+    gap: 0;
+    width: 40rem;
+    border: 2px solid black;
+}
+
+.category-wrapper > * {
+    margin: 0;
+    padding: 0;
+}
+
+.category-wrapper{
+    display: flex;
+    justify-content: center;
+}
+
+.switch-wrapper, .size-switch-wrapper{
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: row;
+    color: #525457;
+    text-decoration: underline;
+    height: 100%;
+    gap: .2rem;
+}
+
+.size-switch-wrapper{
+    justify-content: flex-end;
+}
+
+.switch-wrapper h4, .size-switch-wrapper h4, .switch{
+    cursor: pointer;
+}
+
+.track, .artist{
+    position: relative;
+}
+
+.chart-img{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 2px solid black;
+    margin: 0;
+    cursor: pointer;
+}
+
+.chart-img:hover{
+    border: 2px solid #1eFFE7;
+}
+
+.chart-track-info, .chart-track-info-small {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 25%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.chart-track-info h5, .chart-track-info-small h5 {
+    margin: 0;
+    width: 90%;
+    text-align: center;
+    font-size: clamp(0.375rem, .009rem + 6vw, 0.83rem);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1;
+    opacity: 0.8;
+}
+
+.chart-track-info-small h5{
+    font-size: 6px;
+}

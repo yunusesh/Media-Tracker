@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/mediamenu-backend/src/main/java/product/track/TrackRepository.java" value="76d2d4fe-dd27-4db0-b837-880d7605a1cf" />
+    <file url="file://$PROJECT_DIR$/sql-schema/MediaMenuSQL.sql" value="76d2d4fe-dd27-4db0-b837-880d7605a1cf" />
+  </component>
+</project>

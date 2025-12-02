@@ -1,0 +1,254 @@
+.search-wrapper{
+    width: 29rem;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.results-list{
+    position: absolute;
+    width: 100%;
+    background-color: #3B3E40;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    max-height: 300px;
+    overflow-y: scroll;
+    z-index: 1;
+}
+
+.search-result{
+    padding: 2rem 1rem;
+    width: 100%;
+    display:flex;
+    justify-content: flex-start;
+    align-items: center;
+    white-space:nowrap;
+    overflow: hidden;
+}
+
+.search-result:hover{
+    background-color: #efefef;
+    color: black;
+    cursor: pointer;
+}
+
+.result-row{
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+.result-info{
+    width: 100%;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    margin-left: .5rem;
+}
+
+.result-info h5{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    width: 100%;
+}
+
+.result-img{
+    width: 3rem;
+    height: 3rem;
+}
+
+.input-wrapper {
+    background-color: #4c4c4c;
+    border-radius: 10px;
+    height: 2.5rem;
+    padding: 8px 35px 6px 24px;
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+input{
+    background-color: transparent;
+    color: #FFFF;
+    border: none;
+    height: 100%;
+    font-size: 1.25rem;
+    width: 100%;
+    margin-left: 5px;
+}
+
+input:focus{
+    outline: none;
+}
+
+#search-icon{
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    color: royalblue;
+    font-size: 1.2rem;
+    z-index:1;
+    cursor: pointer;
+}
+
+.search-buttons{
+    display: flex;
+    gap: 1rem;
+    margin-bottom: .5rem;
+    margin-top: .5rem;
+}
+
+.artist-button, .release-button, .track-button{
+    width: 100px;
+    height: 40px;
+    font-size: 16px;
+    font-family: Monaco, monospace;
+    color: #ffffff;
+    background-color: #1d6fa3;
+    box-shadow: 2px 2px 1px black;
+    border: #1E2023;
+    border-radius: 5px;
+    outline: none;
+
+    cursor: pointer;
+
+    transition: all 0.2s ease-in-out;
+}
+
+
+.release-button:hover, .artist-button:hover, .track-button:hover {
+    background-color: #1090e0;
+}
+
+.release-button.active, .artist-button.active, .track-button.active{
+    background-color: #30DBBF;
+}
+
+.release-button.active:hover, .artist-button.active:hover, .track-button.active:hover {
+    background-color: #1eFFE7;
+}
+
+
+
+
+@media (max-width: 1024px) {
+    .search-wrapper {
+        width: 24rem;
+    }
+
+    .input-wrapper {
+        height: 2.3rem;
+        padding: 6px 30px 6px 20px;
+    }
+
+    input {
+        font-size: 1.1rem;
+    }
+
+    .search-buttons {
+        gap: .75rem;
+    }
+
+    .artist-button, .release-button, .track-button {
+        width: 90px;
+        height: 36px;
+        font-size: 14px;
+    }
+}
+
+
+@media (max-width: 768px) {
+    .search-wrapper {
+        width: 100%;
+        max-width: 22rem;
+    }
+
+    .search-result {
+        padding: 1.2rem .75rem;
+    }
+
+    .result-img {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .input-wrapper {
+        height: 2.2rem;
+        padding: 6px 32px 6px 18px;
+    }
+
+    input {
+        font-size: 1rem;
+    }
+
+    #search-icon {
+        right: 15px;
+        top: 9px;
+        font-size: 1rem;
+    }
+
+    .artist-button, .release-button, .track-button {
+        width: 80px;
+        height: 34px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .search-wrapper {
+        width: 95%;
+        margin: auto;
+    }
+
+    .search-buttons {
+        flex-wrap: wrap;
+        gap: .5rem;
+        justify-content: center;
+    }
+
+    .artist-button, .release-button, .track-button {
+        width: 75px;
+        height: 32px;
+        font-size: 12px;
+    }
+
+    .input-wrapper {
+        height: 2rem;
+        padding: 5px 30px 5px 14px;
+    }
+
+    input {
+        font-size: .95rem;
+    }
+
+    #search-icon {
+        font-size: 1rem;
+        right: 12px;
+        top: 7px;
+    }
+
+    .results-list {
+        max-height: 220px;
+        border-radius: 8px;
+        width: 100%;
+    }
+
+    .search-result {
+        padding: 1rem .5rem;
+    }
+
+    .result-img {
+        width: 2.3rem;
+        height: 2.3rem;
+    }
+
+    .result-info {
+        margin-left: .4rem;
+    }
+}

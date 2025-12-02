@@ -1,0 +1,233 @@
+.currently-playing-container, .currently-playing-container-pinned{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 35%;
+    height: 4.5rem;
+    z-index: 1000;
+    border-radius: 7px;
+    box-shadow: 2px 2px 1px black;
+    background: #545961;
+    transition: 0.25s;
+}
+
+.currently-playing-container{
+    bottom: -3.5rem;
+}
+
+.currently-playing-container:hover, .currently-playing-container-pinned{
+    bottom: .2rem;
+}
+
+.player{
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.pin, .pin-active{
+    position: absolute;
+    top: .2rem;
+    right: .2rem;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.pin{
+    color: white;
+}
+
+.pin-active{
+    color: red;
+}
+
+.player-left{
+    width: 80%;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-left: 0.8rem;
+}
+
+.player-img{
+    width: 8vh;
+    height: 8vh;
+    margin-right: 0.6rem;
+    border: 1px solid black;
+}
+
+.player-info{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.player-track{
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    transition: .2s;
+}
+
+.player-artist{
+    display: inline-block;
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+@keyframes scrollText {
+    0%, 30%{
+        transform: translateX(0);
+    }
+    100%{
+        transform: translateX(-100%);
+    }
+}
+
+.player-artist h3, .player-artist span{
+    display:inline;
+    color: #b3b3b3;
+}
+
+.equalizer-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    height: 30%;
+    width: 20%;
+    gap: 5px;
+    margin-right: 2rem;
+    margin-left: 3rem;
+}
+
+.bar-1, .bar-2, .bar-1-active, .bar-2-active, .bar-3-active{
+    width: 10%;
+    background-color: #b3b3b3;
+    border-radius: 2px;
+    height: 100%;
+    transform-origin: bottom;
+}
+
+.bar-1-active, .bar-2-active, .bar-3-active{
+    animation: equalize .8s infinite alternate ease-in-out;
+}
+
+@keyframes equalize {
+    0% {
+        transform: scaleY(0.1);
+    }
+    50% {
+        transform: scaleY(1);
+    }
+    100% {
+        transform: scaleY(0.1);
+    }
+}
+
+.bar-1-active {
+    animation-delay: 0s;
+}
+.bar-2-active {
+    animation-delay: 0.2s;
+}
+.bar-3-active {
+    animation-delay: 0.4s;
+}
+
+
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .currently-playing-container,
+    .currently-playing-container-pinned {
+        width: 50%;
+    }
+
+    .equalizer-container {
+        width: 25%;
+        margin-right: 1rem;
+        margin-left: 1rem;
+    }
+
+    .player-img {
+        width: 6vh;
+        height: 6vh;
+    }
+}
+
+/* Large Phones */
+@media (max-width: 768px) {
+    .currently-playing-container,
+    .currently-playing-container-pinned {
+        width: 50%;
+        height: 4rem;
+    }
+
+    .player-left {
+        width: 70%;
+        margin-left: 0.5rem;
+    }
+
+    .equalizer-container {
+        width: 20%;
+        gap: 3px;
+        margin-left: 1rem;
+        margin-right: 0.6rem;
+    }
+
+    .player-img {
+        width: 5.5vh;
+        height: 5.5vh;
+    }
+
+    .pin,
+    .pin-active {
+        font-size: 1.2rem;
+    }
+}
+
+/* Small Phones */
+@media (max-width: 480px) {
+
+    .currently-playing-container,
+    .currently-playing-container-pinned {
+        width: 50%;
+        height: 3.6rem;
+    }
+
+    .player-img {
+        width: 4.5vh;
+        height: 4.5vh;
+        margin-right: 0.4rem;
+    }
+
+    .player-track {
+        font-size: 0.95rem;
+    }
+
+    .player-artist {
+        font-size: 0.8rem;
+    }
+
+    .equalizer-container {
+        display: none; /* hides equalizer on very small screens */
+    }
+
+    .pin,
+    .pin-active {
+        font-size: 1rem;
+    }
+}

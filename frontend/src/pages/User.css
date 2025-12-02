@@ -1,0 +1,506 @@
+.user-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+    padding: 0 0 2rem 2rem;
+}
+
+.profile-user {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-bottom: 1.5rem;
+}
+
+.profile-pfp {
+    height: 7rem;
+    width: 7rem;
+    border-radius: 50%;
+    margin-bottom: .5rem;
+}
+
+.profile {
+    width: 100%;
+    padding-left: 0;
+}
+
+.profile-categories {
+    width: 85%;
+    margin-bottom: 30px;
+}
+
+.category-header {
+    position: relative;
+    width: 100%;
+}
+
+.category {
+    color: #fff;
+    margin-bottom: 5px;
+    text-align: left;
+    text-shadow: 2px 2px 1px #333;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 1.5rem;
+}
+
+.see-more {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.see-more:hover {
+    text-decoration: underline;
+}
+
+.top5-header {
+    display: flex;
+    flex-direction: row;
+}
+
+.top5-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.edit-top5 {
+    width: 50%;
+    height: 60%;
+    margin-top: .5rem;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 1rem;
+    box-shadow: 2px 2px 1px black;
+    background-color: #545961;
+}
+
+.top5-exit {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #FF2424;
+    z-index: 1000;
+}
+
+.top5-exit:hover {
+    color: #FF4747;
+}
+
+.save-changes {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+}
+
+.save-changes, .top5-remove, .top5-add {
+    height: 1.7rem;
+    width: 4.3rem;
+    font-size: 1rem;
+    box-shadow: 2px 2px 1px black;
+    color: #D9D9D9;
+    background-color: #4C5563;
+    border: #1E2023;
+    font-family: "Malgun Gothic Semilight";
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.top5-remove, .top5-add {
+    height: 1.5rem;
+    width: 4rem;
+    font-size: .8rem;
+    box-shadow: 1px 1px 1px black;
+    margin-left: .5rem;
+}
+
+.save-changes:hover, .top5-remove:hover, .top5-add:hover {
+    background-color: #687487;
+}
+
+.top5-category {
+    display: flex;
+    align-items: center;
+    height: 19%;
+    width: 80%;
+    position: relative;
+    border-bottom: 1px solid #8A9CBA;
+    margin-left: 1rem;
+}
+
+.top5-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: left;
+    width: 90%;
+    cursor: grab;
+    margin-left: .5rem;
+}
+
+.top5-row:hover, .top5-row:active {
+    border: 2px solid #30DBBF;
+}
+
+.top5-row:active {
+    cursor: grabbing;
+}
+
+.top5-pre {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    width: 11%;
+    aspect-ratio: 1 / 1;
+    background-color: #1d6fa3;
+    margin: 0.5rem 0 0.5rem 0;
+    box-shadow: 2px 2px 1px black;
+}
+
+.top5-rank {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    width: 2.5rem;
+    height: 2.3rem;
+    margin-top: 0.5rem;
+    background-color: #1d6fa3;
+    box-shadow: 2px 2px 1px black;
+}
+
+.top5-img {
+    width: 4.3rem;
+    height: 4.3rem;
+    background-color: #1d6fa3;
+    margin: 0 0 0 .5rem;
+    border: 1px solid black;
+    -webkit-user-drag: none;
+}
+
+.top5-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    margin-left: .5rem;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.profile-category-releases {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10.6rem, 1fr));
+    max-width: 100%;
+    justify-items: center;
+    gap: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+}
+
+
+.profile-category-releases::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+    border-top: 1px solid #4C5563;
+}
+
+.releaseGroup-items {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+
+}
+
+.profile-item-img {
+    height: 10.6rem;
+    width: 10.6rem;
+    border: 2px solid black;
+    margin: 15px 15px 5px 15px;
+    transition: border 0.2s;
+}
+
+.profile-item-img:hover {
+    border: 2px solid #30DBBF;
+    cursor: pointer;
+}
+
+.release-info {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    align-items: center;
+    padding-bottom: 5px;
+    width: 10.6rem;
+}
+
+.release-info::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 100%;
+    transform: translateX(-50%);
+    border-bottom: 1px solid #4C5563;
+}
+
+.profile-item-title {
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    max-width: 100%;
+    margin-bottom: 5px;
+}
+
+.profile-item-title:hover {
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.profile-item-container {
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: center;
+    max-width: 100%;
+    margin-top: 5px;
+}
+
+.profile-item-container h4:hover {
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.profile-item-artist{
+    display: inline;
+}
+
+.star-profile {
+    display: inline;
+    font-size: 20px;
+    color: orange;
+    vertical-align: bottom;
+}
+
+.rating-value {
+    margin-top: 5px;
+}
+
+.rating-value h4 {
+    display: inline;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: bottom;
+}
+
+.rating-value-ten {
+    color: #1eFFE7;
+}
+
+.rating-value-high {
+    color: #2EFF66;
+}
+
+.rating-value-med {
+    color: #7BFF00;
+}
+
+.rating-value-medlow {
+    color: #FFF700;
+}
+
+.rating-value-low {
+    color: #FF8C00;
+}
+
+.rating-value-zero {
+    color: #FF0000;
+}
+
+.listen-timestamp {
+    padding: 5px;
+    color: #525457;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+@media (max-width: 1024px) {
+
+    .edit-top5 {
+        width: 70%;
+        height: auto;
+        padding: 1rem;
+    }
+
+    .top5-category {
+        width: 90%;
+        height: auto;
+        padding: .5rem 0;
+    }
+
+    .top5-row {
+        width: 100%;
+        margin-left: 0;
+    }
+
+    .category-releases {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .profile-item-img {
+        height: 9rem;
+        width: 9rem;
+    }
+
+    .release-info {
+        width: 9rem;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .user-page {
+        padding: 0 0 1.5rem 1rem;
+    }
+
+    .profile-pfp {
+        height: 5rem;
+        width: 5rem;
+    }
+
+    .category {
+        font-size: 1.2rem;
+    }
+
+    .see-more {
+        font-size: 10px;
+    }
+
+    .edit-top5 {
+        width: 90%;
+        height: auto;
+        padding: 1rem;
+    }
+
+    .top5-pre {
+        font-size: 1.5rem;
+        width: 2.5rem;
+    }
+
+    .top5-img {
+        width: 3.5rem;
+        height: 3.5rem;
+    }
+
+    .category-releases {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .profile-item-img {
+        height: 7.5rem;
+        width: 7.5rem;
+    }
+
+    .release-info {
+        width: 7.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+
+    .profile-user {
+        text-align: center;
+    }
+
+    .profile-pfp {
+        height: 4rem;
+        width: 4rem;
+    }
+
+    .category {
+        font-size: 1rem;
+        letter-spacing: 1px;
+    }
+
+    .edit-top5 {
+        width: 95%;
+        height: auto;
+        padding: 1rem;
+    }
+
+    .top5-category {
+        margin-left: 0;
+        width: 95%;
+        flex-direction: column;
+    }
+
+    .top5-row {
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+    }
+
+    .top5-pre {
+        width: 2rem;
+        font-size: 1.2rem;
+    }
+
+    .top5-img {
+        width: 3rem;
+        height: 3rem;
+    }
+
+    .category-releases {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .profile-item-img {
+        width: 6rem;
+        height: 6rem;
+        margin: 10px;
+    }
+
+    .release-info {
+        width: 6rem;
+    }
+
+    .listen-timestamp {
+        font-size: .8rem;
+        text-align: center;
+    }
+}

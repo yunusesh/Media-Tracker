@@ -1,0 +1,142 @@
+.track-page{
+    padding: 30px;
+    position: relative;
+}
+.track-info {
+    display: flex;
+    align-items: flex-start;
+    position: relative;
+    margin-bottom: 10px;
+    margin-left: 4.3rem;
+}
+
+.track-info::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 95%;
+    transform: translateX(-50%);
+    border-bottom: 1px solid #4C5563;
+}
+
+.img{
+    height: 50vh;
+    width: 50vh;
+    border: black solid 4px;
+}
+
+.title, .artist, .date{
+    display:inline;
+}
+.date{
+    margin-left: 10px;
+    color: #525457;
+    letter-spacing: 1px;
+}
+.title-date-artist{
+    display: inline;
+}
+
+.title-above-release{
+    position: relative;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    min-height: 50vh;
+}
+
+.appears-on{
+    margin-top: 20px;
+    margin-bottom: 10px;
+    color: #525457;
+    letter-spacing: 1px;
+
+}
+
+.release-format{
+    display: inline;
+    margin-bottom: 10px;
+}
+
+.release{
+    display:inline;
+}
+.release:hover{
+    cursor:pointer;
+    text-decoration: underline;
+}
+
+.format{
+    display: inline;
+    color: #525457;
+}
+
+.user-track{
+    margin-left: 3.5rem;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .track-info {
+        margin-left: 0;
+        justify-content: center;
+    }
+
+    .title-above-release {
+        min-height: auto;
+    }
+
+    .img {
+        max-width: 300px;
+    }
+}
+
+/* Large phones */
+@media (max-width: 768px) {
+    .track-page {
+        padding: 20px;
+    }
+
+    .track-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .user-track {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .img {
+        max-width: 280px;
+        border-width: 3px;
+    }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+
+    .img {
+        max-width: 250px;
+    }
+
+    .title {
+        font-size: 1.2rem;
+    }
+
+    .artist {
+        font-size: 1rem;
+    }
+
+    .date {
+        font-size: 0.9rem;
+    }
+
+    .releases {
+        font-size: 0.9rem;
+    }
+}
