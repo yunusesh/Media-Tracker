@@ -1,7 +1,8 @@
 # Media Tracker
 
-A **work in progress** website that tracks digital **music**, **movie**, and **TV** consumption by integrating with multiple streaming service APIs.  
-> Currently, only the **music** portion is functional.
+A **work in progress** website that tracks digital **music** consumption.  
+Rate, track, review, and view your listening stats.
+
 
 ---
 
@@ -41,14 +42,6 @@ A **work in progress** website that tracks digital **music**, **movie**, and **T
    cd media-menu
 2. **Install React dependencies**
 
-```bash
-npm install react-dom \
-            react-icons \
-            react-query \
-            react-router \
-            react-router-dom \
-            react-scripts
-```
 3. **Set up PostgreSQL server**
 
    Run SQL script
