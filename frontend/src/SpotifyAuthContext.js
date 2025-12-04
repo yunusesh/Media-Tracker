@@ -1,7 +1,7 @@
 import {createContext, useState, useEffect, useContext} from "react";
 import {AuthContext} from "./AuthContext";
 import axios from "axios";
-import {useQuery} from "react-query";
+import {useQuery} from '@tanstack/react-query';
 
 export const SpotifyAuthContext = createContext();
 

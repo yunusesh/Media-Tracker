@@ -1,6 +1,6 @@
 import './Artist.css'
 import {useNavigate, useParams} from "react-router-dom";
-import {useQuery} from "react-query";
+import {useQuery} from '@tanstack/react-query';
 import {useContext, useEffect, useState} from "react";
 import {FaRegEdit} from "react-icons/fa";
 import axios from "axios";

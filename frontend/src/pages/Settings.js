@@ -1,7 +1,7 @@
 import {useContext, useEffect} from "react";
 import {SpotifyAuthContext} from "../SpotifyAuthContext";
 import {AuthContext} from "../AuthContext";
-import {useQuery} from "react-query";
+import {useQuery} from '@tanstack/react-query';
 import {FaSpotify} from "react-icons/fa";
 import "./Settings.css"
 

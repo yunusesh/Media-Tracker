@@ -1,6 +1,6 @@
 import "./Track.css"
 import {useNavigate, useParams} from "react-router-dom";
-import {useQuery} from "react-query";
+import {useQuery} from '@tanstack/react-query';
 import {FaRegEdit, FaStar} from "react-icons/fa";
 import {useContext, useEffect, useState} from "react";
 import {AuthContext} from "../../AuthContext";

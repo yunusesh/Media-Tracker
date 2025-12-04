@@ -1,7 +1,7 @@
 import './Home.css'
 import {AuthContext} from "../AuthContext";
 import React, {useContext, useEffect, useState} from "react";
-import {useQuery} from "react-query";
+import { useQuery } from '@tanstack/react-query';
 import {useNavigate} from "react-router-dom";
 import {GrPowerCycle} from "react-icons/gr";
 import {forEach} from "lodash";

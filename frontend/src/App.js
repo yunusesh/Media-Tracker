@@ -5,8 +5,9 @@ import {Layout} from './Layout';
 import {Artist} from "./pages/music-pages/Artist";
 import {Album} from "./pages/music-pages/Album";
 import {Track} from "./pages/music-pages/Track";
-import {QueryClient, QueryClientProvider} from "react-query";
-import {ReactQueryDevtools} from "react-query/devtools";
+import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import {Login} from "./pages/Login";
 import {Register} from "./pages/Register";
 import {AuthProvider} from "./AuthContext";

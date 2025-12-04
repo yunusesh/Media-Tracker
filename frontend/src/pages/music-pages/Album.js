@@ -1,6 +1,6 @@
 import './Album.css'
 import {useNavigate, useParams} from "react-router-dom";
-import {useQuery} from "react-query"
+import {useQuery} from '@tanstack/react-query'
 import {useContext, useEffect, useState} from "react";
 import {FaStar} from "react-icons/fa";
 import {FaRegEdit} from "react-icons/fa";
