@@ -87,14 +87,6 @@ export function Artist() {
         }
     }, [userScrobbles]);
 
-    if (status === 'loading') {
-        return <p>Loading...</p>
-    }
-
-    if (status === 'error') {
-        return <p>Error!</p>
-    }
-
     const releaseGroupsByFormat = {
         albums: [],
         mixtapes: [],
@@ -104,45 +96,56 @@ export function Artist() {
         compilations: [],
         others: [],
     };
+    
+    if (data){
+        data["release-groups"]?.forEach(releaseGroup => {
+            const format =
+                releaseGroup["secondary-types"]?.includes("Mixtape/Street") ? "mixtapes" :
+                    releaseGroup["secondary-types"]?.includes("Compilation") ? "compilations" :
+                        releaseGroup["secondary-types"]?.includes("Live") ? "live" :
 
-    data["release-groups"]?.forEach(releaseGroup => {
-        const format =
-            releaseGroup["secondary-types"]?.includes("Mixtape/Street") ? "mixtapes" :
-                releaseGroup["secondary-types"]?.includes("Compilation") ? "compilations" :
-                    releaseGroup["secondary-types"]?.includes("Live") ? "live" :
+                            ["Broadcast", "Spokenword",
+                                "Interview", "Audiobook", "Audio drama",
+                                "Remix", "DJ-mix", "Demo", "Field recording"]
+                                .some(type => releaseGroup["secondary-types"]?.includes(type))
+                            && releaseGroup["primary-type"]?.includes("Album") ? "others" :
 
-                        ["Broadcast", "Spokenword",
-                            "Interview", "Audiobook", "Audio drama",
-                            "Remix", "DJ-mix", "Demo", "Field recording"]
-                            .some(type => releaseGroup["secondary-types"]?.includes(type))
-                        && releaseGroup["primary-type"]?.includes("Album") ? "others" :
-
-                            releaseGroup["primary-type"]?.includes("Album") ? "albums" :
-                                releaseGroup["primary-type"]?.includes("EP") ? "eps" :
-                                    releaseGroup["primary-type"]?.includes("Single") ? "singles" :
-                                        "others";
+                                releaseGroup["primary-type"]?.includes("Album") ? "albums" :
+                                    releaseGroup["primary-type"]?.includes("EP") ? "eps" :
+                                        releaseGroup["primary-type"]?.includes("Single") ? "singles" :
+                                            "others";
 
 
-        releaseGroupsByFormat[format].push(releaseGroup);
-    });
+            releaseGroupsByFormat[format].push(releaseGroup);
+        });
+    }
+
+    if (status === 'loading') {
+        return <p>Loading...</p>
+    }
+
+    if (status === 'error') {
+        return <p>Error!</p>
+    }
 
     return (
         <div className="artist-page">
             <div className="artist-page-left">
-                <div className="name-over-img">
-                    <h1 className="artist-name">{data.name}</h1>
-                    <img className="artist-img"
-                         src={artistImage}
-                         onError={() =>
-                             setArtistImage(
-                                 `https://coverartarchive.org/release-group/${data["release-groups"]?.[0]?.id}/front`
-                             )}
-                         alt="placeholder.png"/>
-                    <div className="genres">
-                        {genres.join(", ") + " // genres"}
+                {data && (
+                    <div className="name-over-img">
+                        <h1 className="artist-name">{data.name}</h1>
+                        <img className="artist-img"
+                             src={artistImage}
+                             onError={() =>
+                                 setArtistImage(
+                                     `https://coverartarchive.org/release-group/${data["release-groups"]?.[0]?.id}/front`
+                                 )}
+                             alt="placeholder.png"/>
+                        <div className="genres">
+                            {genres.join(", ") + " // genres"}
+                        </div>
                     </div>
-
-                </div>
+                )}
                 <div className="stats">
                     Your Stats
                     <div className="activity">
@@ -154,27 +157,29 @@ export function Artist() {
                 </div>
             </div>
 
-            <div className="releases">
-                {Object.entries(releaseGroupsByFormat).map(([format, groups]) => (
-                    <div className="categories" key={format}>
-                        {/* i.e. type albums becomes header Albums */}
-                        <h3 className="category">{format.charAt(0).toUpperCase() + format.slice(1)}</h3>
-                        <div className="category-releases">
-                            {groups.filter(release => release["first-release-date"] != "").sort((a,b) => new Date(b["first-release-date"]) - new Date(a["first-release-date"])).map(releaseGroup => (
-                                <div className="releaseGroup-items" key={releaseGroup.id}
-                                     onClick={() => navigate(`/album/${releaseGroup.id}`)}>
-                                    <img className="releaseGroup-img"
-                                         src={`https://coverartarchive.org/release-group/${releaseGroup.id}/front`}
-                                         alt="placeholder.jpg"/>
-                                    <h4 className="releaseGroup-title">{releaseGroup.title}</h4>
-                                    {/* substring(0,4) 2012-10-15 -> 2012 */}
-                                    <h5 className="releaseGroup-date"> {releaseGroup["first-release-date"]?.substring(0, 4)}</h5>
-                                </div>
-                            ))}
+            {data && (
+                <div className="releases">
+                    {Object.entries(releaseGroupsByFormat).map(([format, groups]) => (
+                        <div className="categories" key={format}>
+                            {/* i.e. type albums becomes header Albums */}
+                            <h3 className="category">{format.charAt(0).toUpperCase() + format.slice(1)}</h3>
+                            <div className="category-releases">
+                                {groups.filter(release => release["first-release-date"] != "").sort((a, b) => new Date(b["first-release-date"]) - new Date(a["first-release-date"])).map(releaseGroup => (
+                                    <div className="releaseGroup-items" key={releaseGroup.id}
+                                         onClick={() => navigate(`/album/${releaseGroup.id}`)}>
+                                        <img className="releaseGroup-img"
+                                             src={`https://coverartarchive.org/release-group/${releaseGroup.id}/front`}
+                                             alt="placeholder.jpg"/>
+                                        <h4 className="releaseGroup-title">{releaseGroup.title}</h4>
+                                        {/* substring(0,4) 2012-10-15 -> 2012 */}
+                                        <h5 className="releaseGroup-date"> {releaseGroup["first-release-date"]?.substring(0, 4)}</h5>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     )
 }

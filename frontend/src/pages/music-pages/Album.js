@@ -220,90 +220,92 @@ export function Album() {
 
     return (
         <div className="album-page">
-            <div className="album-info">
-                <div className="links-under-img">
-                    <img className="img" src={albumImage} alt="placeholder.jpg"/>
-                    <div className="album-links">
-                        <h5>www.youtube.com/album</h5>
-                        <h5>www.spotify.com/album</h5>
-                        <h5>www.applemusic.com/album</h5>
-                    </div>
-                    <div className="genres">
-                        {genres.join(", ") + " // genres"}
-                    </div>
-                </div>
-                <div className="list-under-title">
-                    <div className="title-date-artist">
-                        <div className="title-box">
-                            <h1 className="title">{albumTitle}</h1>
+            {data && (
+                <div className="album-info">
+                    <div className="links-under-img">
+                        <img className="img" src={albumImage} alt="placeholder.jpg"/>
+                        <div className="album-links">
+                            <h5>www.youtube.com/album</h5>
+                            <h5>www.spotify.com/album</h5>
+                            <h5>www.applemusic.com/album</h5>
                         </div>
-                        <div className="date-artist">
-                            <h3 className="date-format"> {albumDate} • {data["primary-type"]} by </h3>
-                            {/*(0,4) grabs start of date to end of date i.e. 2014-10-12 becomes 2012) */}
-                            {data["artist-credit"]?.map((artist, index, array) => (
-                                <span key={artist.id}>
+                        <div className="genres">
+                            {genres.join(", ") + " // genres"}
+                        </div>
+                    </div>
+                    <div className="list-under-title">
+                        <div className="title-date-artist">
+                            <div className="title-box">
+                                <h1 className="title">{albumTitle}</h1>
+                            </div>
+                            <div className="date-artist">
+                                <h3 className="date-format"> {albumDate} • {data["primary-type"]} by </h3>
+                                {/*(0,4) grabs start of date to end of date i.e. 2014-10-12 becomes 2012) */}
+                                {data["artist-credit"]?.map((artist, index, array) => (
+                                    <span key={artist.id}>
                                     <h2 className="artist"
                                         onClick={() => navigate(`/artist/${artist.id}`)}
                                     >
                                     {artist.name}
                                     </h2>
-                                    {index < array.length - 1 && (
-                                        <span>{index === array.length - 2 ? " & " : ", "}</span>
-                                    )}
+                                        {index < array.length - 1 && (
+                                            <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                        )}
                                 </span>
+                                ))}
+                            </div>
+                            <div className="reissues-container">
+                                {visible && (
+                                    <div className="reissues-list">
+                                        {reissuesList.map(reissue => (
+                                            <div className="reissues-result"
+                                                 key={reissue.id}
+                                                 onClick={() => {
+                                                     //if a new reissue then do all the changes else go back to defaults
+                                                     if (reissue.disambiguation !== "") {
+                                                         setAlbumImage(`https://coverartarchive.org/release/${reissue.id}/front`)
+                                                         setAlbumTitle(`${reissue.title} (${reissue.disambiguation})`)
+                                                         setAlbumReissue(reissue)
+                                                         if (reissue.date !== "") {
+                                                             setAlbumDate(reissue.date.substring(0, 4))
+                                                         }
+                                                     } else {
+                                                         setAlbumImage(`https://coverartarchive.org/release-group/${data.id}/front`)
+                                                         setAlbumTitle(data.title)
+                                                         setAlbumDate(data["first-release-date"].substring(0, 4))
+                                                         setAlbumReissue(data)
+                                                     }
+                                                 }}>
+                                                {reissue.title}{reissue.disambiguation !== "" ?
+                                                ` (${reissue.disambiguation.charAt(0).toUpperCase() + reissue.disambiguation.slice(1)})` :
+                                                ""}
+                                            </div>
+                                        ))}
+
+                                    </div>
+                                )}
+                                <button className="reissues" onClick={() => {
+                                    setVisible(!visible);
+
+                                }}> Reissues ({data.releases?.length})
+                                </button>
+
+                            </div>
+                        </div>
+                        <div className="tracklist">
+                            {albumReissue.tracklist?.map(track => (
+                                <h3 className="tracklist-items"
+                                    key={track.id}
+                                    onClick={() => {
+                                        navigate(`/track/${track?.recording?.id}`)
+                                    }}
+
+                                >{track.title}</h3>
                             ))}
                         </div>
-                        <div className="reissues-container">
-                            {visible && (
-                                <div className="reissues-list">
-                                    {reissuesList.map(reissue => (
-                                        <div className="reissues-result"
-                                             key={reissue.id}
-                                             onClick={() => {
-                                                 //if a new reissue then do all the changes else go back to defaults
-                                                 if (reissue.disambiguation !== "") {
-                                                     setAlbumImage(`https://coverartarchive.org/release/${reissue.id}/front`)
-                                                     setAlbumTitle(`${reissue.title} (${reissue.disambiguation})`)
-                                                     setAlbumReissue(reissue)
-                                                     if (reissue.date !== "") {
-                                                         setAlbumDate(reissue.date.substring(0, 4))
-                                                     }
-                                                 } else {
-                                                     setAlbumImage(`https://coverartarchive.org/release-group/${data.id}/front`)
-                                                     setAlbumTitle(data.title)
-                                                     setAlbumDate(data["first-release-date"].substring(0, 4))
-                                                     setAlbumReissue(data)
-                                                 }
-                                             }}>
-                                            {reissue.title}{reissue.disambiguation !== "" ?
-                                            ` (${reissue.disambiguation.charAt(0).toUpperCase() + reissue.disambiguation.slice(1)})` :
-                                            ""}
-                                        </div>
-                                    ))}
-
-                                </div>
-                            )}
-                            <button className="reissues" onClick={() => {
-                                setVisible(!visible);
-
-                            }}> Reissues ({data.releases?.length})
-                            </button>
-
-                        </div>
-                    </div>
-                    <div className="tracklist">
-                        {albumReissue.tracklist?.map(track => (
-                            <h3 className="tracklist-items"
-                                key={track.id}
-                                onClick={() => {
-                                    navigate(`/track/${track?.recording?.id}`)
-                                }}
-
-                            >{track.title}</h3>
-                        ))}
                     </div>
                 </div>
-            </div>
+            )}
             <div className="user-album">
                 <div className={isEditing ? "stats-editing" : "stats"}>
                     Your Stats
@@ -348,7 +350,7 @@ export function Album() {
                                         if (!/^\d{0,2}(\.\d?)?$/.test(val)) return;
 
                                         let num = parseFloat(val);
-                                        if (num > 10) val = val.substring(0,1);
+                                        if (num > 10) val = val.substring(0, 1);
                                         if (num < 0) val = "0";
 
 

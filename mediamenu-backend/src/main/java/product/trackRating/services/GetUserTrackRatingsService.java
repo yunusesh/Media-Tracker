@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import product.Query;
 import product.artist.model.ArtistDTO;
+import product.release.model.ReleaseDTO;
 import product.track.TrackRepository;
 import product.track.model.Track;
 import product.trackRating.TrackRatingRepository;
@@ -32,6 +33,7 @@ public class GetUserTrackRatingsService implements Query<Integer, List<TrackRati
             Track track = trackRepository.findById(rating.getTrackId()).orElseThrow();
 
             rating.setArtists(track.getArtists().stream().map(ArtistDTO::new).toList());
+            rating.setReleases(track.getReleases().stream().map(ReleaseDTO::new).toList());
         }
 
         return ResponseEntity.ok(ratings);

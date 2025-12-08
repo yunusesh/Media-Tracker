@@ -24,11 +24,11 @@ public class TrackRatingRequestDTO {
     private String trackTitle;
     private String trackReleaseDate;
     private List<ArtistDTO> artists = new ArrayList<>();
-    private String releaseMbid;
+    private List<ReleaseDTO> releases = new ArrayList<>();
 
     public TrackRatingRequestDTO(Integer userId, Integer trackId, BigDecimal rating,
                                  Timestamp ratedAt, String trackMbid, String trackTitle,
-                                 String trackReleaseDate, String releaseMbid) {
+                                 String trackReleaseDate) {
         this.userId = userId;
         this.trackId = trackId;
         this.rating = rating;
@@ -36,6 +36,5 @@ public class TrackRatingRequestDTO {
         this.trackMbid = trackMbid;
         this.trackTitle = trackTitle;
         this.trackReleaseDate = trackReleaseDate;
-        this.releaseMbid = releaseMbid;
     }
 }

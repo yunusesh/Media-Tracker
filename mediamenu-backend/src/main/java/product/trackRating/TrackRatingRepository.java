@@ -24,9 +24,8 @@ public interface TrackRatingRepository extends JpaRepository<TrackRating, TrackR
             tr.ratedAt,
             t.mbid,
             t.title,
-            t.releaseDate,
-            t.releaseMbid
-        )
+            t.releaseDate
+            )
         FROM TrackRating tr
         JOIN tr.track t
         WHERE tr.id.userId = :userId

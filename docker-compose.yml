@@ -12,12 +12,12 @@ services:
       - "5432:5432"
 
   backend:
-    build: ./backend
+    build: ./mediamenu-backend
     container_name: backend
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/mediatracker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/mediatracker
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: Jojononos2$
     depends_on:
@@ -29,6 +29,6 @@ services:
     ports:
       - "3000:80"
     environment:
-      REACT_APP_API_URL: http://backend:8081
+      REACT_APP_API_URL: https://inconsolably-blearier-catharine.ngrok-free.dev/
     depends_on:
       - backend

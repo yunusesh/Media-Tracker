@@ -38,6 +38,7 @@ export function Track() {
 
     async function fetchTrackFromDB() {
         if (data) {
+            console.log(data.releases[0].id)
             const response = await axios.post(`http://localhost:8081/api/track/getOrCreate`, {
                 trackMbid: id,
                 isrc: null,
@@ -50,7 +51,8 @@ export function Track() {
                 artists: data["artist-credit"]?.map(artist => ({
                     mbid: artist.id,
                     spotifyId: null,
-                    artistName: artist.name
+                    artistName: artist.name,
+                    imageUrl: null
                 })) || [],
                 genres: data.genres?.map(genre => ({
                     mbid: genre.id,
@@ -154,48 +156,50 @@ export function Track() {
 
     return (
         <div className="track-page">
-            <div className="track-info">
-                <div className="links-under-img">
-                    <img className="img"
-                         src={`https://coverartarchive.org/release-group/${data?.releases[0].id}/front`}
-                         alt="placeholder.jpg"/>
-                    <div className="album-links">
-                        <h5>www.youtube.com/album</h5>
-                        <h5>www.spotify.com/album</h5>
-                        <h5>www.applemusic.com/album</h5>
+            {data && (
+                <div className="track-info">
+                    <div className="links-under-img">
+                        <img className="img"
+                             src={`https://coverartarchive.org/release-group/${data.releases[0].id}/front`}
+                             alt="placeholder.jpg"/>
+                        <div className="album-links">
+                            <h5>www.youtube.com/album</h5>
+                            <h5>www.spotify.com/album</h5>
+                            <h5>www.applemusic.com/album</h5>
+                        </div>
+                        <div className="genres">
+                            {genres.join(", ") + " // genres"}
+                        </div>
                     </div>
-                    <div className="genres">
-                        {genres.join(", ") + " // genres"}
-                    </div>
-                </div>
-                <div className="title-above-release">
-                    <div className="title-date-artist">
-                        <h1 className="title">{data?.title}</h1>
-                        <h3 className="date">{data?.["first-release-date"]?.substring(0, 4)} • Track by </h3>
-                        {data?.["artist-credit"]?.map((artist, index, array) => (
-                            <span key={artist.id}>
+                    <div className="title-above-release">
+                        <div className="title-date-artist">
+                            <h1 className="title">{data?.title}</h1>
+                            <h3 className="date">{data?.["first-release-date"]?.substring(0, 4)} • Track by </h3>
+                            {data?.["artist-credit"]?.map((artist, index, array) => (
+                                <span key={artist.id}>
                                     <h2 className="artist"
                                         onClick={() => navigate(`/artist/${artist.id}`)}
                                     >
                                     {artist.name}
                                     </h2>
-                                {index < array.length - 1 && (
-                                    <span>{index === array.length - 2 ? " & " : ", "}</span>
-                                )}
+                                    {index < array.length - 1 && (
+                                        <span>{index === array.length - 2 ? " & " : ", "}</span>
+                                    )}
                                 </span>
-                        ))}
-                    </div>
-                    <h3 className="appears-on">Appears on</h3>
-                    {data?.releases?.map(releaseGroup =>
-                        <div className="release-format">
-                            <h2 className="release" key={releaseGroup?.id}
-                                onClick={() => navigate(`/album/${releaseGroup?.id}`)}
-                            >{releaseGroup?.title} </h2>
-                            <h4 className="format"> {releaseGroup["first-release-date"].substring(0, 4)} • {releaseGroup["primary-type"]} </h4>
+                            ))}
                         </div>
-                    )}
+                        <h3 className="appears-on">Appears on</h3>
+                        {data?.releases?.map(releaseGroup =>
+                            <div className="release-format">
+                                <h2 className="release" key={releaseGroup?.id}
+                                    onClick={() => navigate(`/album/${releaseGroup?.id}`)}
+                                >{releaseGroup?.title} </h2>
+                                <h4 className="format"> {releaseGroup["first-release-date"].substring(0, 4)} • {releaseGroup["primary-type"]} </h4>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
             <div className="user-track">
                 <div className={isEditing ? "stats-editing" : "stats"}>
                     Your Stats
@@ -240,7 +244,7 @@ export function Track() {
                                         if (!/^\d{0,2}(\.\d?)?$/.test(val)) return;
 
                                         let num = parseFloat(val);
-                                        if (num > 10) val = val.substring(0,1);
+                                        if (num > 10) val = val.substring(0, 1);
                                         if (num < 0) val = "0";
 
                                         // Round to 1 decimal and remove infinite zeros

@@ -53,7 +53,6 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
 
         configuration.setAllowedOrigins(List.of(
-                "http://localhost:8081",
                 "http://localhost:3000",
                 "https://inconsolably-blearier-catharine.ngrok-free.dev"));
         configuration.setAllowedMethods(List.of("GET","POST", "PUT", "DELETE", "OPTIONS"));

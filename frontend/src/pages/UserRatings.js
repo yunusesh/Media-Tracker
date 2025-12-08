@@ -72,7 +72,10 @@ export function UserRatings() {
                 {ratings.map((rating, i) => (
                     <div className="ratings-page-item" key={i}>
                         <img className="ratings-item-img"
-                             src={`https://coverartarchive.org/release-group/${rating.releaseMbid}/front`}
+                             src={rating.format ?
+                                 `https://coverartarchive.org/release-group/${rating.releaseMbid}/front` :
+                                 `https://coverartarchive.org/release-group/${rating.releases[0].mbid}/front`
+                             }
                              alt="placeholder.png"
                              onClick={() => {
                                  navigate(

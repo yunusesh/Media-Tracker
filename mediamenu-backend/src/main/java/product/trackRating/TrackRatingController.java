@@ -38,7 +38,7 @@ public class TrackRatingController {
     }
 
     @GetMapping("/api/track-rating/user/{userId}")
-    public ResponseEntity<List<TrackRatingRequestDTO>> getRatingById(@PathVariable Integer userId){
+    public ResponseEntity<List<TrackRatingRequestDTO>> getRatingsById(@PathVariable Integer userId){
         return getUserTrackRatingsService.execute(userId);
     }
 

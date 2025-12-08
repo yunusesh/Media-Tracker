@@ -80,6 +80,12 @@ public class GetOrCreateTrackService {
                 genreNames
         );
 
+        if (track.getReleaseMbid() == null){
+            track.setReleaseMbid(releaseMbid);
+        }
+
+        trackRepository.save(track);
+
         TrackDTO trackDTO = new TrackDTO(track);
         entityManager.clear();
 

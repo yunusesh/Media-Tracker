@@ -526,18 +526,21 @@ export function User() {
                         {ratings.map((rating, i) => (
                             <div className="releaseGroup-items" key={i}>
                                 <img className="profile-item-img"
-                                     src={`https://coverartarchive.org/release-group/${rating.releaseMbid}/front`}
+                                     src={rating.format ?
+                                         `https://coverartarchive.org/release-group/${rating.releaseMbid}/front` :
+                                         `https://coverartarchive.org/release-group/${rating.releases[0].mbid}/front`
+                                     }
                                      alt="placeholder.png"
                                      onClick={() => {
                                          navigate(
-                                             rating.title ?
+                                             rating.format ?
                                                  `/album/${rating.releaseMbid}` :
                                                  `/track/${rating.trackMbid}`
                                          )
                                      }}
                                 />
                                 <div className="release-info">
-                                    {rating.title ?
+                                    {rating.format ?
                                         <h4 className="profile-item-title"
                                             onClick={() => {
                                                 navigate(`/album/${rating.releaseMbid}`)
